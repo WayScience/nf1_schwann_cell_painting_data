@@ -1,0 +1,6 @@
+# ignore all plates as they are downloaded from figshare in insturctions
+0.download_data/Plate_1
+0.download_data/Plate_2
+
+# ignore pycache
+__pycache__
