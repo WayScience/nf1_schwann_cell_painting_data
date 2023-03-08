@@ -1,0 +1,6 @@
+# ignore raw images since they are downloaded from figshare in the instructions
+0.download_data/Plate_1
+0.download_data/Plate_2
+
+# ignore pycache
+__pycache__/
