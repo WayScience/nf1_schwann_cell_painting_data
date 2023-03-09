@@ -38,3 +38,20 @@ Once we discover a biomarker from these cells, we hope that our method can be us
 | Module | Purpose | Description |
 | :---- | :----- | :---------- |
 | [0_download_data](0_download_data/) | Download NF1 pilot data | Download images from each plate of NF1 dataset for analysis from Figshare |
+
+## Main environment
+
+For all modules, we use one main environment for the repository, which includes all packages needed including installing CellProfiler v4.2.4.
+
+To create the environment, run the below code block:
+
+```bash
+# Run this command in terminal to create the conda environment
+conda env create -f nf1_cellpainting_env.yml
+```
+
+Make sure that the conda environment is activated before running notebooks or scripts:
+
+```bash
+conda activate nf1_cellpainting_data
+```
