@@ -2,7 +2,7 @@
 
 ## Data
 
-The data used in this project is a modified Cell Painting assay on [Schwann cells](https://www.ncbi.nlm.nih.gov/books/NBK544316/) from patients with [Neurofibromatosis type 1 (NF1)](https://medlineplus.gov/genetics/condition/neurofibromatosis-type-1/). 
+The data we use is a modified Cell Painting assay on [Schwann cells](https://www.ncbi.nlm.nih.gov/books/NBK544316/) from patients with [Neurofibromatosis type 1 (NF1)](https://medlineplus.gov/genetics/condition/neurofibromatosis-type-1/). 
 In this modified Cell Painting, there are three channels for plates 1 and 2:
 
 - `DAPI` (Nuclei)
@@ -11,7 +11,7 @@ In this modified Cell Painting, there are three channels for plates 1 and 2:
 
 ![Modified_Cell_Painting.png](example_figures/Modified_Cell_Painting.png)
 
-For plates 1 and 2, there are two genotypes of the NF1 gene in these cells:
+Plates 1 and 2 measure Cell Painting in isogenic Schwann cells with two different NF1 genotypes:
 
 **Plate 1**
 - Wild type (`WT +/+`): In column 6 from the plate (e.g C6, D6, etc.)
