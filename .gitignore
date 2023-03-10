@@ -1,7 +1,6 @@
 # ignore all plates as they are downloaded from figshare in instructions, including the metadata folder created
 0.download_data/Plate_1
 0.download_data/Plate_2
-0.download_data/metadata
 
 # ignore pycache
 __pycache__

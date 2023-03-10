@@ -45,5 +45,8 @@ def download_figshare(
     # move the metadata files into a new folder from the images
     for files in output_dir.iterdir():
         if str(files).endswith("csv"):
-            shutil.move(str(files), str(metadata_dir))
+            # copy the metadata downloaded from Figshare into the metadata dir (will overwrite the GitHub versioned metadata)
+            shutil.copy(str(files), str(metadata_dir))
+            # remove the metadata from the plate directory to make it an images only directory
+            os.remove(files)
     print("The metadata has been moved into its own directory!")
