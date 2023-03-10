@@ -1,0 +1,24 @@
+name: nf1_cellpainting_data
+
+channels:
+- conda-forge
+
+dependencies:
+- conda-forge::python>=3.8
+- conda-forge::ipykernel>=6.21.3
+- conda-forge::pip>=23.0.1
+- conda-forge::numpy>=1.24.2
+- conda-forge::matplotlib>=3.7.1
+- conda-forge::pandas>=1.5.3
+- conda-forge::mysqlclient>=2.0.3
+- conda-forge::openjdk>=11.0.9.1
+- conda-forge::scikit-learn>=1.2.2
+- conda-forge::mahotas>=1.4.13
+- conda-forge::gtk2>=2.24.33
+# these are strict because that is how it is on the CellProfiler wiki
+- conda-forge::Jinja2=3.0.1
+- conda-forge::inflect=5.3.0
+- conda-forge::wxpython=4.1.0
+- conda-forge::sentry-sdk=0.18.0
+- pip:
+    - cellprofiler==4.2.4
