@@ -9,23 +9,13 @@
 
 
 import pathlib
-import download_figshare as df
+from download_figshare import download_figshare
 
 
-# ## Set paths and variables for each plate
+# ## Set constant paths/variables
 
 # In[2]:
 
-
-# Plate 1
-figshare_id1 = "22233292/versions/1"
-output_folder1 = "Plate_1_zip"
-output_dir1 = pathlib.Path("Plate_1")
-
-# Plate 2
-figshare_id2 = "22233700/versions/3"
-output_folder2 = "Plate_2_zip"
-output_dir2 = pathlib.Path("Plate_2")
 
 # figshare url for both plates
 figshare_url = "https://figshare.com/ndownloader/articles/"
@@ -33,31 +23,50 @@ figshare_url = "https://figshare.com/ndownloader/articles/"
 # metadata folder for metadata files from both plates to be moved into
 metadata_dir = pathlib.Path("metadata")
 
+# Since the Figshare download is a zip file for the NF1 data, we have to have the unzip_file parameter turned on
+unzip_files = True
 
-# # Download files for Plate 1
+
+# ## Set dictionary with specific path/variables for each plate
 
 # In[3]:
 
 
-df.download_figshare(
-    figshare_id=figshare_id1,
-    output_file=output_folder1,
-    output_dir=output_dir1,
-    metadata_dir=metadata_dir,
-    figshare_url=figshare_url,
-)
+download_plates_info_dictionary = {
+    "Plate_1": {
+        "figshare_id": "22233292",
+        "version_number": "1",
+        "output_folder": "Plate_1_zip",
+        "output_dir": pathlib.Path("Plate_1"),
+    },
+    "Plate_2": {
+        "figshare_id": "22233700",
+        "version_number": "3",
+        "output_folder": "Plate_2_zip",
+        "output_dir": pathlib.Path("Plate_2"),
+    },
+}
 
 
-# ## Download files for Plate 2
+# ## Download files for both plates
 
 # In[4]:
 
 
-df.download_figshare(
-    figshare_id=figshare_id2,
-    output_file=output_folder2,
-    output_dir=output_dir2,
-    metadata_dir=metadata_dir,
-    figshare_url=figshare_url,
-)
+for plate in download_plates_info_dictionary:
+    # Access the plate info stored in the dictionary
+    plate_info = download_plates_info_dictionary[plate]
+    figshare_id = str(
+        plate_info["figshare_id"] + "/versions/" + plate_info["version_number"]
+    )
+    output_folder = plate_info["output_folder"]
+    output_dir = plate_info["output_dir"]
 
+    download_figshare(
+        figshare_id=figshare_id,
+        output_file=output_folder,
+        output_dir=output_dir,
+        metadata_dir=metadata_dir,
+        figshare_url=figshare_url,
+        unzip_files=unzip_files,
+    )
