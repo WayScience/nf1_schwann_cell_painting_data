@@ -37,7 +37,8 @@ Once we discover a biomarker from these cells, we hope that our method can be us
 
 | Module | Purpose | Description |
 | :---- | :----- | :---------- |
-| [0_download_data](0_download_data/) | Download NF1 pilot data | Download images from each plate of NF1 dataset for analysis from Figshare |
+| [0_download_data](0.download_data/) | Download NF1 pilot data | Download images from each plate of NF1 dataset for analysis from Figshare |
+| [1.cellprofiler_ic](1.cellprofiler_ic/) | Apply CellProfiler illumination correction (IC)| Use a CellProfiler pipeline to calculate and apply IC the images and save them |
 
 ## Main environment
 
