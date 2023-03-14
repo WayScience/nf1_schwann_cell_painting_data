@@ -10,9 +10,7 @@
 
 import pathlib
 
-import sys
-sys.path.append("../utils")
-import cp_utils
+import utils.cp_utils as cp_utils
 
 
 # ## Set paths for each plate
