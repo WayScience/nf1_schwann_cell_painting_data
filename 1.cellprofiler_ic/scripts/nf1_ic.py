@@ -10,7 +10,9 @@
 
 import pathlib
 
-import utils.cp_utils as cp_utils
+import sys
+sys.path.append("../")
+from utils import cp_utils
 
 
 # ## Set paths for each plate
@@ -37,11 +39,11 @@ plates_info_dictionary = {
 # In[3]:
 
 
-for plate in plates_info_dictionary:
-    # access the plate info stored in the dictionary
-    plate_info = plates_info_dictionary[plate]
-    path_to_output=plate_info["path_to_output"]
-    path_to_images=plate_info["path_to_images"]
+# run through each plate with each set of paths based on dictionary
+for plate, info in plates_info_dictionary.items():
+    path_to_output = info["path_to_output"]
+    path_to_images = info["path_to_images"]
+    print(f"Correcting {plate}")
 
     # run illumination correction pipeline and save images
     cp_utils.run_cellprofiler(
