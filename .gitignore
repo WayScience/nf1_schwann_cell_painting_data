@@ -1,6 +1,13 @@
-# ignore all plates as they are downloaded from figshare in instructions, including the metadata folder created
+# ignore all plates as they are downloaded from figshare in instructions
 0.download_data/Plate_1
 0.download_data/Plate_2
 
 # ignore pycache
 __pycache__
+
+# ignore corrected plates images (like in download data
+1.cellprofiler_ic/Corrected_Plate_1
+1.cellprofiler_ic/Corrected_Plate_2
+
+# ignore log files
+1.cellprofiler_ic/logs

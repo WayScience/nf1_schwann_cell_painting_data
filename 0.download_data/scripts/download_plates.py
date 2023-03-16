@@ -9,7 +9,7 @@
 
 
 import pathlib
-from download_figshare import download_figshare
+from utils.download_figshare import download_figshare
 
 
 # ## Set constant paths/variables
