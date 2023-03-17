@@ -11,3 +11,4 @@ __pycache__
 
 # ignore log files
 1.cellprofiler_ic/logs
+2.cellprofiler_analysis/logs

@@ -9,7 +9,7 @@ To calculate and apply an IC function on each channel, run the [nf1_ic.ipynb](nf
 
 ```bash
 # Run this script in terminal
-# move to the 1.cellprofiler_ic directory to acess the `sh` script
+# move to the 1.cellprofiler_ic directory to access the `sh` script
 cd 1.cellprofiler_ic
 # run the notebook as a python script
 bash nf1_ic.sh
