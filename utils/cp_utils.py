@@ -66,9 +66,8 @@ def run_cellprofiler(
         # A log file is created for each plate or data set name (based on folder name with images)
         with open(pathlib.Path(f"logs/cellprofiler_output_{pathlib.Path(path_to_images).name}.log"), "w") as cellprofiler_output_file:
             # run CellProfiler for a illumination correction pipeline
-            command = f"cellprofiler -c -r -p {path_to_pipeline} -o {path_to_output} -i {path_to_images}"
-            subprocess.run(command, shell=True, stdout=cellprofiler_output_file, stderr=cellprofiler_output_file)
-        cellprofiler_output_file.close()
+            command = f"cellprofiler -c -r -p {path_to_pipeline} -o {path_to_output} -i {path_to_images}".split()
+            subprocess.run(command, capture_output=cellprofiler_output_file)
 
     # run CellProfiler analysis pipeline
     if analysis_run:
@@ -83,9 +82,8 @@ def run_cellprofiler(
         # run CellProfiler on corrected images
         print(f"Starting CellProfiler run on {sqlite_name}")
         with open(f"logs/cellprofiler_output_analysis_{sqlite_name}.log", "w") as cellprofiler_output_file:
-            command = f"cellprofiler -c -r -p {path_to_pipeline} -o {path_to_output} -i {path_to_images}"
-            subprocess.run(command, shell=True, stdout=cellprofiler_output_file, stderr=cellprofiler_output_file)
-        cellprofiler_output_file.close()
+            command = f"cellprofiler -c -r -p {path_to_pipeline} -o {path_to_output} -i {path_to_images}".split()
+            subprocess.run(command, capture_output=cellprofiler_output_file)
 
         if sqlite_name:
             # rename the outputted .sqlite file as a specified name (used when running multiple plates with same CP pipeline)

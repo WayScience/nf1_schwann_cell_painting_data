@@ -1,6 +1,6 @@
 # Segmentation and feature extraction using CellProfiler
 
-In this module, we segment nuclei, cytoplasm, and whole cells from the images and perform feature extraction using CellProfiler.
+In this module, we segment nuclei, cytoplasm, and whole cells from images and perform feature extraction using CellProfiler.
 
 ## Run the `nf1_analysis` notebook
 
