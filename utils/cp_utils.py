@@ -63,10 +63,25 @@ def run_cellprofiler(
     # run CellProfiler illumination correction pipeline
     if not analysis_run:
         print(f"Starting CellProfiler run on {pathlib.Path(path_to_images).name}")
-        # A log file is created for each plate or data set name (based on folder name with images)
-        with open(pathlib.Path(f"logs/cellprofiler_output_{pathlib.Path(path_to_images).name}.log"), "w") as cellprofiler_output_file:
+        # A log file is created for each plate or data set name (based on folder name with images) that holds all outputs and errors
+        with open(
+            pathlib.Path(
+                f"logs/cellprofiler_output_{pathlib.Path(path_to_images).name}.log"
+            ),
+            "w",
+        ) as cellprofiler_output_file:
             # run CellProfiler for a illumination correction pipeline
-            command = f"cellprofiler -c -r -p {path_to_pipeline} -o {path_to_output} -i {path_to_images}".split()
+            command = [
+                "cellprofiler",
+                "-c",
+                "-r",
+                "-p",
+                path_to_pipeline,
+                "-o",
+                path_to_output,
+                "-i",
+                path_to_images,
+            ]
             subprocess.run(command, capture_output=cellprofiler_output_file)
 
     # run CellProfiler analysis pipeline
@@ -81,8 +96,21 @@ def run_cellprofiler(
 
         # run CellProfiler on corrected images
         print(f"Starting CellProfiler run on {sqlite_name}")
-        with open(f"logs/cellprofiler_output_analysis_{sqlite_name}.log", "w") as cellprofiler_output_file:
-            command = f"cellprofiler -c -r -p {path_to_pipeline} -o {path_to_output} -i {path_to_images}".split()
+        # A log file is created for each plate or data set name (based on folder name with images) that holds all outputs and errors
+        with open(
+            f"logs/cellprofiler_output_analysis_{sqlite_name}.log", "w"
+        ) as cellprofiler_output_file:
+            command = [
+                "cellprofiler",
+                "-c",
+                "-r",
+                "-p",
+                path_to_pipeline,
+                "-o",
+                path_to_output,
+                "-i",
+                path_to_images,
+            ]
             subprocess.run(command, capture_output=cellprofiler_output_file)
 
         if sqlite_name:
