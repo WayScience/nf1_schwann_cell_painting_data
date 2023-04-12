@@ -82,7 +82,7 @@ To create the environment, run the below code block:
 conda env create -f nf1_cellpainting_env.yml
 ```
 
-Make sure that the conda environment is activated before running notebooks or scripts:
+**Make sure that the conda environment is activated before running notebooks or scripts:**
 
 ```bash
 conda activate nf1_cellpainting_data
