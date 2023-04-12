@@ -49,6 +49,7 @@ As well, the plates have different culturing conditions, where plate 3 cells wer
   - 500 -> Columns 1, 5, and 9
   - 1000 -> Columns 2, 6, and 10
   - 2000 -> Columns 3, 7, and 11
+  - 4000 -> Columns 4, 8, and 12
 
 ![plate3_nf1_platemap.png](example_figures/plate3_nf1_platemap.png)
 
