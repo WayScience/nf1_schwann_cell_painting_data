@@ -60,13 +60,18 @@ def run_cellprofiler(
         multiple sets of images (e.g., per plate) so that the outputs will have different names (default is None)
         analysis_run (bool, optional): will use functions to complete an analysis pipeline (default is False)
     """
-    # check to make sure all paths are correct and the directory exists before 
+    # check to make sure paths to pipeline and images are correct before running the pipeline
     if not os.path.exists(path_to_pipeline):
         raise FileNotFoundError(f"Directory '{path_to_pipeline}' does not exist")
-    if not os.path.exists(path_to_output):
-        raise FileNotFoundError(f"Directory '{path_to_output}' does not exist")
     if not os.path.exists(path_to_images):
         raise FileNotFoundError(f"Directory '{path_to_images}' does not exist")
+
+    # make logs directory
+    log_dir = pathlib.Path("./logs")
+    os.makedirs(log_dir, exist_ok=True)
+
+    # make output directory if it is not already created
+    os.makedirs(path_to_output, exist_ok=True)
 
     # run CellProfiler illumination correction pipeline
     if not analysis_run:
@@ -90,12 +95,22 @@ def run_cellprofiler(
                 "-i",
                 path_to_images,
             ]
-            subprocess.run(command, capture_output=cellprofiler_output_file, check=True)
+            subprocess.run(
+                command,
+                stdout=cellprofiler_output_file,
+                stderr=cellprofiler_output_file,
+                check=True,
+            )
+            print(
+                f"The CellProfiler run has been completed with {pathlib.Path(path_to_images).name}. Please check log file for any errors."
+            )
 
     # run CellProfiler analysis pipeline
     if analysis_run:
-        if sqlite_name is None: 
-            raise ValueError("You have not set a name for the SQLite file. Please add a sqlite_name for the analysis output.")
+        if sqlite_name is None:
+            raise ValueError(
+                "You have not set a name for the SQLite file. Please add a sqlite_name for the analysis output."
+            )
         # runs through any files that are in the output path
         if any(
             files.name.startswith(sqlite_name)
@@ -121,7 +136,15 @@ def run_cellprofiler(
                 "-i",
                 path_to_images,
             ]
-            subprocess.run(command, capture_output=cellprofiler_output_file, check=True)
+            subprocess.run(
+                command,
+                stdout=cellprofiler_output_file,
+                stderr=cellprofiler_output_file,
+                check=True,
+            )
+            print(
+                f"The CellProfiler run has been completed with {pathlib.Path(path_to_images).name}. Please check log file for any errors."
+            )
 
         if sqlite_name:
             # rename the outputted .sqlite file as a specified name (used when running multiple plates with same CP pipeline)
