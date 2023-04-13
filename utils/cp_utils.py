@@ -60,11 +60,11 @@ def run_cellprofiler(
         multiple sets of images (e.g., per plate) so that the outputs will have different names (default is None)
         analysis_run (bool, optional): will use functions to complete an analysis pipeline (default is False)
     """
-    # check to make sure paths to pipeline and images are correct before running the pipeline
-    if not os.path.exists(path_to_pipeline):
-        raise FileNotFoundError(f"Directory '{path_to_pipeline}' does not exist")
-    if not os.path.exists(path_to_images):
-        raise FileNotFoundError(f"Directory '{path_to_images}' does not exist")
+    # check to make sure paths to pipeline and directory of images are correct before running the pipeline
+    if not pathlib.Path(path_to_pipeline):
+        raise FileNotFoundError(f"The file '{pathlib.Path(path_to_pipeline).name}' does not exist")
+    if not pathlib.Path(path_to_images).is_dir():
+        raise FileNotFoundError(f"Directory '{pathlib.Path(path_to_images).name}' does not exist or is not a directory")
 
     # make logs directory
     log_dir = pathlib.Path("./logs")
