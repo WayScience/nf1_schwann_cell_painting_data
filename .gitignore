@@ -1,14 +1,18 @@
 # ignore all plates as they are downloaded from figshare in instructions
 0.download_data/Plate_1
 0.download_data/Plate_2
+0.download_data/Plate_3
 
 # ignore pycache
 __pycache__
 
-# ignore corrected plates images (like in download data
+# ignore corrected plates images (like in download data)
 1.cellprofiler_ic/Corrected_Plate_1
 1.cellprofiler_ic/Corrected_Plate_2
+1.cellprofiler_ic/Corrected_Plate_3
 
 # ignore log files
 *logs
 
+# ignore Mac related files
+.DS_Store

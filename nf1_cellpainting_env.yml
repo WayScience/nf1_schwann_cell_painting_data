@@ -12,7 +12,8 @@ dependencies:
 - conda-forge::numpy
 - conda-forge::matplotlib
 - conda-forge::pandas
-- conda-forge::mysqlclient
+# this package must be hardcoded to work with Mac 
+- conda-forge::mysqlclient=1.4.6
 - conda-forge::openjdk
 - conda-forge::scikit-learn
 - conda-forge::mahotas

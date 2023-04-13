@@ -14,3 +14,5 @@ cd 1.cellprofiler_ic
 # run the notebook as a python script
 bash nf1_ic.sh
 ```
+
+For three plates, it took about 18 hours to calculate and save illumination corrected images on a computer using MacOS Ventura 13.2.1 with the M2 chip.

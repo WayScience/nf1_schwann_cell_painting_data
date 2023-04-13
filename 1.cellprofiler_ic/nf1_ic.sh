@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# activate the main conda environment
+# activate the main conda environment (if not already activated)
 eval "$(conda shell.bash hook)"
 conda activate nf1_cellpainting_data
 
