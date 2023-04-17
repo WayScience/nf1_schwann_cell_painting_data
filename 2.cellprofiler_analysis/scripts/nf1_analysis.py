@@ -20,16 +20,23 @@ from utils import cp_utils
 # In[2]:
 
 
-path_to_pipeline = pathlib.Path("NF1_analysis.cppipe").absolute()
-
-path_to_output = pathlib.Path("analysis_output").absolute()
+path_to_output = pathlib.Path("./analysis_output").resolve(strict=True)
 
 plates_info_dictionary = {
     "Plate_1": {
-        "path_to_images": pathlib.Path("../1.cellprofiler_ic/Corrected_Plate_1/").absolute(),
+        # this pipeline is specific to plates 1 and 2
+        "path_to_pipeline" : pathlib.Path("NF1_analysis_plate1_plate2.cppipe").resolve(strict=True),
+        "path_to_images": pathlib.Path("../1.cellprofiler_ic/Corrected_Plate_1/").resolve(strict=True),
     },
     "Plate_2": {
-        "path_to_images": pathlib.Path("../1.cellprofiler_ic/Corrected_Plate_2/").absolute(), 
+        # this pipeline is specific to plates 1 and 2
+        "path_to_pipeline" : pathlib.Path("NF1_analysis_plate1_plate2.cppipe").resolve(strict=True),
+        "path_to_images": pathlib.Path("../1.cellprofiler_ic/Corrected_Plate_2/").resolve(strict=True), 
+    },
+    "Plate_3": {
+        # this pipeline is specific to plates 3 and 3'
+        "path_to_pipeline" : pathlib.Path("NF1_analysis_plate3_plate3'.cppipe").resolve(strict=True),
+        "path_to_images": pathlib.Path("../1.cellprofiler_ic/Corrected_Plate_3/").resolve(strict=True), 
     },
 }
 
@@ -43,6 +50,7 @@ plates_info_dictionary = {
 
 # run through each plate with each set of paths based on dictionary
 for plate, info in plates_info_dictionary.items():
+    path_to_pipeline = info["path_to_pipeline"]
     path_to_images = info["path_to_images"]
     print(f"Running analysis on {plate}!")
 
