@@ -2,6 +2,7 @@
 0.download_data/Plate_1
 0.download_data/Plate_2
 0.download_data/Plate_3
+0.download_data/Plate_3_prime
 
 # ignore pycache
 __pycache__
