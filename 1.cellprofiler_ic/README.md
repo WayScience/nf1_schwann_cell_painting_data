@@ -12,7 +12,9 @@ To calculate and apply an IC function on each channel, run the [nf1_ic.ipynb](nf
 # move to the 1.cellprofiler_ic directory to access the `sh` script
 cd 1.cellprofiler_ic
 # run the notebook as a python script
-bash nf1_ic.sh
+source nf1_ic.sh
 ```
+
+For four plates, it took about 2 hours to calculate and save illumination corrected images on a computer using Pop_OS! 22.04 LTS with an AMD Ryzen 7 3700X 8-Core Processor.
 
 For three plates, it took about 18 hours to calculate and save illumination corrected images on a computer using MacOS Ventura 13.2.1 with the M2 chip.
