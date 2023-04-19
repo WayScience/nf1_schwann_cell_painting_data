@@ -8,9 +8,9 @@
 # In[1]:
 
 
+import sys
 import pathlib
 
-import sys
 sys.path.append("../")
 from utils import cp_utils
 
@@ -22,25 +22,37 @@ from utils import cp_utils
 
 plates_info_dictionary = {
     "Plate_1": {
-        "path_to_pipeline": pathlib.Path("NF1_illum_Plates_1_2.cppipe").absolute().resolve(),
-        "path_to_images": pathlib.Path("../0.download_data/Plate_1/").absolute().resolve(),
+        "path_to_pipeline": pathlib.Path("NF1_illum_Plates_1_2.cppipe")
+        .absolute()
+        .resolve(),
+        "path_to_images": pathlib.Path("../0.download_data/Plate_1/")
+        .absolute()
+        .resolve(),
         "path_to_output": pathlib.Path("Corrected_Plate_1").absolute().resolve(),
     },
     "Plate_2": {
-        "path_to_pipeline": pathlib.Path("NF1_illum_Plates_1_2.cppipe").absolute().resolve(),
-        "path_to_images": pathlib.Path("../0.download_data/Plate_2/").absolute().resolve(),
+        "path_to_pipeline": pathlib.Path("NF1_illum_Plates_1_2.cppipe")
+        .absolute()
+        .resolve(),
+        "path_to_images": pathlib.Path("../0.download_data/Plate_2/")
+        .absolute()
+        .resolve(),
         "path_to_output": pathlib.Path("Corrected_Plate_2").absolute().resolve(),
     },
     "Plate_3": {
-        "path_to_pipeline": pathlib.Path("NF1_illum_Plate3.cppipe").absolute().resolve(),
-        "path_to_images": pathlib.Path("../0.download_data/Plate_3/").absolute().resolve(),
+        "path_to_pipeline": pathlib.Path("NF1_illum_Plate3.cppipe")
+        .absolute()
+        .resolve(),
+        "path_to_images": pathlib.Path("../0.download_data/Plate_3/")
+        .absolute()
+        .resolve(),
         "path_to_output": pathlib.Path("Corrected_Plate_3").absolute().resolve(),
     },
 }
 
 
 # ## Run illumination correction pipeline on each plate
-# 
+#
 # In this notebook, we do not run the cells to completion as we prefer to run the notebooks as nbconverted python files due to better stability.
 
 # In[3]:
@@ -62,4 +74,3 @@ for plate, info in plates_info_dictionary.items():
         sqlite_name=None,
         analysis_run=False,
     )
-
