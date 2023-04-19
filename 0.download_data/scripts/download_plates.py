@@ -8,7 +8,9 @@
 # In[1]:
 
 
+import os
 import pathlib
+import shutil
 
 import sys
 sys.path.append("../")
@@ -25,9 +27,6 @@ figshare_url = "https://figshare.com/ndownloader/articles/"
 
 # metadata folder for metadata files from both plates to be moved into
 metadata_dir = pathlib.Path("metadata")
-
-# Since the Figshare download is a zip file for the NF1 data, we have to have the unzip_file parameter turned on
-unzip_files = True
 
 
 # ## Set dictionary with specific path/variables for each plate
@@ -52,6 +51,12 @@ download_plates_info_dictionary = {
         "output_folder": "Plate_2_zip",
         "output_dir": pathlib.Path("Plate_2"),
     },
+    "Plates_3_and_3_prime": {
+        "figshare_id": "22592890",
+        "version_number": "1",
+        "output_folder": "Plates_3_zip",
+        "output_dir": pathlib.Path("Plates_3_and_3_prime"),
+    },
 }
 
 
@@ -60,15 +65,13 @@ download_plates_info_dictionary = {
 # In[4]:
 
 
-for plate in download_plates_info_dictionary:
-    # access the plate info stored in the dictionary
-    plate_info = download_plates_info_dictionary[plate]
+for plate, info in download_plates_info_dictionary.items():
     # set the parameters for the function as variables based on the plate dictionary info
     figshare_id = str(
-        plate_info["figshare_id"] + "/versions/" + plate_info["version_number"]
+        info["figshare_id"] + "/versions/" + info["version_number"]
     )
-    output_folder = plate_info["output_folder"]
-    output_dir = plate_info["output_dir"]
+    output_folder = info["output_folder"]
+    output_dir = info["output_dir"]
 
     # download images and metadata for both plates
     downfig.download_figshare(
@@ -77,6 +80,38 @@ for plate in download_plates_info_dictionary:
         output_dir=output_dir,
         metadata_dir=metadata_dir,
         figshare_url=figshare_url,
-        unzip_files=unzip_files,
+        unzip_download="True",
     )
+
+
+# In[5]:
+
+
+zip_images_dictionary ={
+    "Plate_3": {
+        "path_to_zip_file": pathlib.Path("./Plates_3_and_3_prime/plate_3.zip"),
+        "extraction_path": pathlib.Path("./Plate_3"),
+    },
+    "Plate_3_prime": {
+        "path_to_zip_file": pathlib.Path("./Plates_3_and_3_prime/plate_3_prime.zip"),
+        "extraction_path": pathlib.Path("./Plate_3_prime"),
+    },
+}
+
+for plate, info in zip_images_dictionary.items():
+    # set the parameters for the function as variables based on the plate dictionary info
+    path_to_zip_file = info["path_to_zip_file"]
+    extraction_path = info["extraction_path"]
+    print(f"Starting extraction on {plate} zip file!")
+
+    # download images and metadata for both plates
+    downfig.extract_zip_from_Figshare(
+        path_to_zip_file=path_to_zip_file,
+        extraction_path=extraction_path,
+    )
+
+# remove the parent directory with the zip files as we have moved all the images
+parent_directory = os.path.dirname(path_to_zip_file)
+shutil.rmtree(parent_directory)
+print(f"The directory containing zip files from Figshare has been deleted as the files have been extracted!")
 
