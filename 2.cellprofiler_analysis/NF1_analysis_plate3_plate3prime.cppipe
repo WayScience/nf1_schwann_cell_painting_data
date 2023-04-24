@@ -10,7 +10,7 @@ Images:[module_num:1|svn_version:'Unknown'|variable_revision_number:2|show_windo
     Filter images?:Images only
     Select the rule criteria:and (extension does isimage) (directory doesnot containregexp "[\\\\/]\\.")
 
-Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['The Metadata module optionally allows you to extract information describing your images (i.e, metadata) which will be stored along with your measurements. This information can be contained in the file name and/or location, or in an external file.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['Like with plates 1 and 2, there is no plate metadata located in the file names for plates 3 and 3 prime. There is no plate metadata extracted and will not be avaliable in the exported SQLite file.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Extract metadata?:Yes
     Metadata data type:Text
     Metadata types:{"Channel": "integer", "FileLocation": "text", "Frame": "text", "Plate": "text", "Series": "text", "Site": "integer", "Stain": "float", "Well": "text"}
