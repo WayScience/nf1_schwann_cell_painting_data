@@ -16,3 +16,6 @@ cd 2.cellprofiler_analysis
 source nf1_analysis.sh
 ```
 
+To run analysis on plates 1 and 2, it took approximately one hour. 
+To run analysis on plates 3 and 3 prime, it took approximately 31 hours.
+The analysis was run on a Linux-based machine running Pop_OS! LTS 22.04 with an AMD Ryzen 7 3700X 8-Core Processor.
