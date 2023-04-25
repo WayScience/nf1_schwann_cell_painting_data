@@ -71,7 +71,7 @@ def add_sc_count_metadata_file(
     if file_type == "parquet":
         data_df = pd.read_parquet(data_path)
     if file_type == "csv":
-        data_df = pd.read_csv(data_path, compression="gzip")
+        data_df = pd.read_csv(data_path)
 
     # add single cell count as new metadata column
     data_df = add_single_cell_count_df(
@@ -84,7 +84,7 @@ def add_sc_count_metadata_file(
     if file_type == "csv.gz":
         data_df.to_csv(data_path, compression="gzip")
     if file_type == "csv":
-        data_df.to_csv(data_path, compression="gzip")
+        data_df.to_csv(data_path)
 
 
 def load_sqlite_as_df(
@@ -115,26 +115,29 @@ def load_sqlite_as_df(
     return image_df
 
 
-def extract_image_features(image_feature_categories, image_df, image_cols, strata):
+def extract_image_features(
+    image_feature_categories: list[str] or str,
+    image_df: pd.DataFrame,
+    image_cols: list[str] or str,
+) -> pd.DataFrame:
     """Confirm that the input list of image features categories are present in the image table and then extract those features.
-    This is pulled from Pycytominer cyto_utils util.py and editted.
+    This is pulled from Pycytominer cyto_utils util.py 'extract_image_features` and editted.
 
     Parameters
     ----------
-    image_feature_categories : list of str
-        Input image feature groups to extract from the image table including the prefix (e.g. ["Image_Correlation", "Image_ImageQuality"])
-    image_df : pandas.core.frame.DataFrame
-        Image dataframe.
-    image_cols : list of str
-        Columns to select from the image table.
-    strata :  list of str
-        The columns to groupby and aggregate single cells.
+    image_feature_categories : list of str or str
+        input image feature group(s) to extract from the image table including the prefix (e.g. ["Image_Correlation", "Image_ImageQuality"])
+    image_df : pd.Dataframe
+        image dataframe from SQLite file 'Per_Image' table 
+    image_cols : list of str or str
+        column(s) to select from the image df to include 
+
     Returns
     -------
-    image_features_df : pandas.core.frame.DataFrame
-        Dataframe with extracted image features.
+    image_features_df : pd.DataFrame
+        dataframe with extracted image features
     """
-    # Extract Image features from image_feature_categories
+    # extract image features from image_feature_categories
     image_features = list(
         image_df.columns[
             image_df.columns.str.startswith(tuple(image_feature_categories))
@@ -146,7 +149,7 @@ def extract_image_features(image_feature_categories, image_df, image_cols, strat
 
     # Add image_cols and strata to the dataframe
     image_features_df = pd.concat(
-        [image_df[list(np.union1d(image_cols, strata))], image_features_df], axis=1
+        [image_df[list(np.union1d(image_cols))], image_features_df], axis=1
     )
 
     return image_features_df

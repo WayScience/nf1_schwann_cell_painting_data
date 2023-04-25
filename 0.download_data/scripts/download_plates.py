@@ -16,7 +16,6 @@ import sys
 sys.path.append("../")
 from utils import download_figshare as downfig
 
-
 # ## Set constant paths/variables
 
 # In[2]:
@@ -27,7 +26,6 @@ figshare_url = "https://figshare.com/ndownloader/articles/"
 
 # metadata folder for metadata files from both plates to be moved into
 metadata_dir = pathlib.Path("metadata")
-
 
 # ## Set dictionary with specific path/variables for each plate
 # 
@@ -43,29 +41,32 @@ download_plates_info_dictionary = {
         "figshare_id": "22233292",
         "version_number": "2",
         "output_folder": "Plate_1_zip",
-        "output_dir": pathlib.Path("Plate_1"),
+        "output_dir": pathlib.Path("./Plate_1"),
     },
     "Plate_2": {
         "figshare_id": "22233700",
         "version_number": "4",
         "output_folder": "Plate_2_zip",
-        "output_dir": pathlib.Path("Plate_2"),
+        "output_dir": pathlib.Path("./Plate_2"),
     },
+    # these plates are combined due to the figsahre project containing zip files with the images for each
+    # plate that will need to be extracted in a second step
     "Plates_3_and_3_prime": {
         "figshare_id": "22592890",
         "version_number": "1",
         "output_folder": "Plates_3_zip",
-        "output_dir": pathlib.Path("Plates_3_and_3_prime"),
+        "output_dir": pathlib.Path("./Plates_3_and_3_prime"),
     },
 }
 
-
-# ## Download files for both plates
+# ## Download files for all plates
+# 
+# **Note:** In the case of the NF1 Schwann Cell Project, the items on figshare are downloaded as zip files so we will have the `unzip_download` parameter turned on to extract the items from the zip file into the respective plate directory.
 
 # In[4]:
 
 
-for plate, info in download_plates_info_dictionary.items():
+for _, info in download_plates_info_dictionary.items():
     # set the parameters for the function as variables based on the plate dictionary info
     figshare_id = str(
         info["figshare_id"] + "/versions/" + info["version_number"]
@@ -83,10 +84,13 @@ for plate, info in download_plates_info_dictionary.items():
         unzip_download="True",
     )
 
+# ## Extract images from extracted zip file from figshare download
 
 # In[5]:
 
 
+# this dictionary contains the paths to the extracted zip file from the previous step for each plate
+# and the path to the directory for the images
 zip_images_dictionary ={
     "Plate_3": {
         "path_to_zip_file": pathlib.Path("./Plates_3_and_3_prime/plate_3.zip"),

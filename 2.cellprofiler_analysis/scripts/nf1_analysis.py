@@ -14,10 +14,11 @@ import pathlib
 sys.path.append("../")
 from utils import cp_utils
 
-
 # ## Set paths for each plate
 # 
 # Note: Due to the difference channel numbers between plates 1 + 2 (3 channels) and plates 3 + 3 prime (4 channels), there needs to be two difference cppipe files (like in the IC module). 
+# 
+# As well, the output file path does not need to be strict since the `run_cellprofiler` function can create the output folder directory if it doesn't already exist. The other paths must be strict since these files should already exist for CellProfiler to run. The output directory doesn't need to already exist.
 
 # In[2]:
 
@@ -63,7 +64,6 @@ plates_info_dictionary = {
     },
 }
 
-
 # ## Run analysis pipeline on each plate
 # 
 # This cell is not finished to completion due to how long it would take. It is ran in the python file instead.
@@ -86,4 +86,3 @@ for plate, info in plates_info_dictionary.items():
         sqlite_name=plate,
         analysis_run=True,
     )
-

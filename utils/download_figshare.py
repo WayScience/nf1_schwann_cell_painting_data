@@ -24,7 +24,7 @@ def download_figshare(
         string of numbers that corresponds to the figshare identifier
     output_file : pathlib.Path
         the location and file/folder name for the downloaded contents from Figshare (in the case of zip files, this will be a temp folder and is removed
-        after extraction)
+        after extraction). In the case of downloading a zip file, this would be the name of the zip file.
     metadata_dir : pathlib.Path
         path to directory for metadata
     figshare_url: str, default "https://ndownloader.figshare.com/files/"
