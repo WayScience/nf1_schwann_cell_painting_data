@@ -19,7 +19,6 @@ from pycytominer.cyto_utils import output
 sys.path.append("../utils")
 import extraction_utils as sc_utils
 
-
 # ## Set paths and variables
 
 # In[2]:
@@ -56,7 +55,6 @@ plate_info_dictionary = {
     },
 }
 
-
 # ## Annotate merged single cells
 
 # In[3]:
@@ -91,11 +89,9 @@ for plate, info in plate_info_dictionary.items():
     )
     print(f"Annotations have been added to {plate} and saved!")
 
-
 # In[4]:
 
 
 # print last annotated df to see if annotation occured
 print(annotated_df.shape)
 annotated_df.head()
-

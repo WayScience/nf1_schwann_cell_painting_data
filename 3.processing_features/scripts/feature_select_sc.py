@@ -19,7 +19,6 @@ from pycytominer.cyto_utils import output
 sys.path.append("../utils")
 import extraction_utils as sc_utils
 
-
 # ## Set paths and variables
 
 # In[2]:
@@ -50,8 +49,18 @@ plate_info_dictionary = {
     }
 }
 
-
 # ## Perform feature selection
+# 
+# The operations that we are using for feature selection are:
+# 
+# - `variance_threshold`: creates a list of exlcuded features that have very low varience of values between single cells
+#   
+# - `correlation_threshold`: creates a list of excluded features with a correlation to at least one other feature greater than the default threshold (`threshold=0.9`)
+#   
+# - `blocklist`: creates a list of excluded features using the [standard blocklist file](https://github.com/cytomining/pycytominer/blob/master/pycytominer/data/blocklist_features.txt) for CellProfiler features from Pycytominer
+# 
+# For more information regarding these operations, please visit [the Pycytominer operations folder](https://github.com/cytomining/pycytominer/tree/master/pycytominer/operations) on GitHub.
+# To view how `blocklist` woreks, please visit [the seperate file](https://github.com/cytomining/pycytominer/blob/a5ae6c81a275b692ef5d4c85cfeb37696bf69242/pycytominer/cyto_utils/features.py#L13) for that function.
 
 # In[3]:
 
@@ -84,11 +93,9 @@ for plate, info in plate_info_dictionary.items():
     )
     print(f"Features have been selected for {plate} and saved!")
 
-
 # In[4]:
 
 
 # print last feature selected df to assess if feature selection occured (less columns)
 print(feature_select_df.shape)
 feature_select_df.head()
-

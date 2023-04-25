@@ -19,7 +19,6 @@ from pycytominer.cyto_utils import output
 sys.path.append("../utils")
 import extraction_utils as sc_utils
 
-
 # In[2]:
 
 
@@ -48,7 +47,6 @@ plate_info_dictionary = {
     }
 }
 
-
 # In[3]:
 
 
@@ -74,11 +72,9 @@ for plate, info in plate_info_dictionary.items():
     )
     print(f"Single cells have been normalized for {plate} and saved!")
 
-
 # In[4]:
 
 
 # print last normalized df to see if looks like normalization has occured
 print(normalized_df.shape)
 normalized_df.head()
-

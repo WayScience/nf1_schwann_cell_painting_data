@@ -17,7 +17,6 @@ from cytotable import convert, presets
 sys.path.append("../utils")
 import extraction_utils as sc_utils
 
-
 # ## Set paths and variables
 
 # In[2]:
@@ -32,10 +31,14 @@ preset = "cellprofiler_sqlite_pycytominer"
 # add Image_Metadata_Site as this is an important metadata when finding where single cells are located
 presets.config["cellprofiler_sqlite_pycytominer"][
     "CONFIG_JOINS"
+    # create filtered list of image features to be extracted and used for merging tables
+    # with the list of image features, this will merge the objects together using the image number,
+    # and parent objects to create all single cells (all objetcs associated to one cell)
 ] = """WITH Per_Image_Filtered AS (
                 SELECT
                     Metadata_ImageNumber,
-                    Image_Metadata_Well
+                    Image_Metadata_Well,
+                    Image_Metadata_Site
                 FROM
                     read_parquet('per_image.parquet')
                 )
@@ -55,7 +58,6 @@ presets.config["cellprofiler_sqlite_pycytominer"][
 
 # directory where parquet files are saved to
 output_dir = "data/converted_data"
-
 
 # In[3]:
 
@@ -103,7 +105,6 @@ plate_info_dictionary = {
     }
 }
 
-
 # ## Merge objects to single cells and convert SQLite to parquet file + add single cell metadata
 
 # In[4]:
@@ -129,4 +130,3 @@ for plate, info in plate_info_dictionary.items():
         data_path=dest_path, well_column_name="Image_Metadata_Well", file_type="parquet"
     )
     print(f"Added single cell count as metadata to {pathlib.Path(dest_path).name}!")
-
