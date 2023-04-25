@@ -15,6 +15,6 @@ cd 1.cellprofiler_ic
 source nf1_ic.sh
 ```
 
-For four plates, it took about 2 hours to calculate and save illumination corrected images on a computer using Pop_OS! 22.04 LTS with an AMD Ryzen 7 3700X 8-Core Processor.
+For four plates, it took about 2 hours to calculate, apply, and save illumination corrected images on a computer using Pop_OS! 22.04 LTS with an AMD Ryzen 7 3700X 8-Core Processor.
 
 For three plates, it took about 18 hours to calculate and save illumination corrected images on a computer using MacOS Ventura 13.2.1 with the M2 chip.

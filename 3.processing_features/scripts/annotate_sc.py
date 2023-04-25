@@ -92,6 +92,6 @@ for plate, info in plate_info_dictionary.items():
 # In[4]:
 
 
-# print last annotated df to see if annotation occured
+# print last annotated df to see if annotation occurred
 print(annotated_df.shape)
 annotated_df.head()

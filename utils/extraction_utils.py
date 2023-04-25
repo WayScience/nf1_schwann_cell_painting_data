@@ -13,9 +13,6 @@ import pandas as pd
 from sqlalchemy import create_engine
 import numpy as np
 
-from pycytominer import normalize, feature_select
-from pycytominer.cyto_utils import cells, output
-
 
 def add_single_cell_count_df(
     data_df: pd.DataFrame, well_column_name: str = "Metadata_Well"
@@ -121,16 +118,16 @@ def extract_image_features(
     image_cols: list[str] or str,
 ) -> pd.DataFrame:
     """Confirm that the input list of image features categories are present in the image table and then extract those features.
-    This is pulled from Pycytominer cyto_utils util.py 'extract_image_features` and editted.
+    This is pulled from Pycytominer cyto_utils util.py 'extract_image_features` and edited.
 
     Parameters
     ----------
     image_feature_categories : list of str or str
         input image feature group(s) to extract from the image table including the prefix (e.g. ["Image_Correlation", "Image_ImageQuality"])
     image_df : pd.Dataframe
-        image dataframe from SQLite file 'Per_Image' table 
+        image dataframe from SQLite file 'Per_Image' table
     image_cols : list of str or str
-        column(s) to select from the image df to include 
+        column(s) to select from the image df to include
 
     Returns
     -------

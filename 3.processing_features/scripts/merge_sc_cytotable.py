@@ -33,7 +33,7 @@ presets.config["cellprofiler_sqlite_pycytominer"][
     "CONFIG_JOINS"
     # create filtered list of image features to be extracted and used for merging tables
     # with the list of image features, this will merge the objects together using the image number,
-    # and parent objects to create all single cells (all objetcs associated to one cell)
+    # and parent objects to create all single cells (all objects associated to one cell)
 ] = """WITH Per_Image_Filtered AS (
                 SELECT
                     Metadata_ImageNumber,
@@ -65,7 +65,7 @@ output_dir = "data/converted_data"
 # dictionary with info for the sqlite file from each plate
 plate_info_dictionary = {
     "Plate_1": {
-        # path to outputed SQLite file
+        # path to outputted SQLite file
         "source_path": str(
             pathlib.Path(
                 "../2.cellprofiler_analysis/analysis_output/Plate_1.sqlite"
@@ -74,7 +74,7 @@ plate_info_dictionary = {
         "dest_path": str(pathlib.Path(f"{output_dir}/Plate_1.parquet")),
     },
     "Plate_2": {
-        # path to outputed SQLite file
+        # path to outputted SQLite file
         "source_path": str(
             pathlib.Path(
                 "../2.cellprofiler_analysis/analysis_output/Plate_2.sqlite"
@@ -84,7 +84,7 @@ plate_info_dictionary = {
         "dest_path": str(pathlib.Path(f"{output_dir}/Plate_2.parquet")),
     },
     "Plate_3": {
-        # path to outputed SQLite file
+        # path to outputted SQLite file
         "source_path": str(
             pathlib.Path(
                 "../2.cellprofiler_analysis/analysis_output/Plate_3.sqlite"
@@ -94,7 +94,7 @@ plate_info_dictionary = {
         "dest_path": str(pathlib.Path(f"{output_dir}/Plate_3.parquet")),
     },
     "Plate_3_prime": {
-        # path to outputed SQLite file
+        # path to outputted SQLite file
         "source_path": str(
             pathlib.Path(
                 "../2.cellprofiler_analysis/analysis_output/Plate_3_prime.sqlite"

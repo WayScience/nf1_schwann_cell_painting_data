@@ -1,0 +1,15 @@
+plate_info_dictionary:
+  Plate_1:
+    source_path: str(pathlib.Path("../2.cellprofiler_analysis/analysis_output/Plate_1.sqlite")
+    dest_path: str(pathlib.Path(f"{output_dir}/Plate_1.parquet"))
+  Plate_2:
+    source_path: str(pathlib.Path("../2.cellprofiler_analysis/analysis_output/Plate_2.sqlite")
+    dest_path: str(pathlib.Path(f"{output_dir}/Plate_2.parquet"))
+  Plate_3:
+    source_path: str(pathlib.Path("../2.cellprofiler_analysis/analysis_output/Plate_3.sqlite")
+    dest_path: str(pathlib.Path(f"{output_dir}/Plate_2.parquet"))
+  Plate_3_prime:
+    source_path: str(pathlib.Path("../2.cellprofiler_analysis/analysis_output/Plate_3_prime.sqlite")
+    dest_path: str(pathlib.Path(f"{output_dir}/Plate_2.parquet"))
+
+            

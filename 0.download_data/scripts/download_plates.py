@@ -41,12 +41,14 @@ download_plates_info_dictionary = {
         "figshare_id": "22233292",
         "version_number": "2",
         "output_folder": "Plate_1_zip",
+        # save extracted files from figshare download to a folder in the `0.download_data` directory
         "output_dir": pathlib.Path("./Plate_1"),
     },
     "Plate_2": {
         "figshare_id": "22233700",
         "version_number": "4",
         "output_folder": "Plate_2_zip",
+        # save extracted files from figshare download to a folder in the `0.download_data` directory
         "output_dir": pathlib.Path("./Plate_2"),
     },
     # these plates are combined due to the figsahre project containing zip files with the images for each
@@ -55,6 +57,7 @@ download_plates_info_dictionary = {
         "figshare_id": "22592890",
         "version_number": "1",
         "output_folder": "Plates_3_zip",
+        # save extracted files from figshare download to a folder in the `0.download_data` directory
         "output_dir": pathlib.Path("./Plates_3_and_3_prime"),
     },
 }
@@ -117,5 +120,5 @@ for plate, info in zip_images_dictionary.items():
 # remove the parent directory with the zip files as we have moved all the images
 parent_directory = os.path.dirname(path_to_zip_file)
 shutil.rmtree(parent_directory)
-print(f"The directory containing zip files from Figshare has been deleted as the files have been extracted!")
+print("The directory containing zip files from Figshare has been deleted as the files have been extracted!")
 

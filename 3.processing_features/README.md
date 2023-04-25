@@ -16,7 +16,7 @@ For more information regarding the functions that we used, please see [the docum
 
 Using the code below, execute the `sh` file and merge single cells to use for annotation, normalization, and feature selection.
 
-**Note:** To prevent kernel issues, the processes is split into seperate notebooks (one for each step). 
+**Note:** To prevent kernel issues, the processes is split into separate notebooks (one for each step). 
 
 ```bash
 source processing_features.sh

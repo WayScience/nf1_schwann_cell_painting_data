@@ -39,9 +39,9 @@ This plate uses all rows (e.g., A-H)
 
 Plates 3 and 3' measure Cell Painting in isogenic Schwann cells with all three different NF1 genotypes:
 
-**Plate 3 and 3'**
+**Plate 3 and 3'(prime)**
 For these plates, we looking at different seeding densities to identify which will lower the cell count contribution on the features and identify differential features between genotypes. 
-As well, the plates have different culturing conditions, where plate 3 cells were cultured in 10% FBS versus plate 3' culturing in 5% FBS.
+As well, the plates have different culturing conditions, where plate 3 cells were cultured in 10% FBS versus plate 3 prime culturing in 5% FBS.
 - Wild type (`WT +/+`): Columns 1-3
 - Heterzygous (`HET +/-`): Columns 5-7
 - Null (`Null -/-`): Columns 9-11

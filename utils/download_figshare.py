@@ -48,7 +48,7 @@ def download_figshare(
             f"The downloaded zip file contents have been extracted into {output_dir.name} folder for plate with ID {str(figshare_id)}!"
         )
     else:
-        print(f"No files were extracted. Check to see if a zip file was downloaded.")
+        print("No files were extracted. Check to see if a zip file was downloaded.")
 
     # glob the metadata files together to then copy and remove
     metadata_files = glob.glob(f"{output_dir}/*.csv")

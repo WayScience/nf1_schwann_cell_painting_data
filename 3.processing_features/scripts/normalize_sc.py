@@ -75,6 +75,6 @@ for plate, info in plate_info_dictionary.items():
 # In[4]:
 
 
-# print last normalized df to see if looks like normalization has occured
+# print last normalized df to see if looks like normalization has occurred
 print(normalized_df.shape)
 normalized_df.head()
