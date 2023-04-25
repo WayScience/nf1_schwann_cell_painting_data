@@ -11,13 +11,13 @@
 import sys
 import pathlib
 import os
+import yaml
+import json
 
 import pandas as pd
 from pycytominer import feature_select
 from pycytominer.cyto_utils import output
 
-sys.path.append("../utils")
-import extraction_utils as sc_utils
 
 # ## Set paths and variables
 
@@ -29,25 +29,14 @@ output_dir = pathlib.Path("./data/feature_selected_data")
 # if directory if doesn't exist, will not raise error if it already exists
 os.makedirs(output_dir, exist_ok=True)
 
-# dictionary with each run for the cell type
-plate_info_dictionary = {
-    "Plate_1": {
-        # path to parquet file from normalize function
-        "normalized_path": str(pathlib.Path("./data/normalized_data/Plate_1_sc_norm.parquet"))
-    },
-    "Plate_2": {
-        # path to parquet file from normalize function
-        "normalized_path": str(pathlib.Path("./data/normalized_data/Plate_2_sc_norm.parquet"))
-    },
-    "Plate_3": {
-        # path to parquet file from normalize function
-        "normalized_path": str(pathlib.Path("./data/normalized_data/Plate_3_sc_norm.parquet"))
-    },
-    "Plate_3_prime": {
-        # path to parquet file from normalize function
-        "normalized_path": str(pathlib.Path("./data/normalized_data/Plate_3_prime_sc_norm.parquet"))
-    }
-}
+# load in dicionary from yaml file
+dictionary_path = pathlib.Path("./plate_info_dictionary.yaml")
+with open(dictionary_path) as file:
+    plate_info_dictionary = yaml.load(file, Loader=yaml.FullLoader)
+
+# view the dictionary to confirm all info is included to use for normalization
+print(json.dumps(plate_info_dictionary, indent=4))
+
 
 # ## Perform feature selection
 # 
@@ -75,6 +64,7 @@ feature_select_ops = [
 # process each run
 for plate, info in plate_info_dictionary.items():
     normalized_df = pd.read_parquet(info["normalized_path"])
+    # output_file does not need to be saved to dictionary as there are no more processin steps after this
     output_file = str(pathlib.Path(f"{output_dir}/{plate}_sc_norm_fs.parquet"))
     print(f"Performing feature selection on normalized annotated merged single cells for {plate}!")
 
@@ -93,9 +83,11 @@ for plate, info in plate_info_dictionary.items():
     )
     print(f"Features have been selected for {plate} and saved!")
 
+
 # In[4]:
 
 
 # print last feature selected df to assess if feature selection occurred (less columns)
 print(feature_select_df.shape)
 feature_select_df.head()
+

@@ -19,5 +19,7 @@ Using the code below, execute the `sh` file and merge single cells to use for an
 **Note:** To prevent kernel issues, the processes is split into separate notebooks (one for each step). 
 
 ```bash
+# cd to directory with sh file
+cd 3.processing_features
 source processing_features.sh
 ```
