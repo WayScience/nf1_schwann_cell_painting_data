@@ -2,6 +2,7 @@
 0.download_data/Plate_1
 0.download_data/Plate_2
 0.download_data/Plate_3
+0.download_data/Plate_3_prime
 
 # ignore pycache
 __pycache__
@@ -10,6 +11,7 @@ __pycache__
 1.cellprofiler_ic/Corrected_Plate_1
 1.cellprofiler_ic/Corrected_Plate_2
 1.cellprofiler_ic/Corrected_Plate_3
+1.cellprofiler_ic/Corrected_Plate_3_prime
 
 # ignore log files
 *logs

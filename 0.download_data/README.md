@@ -10,5 +10,5 @@ To download the images for each plate and separate the metadata from the images,
 ```bash
 # Run this script in terminal
 cd 0.download_data
-bash download_plates.sh
+source download_plates.sh
 ```

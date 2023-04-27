@@ -11,36 +11,64 @@
 import pathlib
 
 import sys
+
 sys.path.append("../")
 from utils import cp_utils
 
 
 # ## Set paths for each plate
+#
+# Note: Output file path does not need to be strict since the `run_cellprofiler` function can create the output folder directory if it doesn't already exist. The other paths must be strict since these files should already exist for CellProfiler to run. The output directory doesn't need to already exist.
 
 # In[2]:
 
 
 plates_info_dictionary = {
     "Plate_1": {
-        "path_to_pipeline": pathlib.Path("NF1_illum_Plates_1_2.cppipe").absolute().resolve(),
-        "path_to_images": pathlib.Path("../0.download_data/Plate_1/").absolute().resolve(),
-        "path_to_output": pathlib.Path("Corrected_Plate_1").absolute().resolve(),
+        # this pipeline is specific to plates 1 and 2 (due to channel difference from plates 3 and 3 prime)
+        "path_to_pipeline": pathlib.Path("NF1_illum_Plates_1_2.cppipe").resolve(
+            strict=True
+        ),
+        "path_to_images": pathlib.Path("../0.download_data/Plate_1/").resolve(
+            strict=True
+        ),
+        "path_to_output": pathlib.Path("Corrected_Plate_1").resolve(),
     },
     "Plate_2": {
-        "path_to_pipeline": pathlib.Path("NF1_illum_Plates_1_2.cppipe").absolute().resolve(),
-        "path_to_images": pathlib.Path("../0.download_data/Plate_2/").absolute().resolve(),
-        "path_to_output": pathlib.Path("Corrected_Plate_2").absolute().resolve(),
+        # this pipeline is specific to plates 1 and 2 (due to channel difference from plates 3 and 3 prime)
+        "path_to_pipeline": pathlib.Path("NF1_illum_Plates_1_2.cppipe").resolve(
+            strict=True
+        ),
+        "path_to_images": pathlib.Path("../0.download_data/Plate_2/").resolve(
+            strict=True
+        ),
+        "path_to_output": pathlib.Path("Corrected_Plate_2").resolve(),
     },
     "Plate_3": {
-        "path_to_pipeline": pathlib.Path("NF1_illum_Plate3.cppipe").absolute().resolve(),
-        "path_to_images": pathlib.Path("../0.download_data/Plate_3/").absolute().resolve(),
-        "path_to_output": pathlib.Path("Corrected_Plate_3").absolute().resolve(),
+        # this pipeline is specific to plates 3 and 3 prime (due to channel difference from plates 1 and 2)
+        "path_to_pipeline": pathlib.Path("NF1_illum_Plate3_Plate3prime.cppipe").resolve(
+            strict=True
+        ),
+        "path_to_images": pathlib.Path("../0.download_data/Plate_3/").resolve(
+            strict=True
+        ),
+        "path_to_output": pathlib.Path("Corrected_Plate_3").resolve(),
+    },
+    "Plate_3_prime": {
+        # this pipeline is specific to plates 3 and 3 prime (due to channel difference from plates 1 and 2)
+        "path_to_pipeline": pathlib.Path("NF1_illum_Plate3_Plate3prime.cppipe").resolve(
+            strict=True
+        ),
+        "path_to_images": pathlib.Path("../0.download_data/Plate_3_prime/").resolve(
+            strict=True
+        ),
+        "path_to_output": pathlib.Path("Corrected_Plate_3_prime").resolve(),
     },
 }
 
 
 # ## Run illumination correction pipeline on each plate
-# 
+#
 # In this notebook, we do not run the cells to completion as we prefer to run the notebooks as nbconverted python files due to better stability.
 
 # In[3]:
@@ -62,4 +90,3 @@ for plate, info in plates_info_dictionary.items():
         sqlite_name=None,
         analysis_run=False,
     )
-

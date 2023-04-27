@@ -11,7 +11,7 @@ def download_figshare(
     output_file: pathlib.Path,
     metadata_dir: pathlib.Path,
     figshare_url: str = "https://ndownloader.figshare.com/files/",
-    unzip_files: bool = False,
+    unzip_download: bool = False,
     output_dir: pathlib.Path = None,
 ):
     """
@@ -24,12 +24,12 @@ def download_figshare(
         string of numbers that corresponds to the figshare identifier
     output_file : pathlib.Path
         the location and file/folder name for the downloaded contents from Figshare (in the case of zip files, this will be a temp folder and is removed
-        after extraction)
+        after extraction). In the case of downloading a zip file, this would be the name of the zip file.
     metadata_dir : pathlib.Path
         path to directory for metadata
     figshare_url: str, default "https://ndownloader.figshare.com/files/"
         the location of where the figshare id is stored
-    unzip_files: bool, default False
+    unzip_download: bool, default False
         if set to True, then the expected download from Figshare is a zip file which will be unzipped
     output_dir : pathlib.Path, optional
         path to directory to extract images and metadata from zip file to
@@ -37,20 +37,18 @@ def download_figshare(
     # access the url and download the zip file from figshare containing files for plate (images + metadata)
     urllib.request.urlretrieve(f"{figshare_url}/{figshare_id}", output_file)
 
-    if unzip_files:
-        # find the zip file and then extract it into the specific folder
+    if unzip_download:
+        # find the zip file downloaded from figshare and then extract it into the specific folder
         with zipfile.ZipFile(output_file, "r") as zip_files:
             zip_files.extractall(output_dir)
 
         # remove the zip file from the directory
         os.remove(output_file)
         print(
-            f"The files have been extracted into {output_dir.name} folder for plate with ID {str(figshare_id)}!"
+            f"The downloaded zip file contents have been extracted into {output_dir.name} folder for plate with ID {str(figshare_id)}!"
         )
     else:
-        print(
-            f"The files have been downloaded into {output_dir.name} folder for plate with ID {str(figshare_id)}!"
-        )
+        print("No files were extracted. Check to see if a zip file was downloaded.")
 
     # glob the metadata files together to then copy and remove
     metadata_files = glob.glob(f"{output_dir}/*.csv")
@@ -61,3 +59,27 @@ def download_figshare(
         # remove the metadata from the plate directory to make it an images only directory
         os.remove(files)
     print("The metadata has been moved into its own directory!")
+
+
+def extract_zip_from_Figshare(
+    path_to_zip_file: pathlib.Path, extraction_path: pathlib.Path
+):
+    """
+    This function will extract images from zip files downloaded from Figshare. This function is used if
+    multiple plates are in the same item on Figshare.
+
+    Attributes
+    ----------
+        path_to_zip_file (pathlib.Path):
+            path to extracted zip files from Figshare
+        extraction_path (pathlib.Path):
+            path to directory for zip file contents (images) to be extracted to
+    """
+    # make output directory if it is not already created
+    os.makedirs(extraction_path, exist_ok=True)
+
+    # extract images from zip file(s) downloaded from figshare into specific directory
+    with zipfile.ZipFile(path_to_zip_file, "r") as zip_file:
+        zip_file.extractall(extraction_path)
+        
+    print(f"All images/files within the zip file have been extracted to {extraction_path.name}!")

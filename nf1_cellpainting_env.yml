@@ -28,3 +28,5 @@ dependencies:
 - conda-forge::sentry-sdk=0.18.0
 - pip:
     - cellprofiler==4.2.4
+    - git+https://github.com/cytomining/CytoTable@e3773183b8fd930a6513c65dd3e45418e9a5e80d
+    - git+https://github.com/cytomining/pycytominer@7e571322d211f66e716bf135c8b52898556fb960
