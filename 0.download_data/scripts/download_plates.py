@@ -55,7 +55,7 @@ download_plates_info_dictionary = {
     # plate that will need to be extracted in a second step
     "Plates_3_and_3_prime": {
         "figshare_id": "22592890",
-        "version_number": "1",
+        "version_number": "2",
         "output_folder": "Plates_3_zip",
         # save extracted files from figshare download to a folder in the `0.download_data` directory
         "output_dir": pathlib.Path("./Plates_3_and_3_prime"),
