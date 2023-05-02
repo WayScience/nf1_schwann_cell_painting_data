@@ -112,7 +112,6 @@ def extract_image_features(
     image_feature_categories: list[str] or str,
     image_df: pd.DataFrame,
     image_cols: list[str] or str,
-    strata: Optional[None | list[str] or str] = None
 ) -> pd.DataFrame:
     """Confirm that the input list of image features categories are present in the image table and then extract those features.
     This is pulled from Pycytominer cyto_utils util.py 'extract_image_features` and edited.
@@ -125,8 +124,6 @@ def extract_image_features(
         image dataframe from SQLite file 'Per_Image' table
     image_cols : list of str or str
         column(s) to select from the image df to include
-    strata :  list of str or str (Optional)
-        The columns to groupby and add to the extracted dataframe
 
     Returns
     -------
@@ -145,7 +142,7 @@ def extract_image_features(
 
     # Add image_cols and strata to the dataframe
     image_features_df = pd.concat(
-        [image_df[list(np.union1d(image_cols, strata))], image_features_df], axis=1
+        [image_df[list(np.union1d(image_cols))], image_features_df], axis=1
     )
 
     return image_features_df
