@@ -23,3 +23,14 @@ Using the code below, execute the `sh` file and merge single cells to use for an
 cd 3.processing_features
 source processing_features.sh
 ```
+
+## Accessing the CellProfiler output - Parquet files
+
+We used Git LFS to store the large files like Parquet files.
+If you would like to access these files after cloning the repo, you will need to run the below command in terminal. 
+
+**Note:** Make sure that you have Git LFS installed on your local machine. Follow the instructions on [the GitHub Docs](https://docs.github.com/en/repositories/working-with-files/managing-large-files/installing-git-large-file-storage).
+
+```bash
+git lfs pull
+```

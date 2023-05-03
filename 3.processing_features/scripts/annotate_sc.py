@@ -21,7 +21,6 @@ from pycytominer.cyto_utils import output
 sys.path.append("../utils")
 import extraction_utils as sc_utils
 
-
 # ## Set paths and variables
 
 # In[2]:
@@ -46,7 +45,6 @@ plate_info_dictionary["Plate_3_prime"]["platemap_path"] = str(pathlib.Path("../0
 
 # view the dictionary to assess that all info is added correctly
 print(json.dumps(plate_info_dictionary, indent=4))
-
 
 # ## Annotate merged single cells
 
@@ -84,14 +82,12 @@ for plate, info in plate_info_dictionary.items():
     )
     print(f"Annotations have been added to {plate} and saved!")
 
-
 # In[4]:
 
 
 # print last annotated df to see if annotation occurred
 print(annotated_df.shape)
 annotated_df.head()
-
 
 # ## Write updated dictionary to yaml file for use in downstream steps
 
@@ -100,4 +96,3 @@ annotated_df.head()
 
 with open(dictionary_path, 'w') as file:
     yaml.dump(plate_info_dictionary, file)
-
