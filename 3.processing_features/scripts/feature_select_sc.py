@@ -18,7 +18,6 @@ import pandas as pd
 from pycytominer import feature_select
 from pycytominer.cyto_utils import output
 
-
 # ## Set paths and variables
 
 # In[2]:
@@ -36,7 +35,6 @@ with open(dictionary_path) as file:
 
 # view the dictionary to confirm all info is included to use for normalization
 print(json.dumps(plate_info_dictionary, indent=4))
-
 
 # ## Perform feature selection
 # 
@@ -83,11 +81,9 @@ for plate, info in plate_info_dictionary.items():
     )
     print(f"Features have been selected for {plate} and saved!")
 
-
 # In[4]:
 
 
 # print last feature selected df to assess if feature selection occurred (less columns)
 print(feature_select_df.shape)
 feature_select_df.head()
-
