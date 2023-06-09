@@ -65,14 +65,14 @@ Groups:[module_num:4|svn_version:'Unknown'|variable_revision_number:2|show_windo
     grouping metadata count:1
     Metadata category:None
 
-CorrectIlluminationCalculate:[module_num:5|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['Create an IC function for each image and we use the Background (due to majority of the images have less objects taking up the images) + Fit Polynomial smoothing method as this seems to work well at this time.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+CorrectIlluminationCalculate:[module_num:5|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['Create an IC function for each image and we use the Background (due to majority of the images have less objects taking up the images) + Fit Polynomial smoothing method as this seems to work well at this time.', '', 'When using Background method, make sure that the IC function is NOT rescaled!']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:OrigDAPI
     Name the output image:IllumDAPI
     Select how the illumination function is calculated:Background
     Dilate objects in the final averaged image?:No
     Dilation radius:1
     Block size:50
-    Rescale the illumination function?:Yes
+    Rescale the illumination function?:No
     Calculate function for each image individually, or based on all images?:Each
     Smoothing method:Fit Polynomial
     Method to calculate smoothing filter size:Automatic
@@ -90,14 +90,14 @@ CorrectIlluminationCalculate:[module_num:5|svn_version:'Unknown'|variable_revisi
     Maximum number of iterations:40
     Residual value for convergence:0.001
 
-CorrectIlluminationCalculate:[module_num:6|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['Create an IC function for each image and we use the Background (due to majority of the images have less objects taking up the images) + Fit Polynomial smoothing method as this seems to work well at this time.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+CorrectIlluminationCalculate:[module_num:6|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['Create an IC function for each image and we use the Background (due to majority of the images have less objects taking up the images) + Fit Polynomial smoothing method as this seems to work well at this time.', '', 'When using Background method, make sure that the IC function is NOT rescaled!']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:OrigGFP
     Name the output image:IllumGFP
     Select how the illumination function is calculated:Background
     Dilate objects in the final averaged image?:No
     Dilation radius:1
     Block size:50
-    Rescale the illumination function?:Yes
+    Rescale the illumination function?:No
     Calculate function for each image individually, or based on all images?:Each
     Smoothing method:Fit Polynomial
     Method to calculate smoothing filter size:Automatic
@@ -115,14 +115,14 @@ CorrectIlluminationCalculate:[module_num:6|svn_version:'Unknown'|variable_revisi
     Maximum number of iterations:40
     Residual value for convergence:0.001
 
-CorrectIlluminationCalculate:[module_num:7|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['Create an IC function for each image and we use the Background (due to majority of the images have less objects taking up the images) + Fit Polynomial smoothing method as this seems to work well at this time.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+CorrectIlluminationCalculate:[module_num:7|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['Create an IC function for each image and we use the Background (due to majority of the images have less objects taking up the images) + Fit Polynomial smoothing method as this seems to work well at this time.', '', 'When using Background method, make sure that the IC function is NOT rescaled!']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:OrigRFP
     Name the output image:IllumRFP
     Select how the illumination function is calculated:Background
     Dilate objects in the final averaged image?:No
     Dilation radius:1
     Block size:50
-    Rescale the illumination function?:Yes
+    Rescale the illumination function?:No
     Calculate function for each image individually, or based on all images?:Each
     Smoothing method:Fit Polynomial
     Method to calculate smoothing filter size:Automatic
@@ -140,19 +140,19 @@ CorrectIlluminationCalculate:[module_num:7|svn_version:'Unknown'|variable_revisi
     Maximum number of iterations:40
     Residual value for convergence:0.001
 
-CorrectIlluminationApply:[module_num:8|svn_version:'Unknown'|variable_revision_number:5|show_window:False|notes:['Apply illumination correction functions to all channel groups']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+CorrectIlluminationApply:[module_num:8|svn_version:'Unknown'|variable_revision_number:5|show_window:False|notes:['Apply illumination correction functions to all channel groups', '', 'Make sure to subtract when using the Background method!']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:OrigDAPI
     Name the output image:CorrDAPI
     Select the illumination function:IllumDAPI
-    Select how the illumination function is applied:Divide
+    Select how the illumination function is applied:Subtract
     Select the input image:OrigGFP
     Name the output image:CorrGFP
     Select the illumination function:IllumGFP
-    Select how the illumination function is applied:Divide
+    Select how the illumination function is applied:Subtract
     Select the input image:OrigRFP
     Name the output image:CorrRFP
     Select the illumination function:IllumRFP
-    Select how the illumination function is applied:Divide
+    Select how the illumination function is applied:Subtract
     Set output image values less than 0 equal to 0?:Yes
     Set output image values greater than 1 equal to 1?:Yes
 
