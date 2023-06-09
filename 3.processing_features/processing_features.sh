@@ -9,4 +9,7 @@ conda activate nf1_cellpainting_data
 jupyter nbconvert --to python --output-dir=scripts/ *.ipynb
 
 # run the python scripts in order (from convert+merge, annotate, normalize, and feature select)
-python scripts/merge_sc_cytotable.py && python scripts/annotate_sc.py && python scripts/normalize_sc.py && python scripts/feature_select_sc.py
+python scripts/0.merge_sc_cytotable.py 
+python scripts/1.annotate_sc.py
+python scripts/2.normalize_sc.py
+python scripts/3.feature_select_sc.py

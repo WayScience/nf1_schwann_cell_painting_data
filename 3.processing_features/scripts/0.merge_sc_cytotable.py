@@ -18,6 +18,7 @@ from cytotable import convert, presets
 sys.path.append("../utils")
 import extraction_utils as sc_utils
 
+
 # ## Set paths and variables
 
 # In[2]:
@@ -56,6 +57,7 @@ presets.config["cellprofiler_sqlite_pycytominer"][
                 per_nuclei.Metadata_ImageNumber = per_cytoplasm.Metadata_ImageNumber
                 AND per_nuclei.Metadata_Nuclei_Number_Object_Number = per_cytoplasm.Metadata_Cytoplasm_Parent_Nuclei
                 """
+
 
 # In[3]:
 
@@ -103,6 +105,7 @@ plate_info_dictionary = {
     }
 }
 
+
 # ## Merge objects to single cells and convert SQLite to parquet file + add single cell metadata
 
 # In[4]:
@@ -129,6 +132,7 @@ for plate, info in plate_info_dictionary.items():
     )
     print(f"Added single cell count as metadata to {pathlib.Path(dest_path).name}!")
 
+
 # ## Write dictionary to yaml file for use in downstream steps
 
 # In[5]:
@@ -137,3 +141,4 @@ for plate, info in plate_info_dictionary.items():
 dictionary_path = pathlib.Path("./plate_info_dictionary.yaml")
 with open(dictionary_path, 'w') as file:
     yaml.dump(plate_info_dictionary, file)
+
