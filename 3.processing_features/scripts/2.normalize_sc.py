@@ -18,6 +18,7 @@ import pandas as pd
 from pycytominer import normalize
 from pycytominer.cyto_utils import output
 
+
 # In[2]:
 
 
@@ -33,6 +34,7 @@ with open(dictionary_path) as file:
 
 # view the dictionary to confirm all info is included to use for normalization
 print(json.dumps(plate_info_dictionary, indent=4))
+
 
 # In[3]:
 
@@ -61,12 +63,14 @@ for plate, info in plate_info_dictionary.items():
     )
     print(f"Single cells have been normalized for {plate} and saved!")
 
+
 # In[4]:
 
 
 # print last normalized df to see if looks like normalization has occurred
 print(normalized_df.shape)
 normalized_df.head()
+
 
 # ## Write updated dictionary to yaml file for use in downstream steps
 
@@ -75,3 +79,4 @@ normalized_df.head()
 
 with open(dictionary_path, 'w') as file:
     yaml.dump(plate_info_dictionary, file)
+
