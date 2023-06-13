@@ -17,7 +17,7 @@ from utils import cp_utils
 
 # ## Set paths for each plate
 # 
-# Note: Due to the difference channel numbers between plates 1 + 2 (3 channels) and plates 3 + 3 prime (4 channels), there needs to be two different cppipe files (like in the IC module). 
+# Note: Due to the different channel numbers between plates 1 + 2 (3 channels) and plates 3 + 3 prime (4 channels), there needs to be two different cppipe files (like in the IC module). 
 
 # In[2]:
 
