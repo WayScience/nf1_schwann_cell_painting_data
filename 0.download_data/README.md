@@ -5,6 +5,8 @@ The plates for this project are located at [NF1 Schwann Cell Genotype Cell Paint
 
 ## Run the `download_plates` notebook
 
+**Note:** Confirm that the shell name in the cp_analysis.sh file is correct for your machine (e.g. Linux = bash, MacOS = zsh).
+
 To download the images for each plate and separate the metadata from the images, run the [download_plates.ipynb](download_plates.ipynb) notebook as a python script using the code block below:
 
 ```bash
@@ -12,3 +14,6 @@ To download the images for each plate and separate the metadata from the images,
 cd 0.download_data
 source download_plates.sh
 ```
+
+To download 4 plates from figshare, it took about 50 minutes. 
+There is the option to parallelize this in the future depending on needs.
