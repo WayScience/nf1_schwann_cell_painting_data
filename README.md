@@ -53,12 +53,27 @@ As well, the plates have different culturing conditions, where plate 3 cells wer
 
 ![plate3_nf1_platemap.png](example_figures/plate3_nf1_platemap.png)
 
-It is important to study Schwann cells from NF1 patients because NF1 causes patients to develop neurofibromas, which are red bumps on the skin (tumors) that appear due to the loss of Ras-GAP neurofibromin. 
-This loss occurs when the NF1 gene is mutated (NF1 +/-).
+**Plate 4**
+For plate 4, we will be looking at how using different siRNA constructs to downregulate neurofibromin production in NF1 WT cells impacts the morpholgy as dose increases. 
+We will be able to compare this to controls (e.g., untreated WT and Null cells).
+
+The cells were cultured in 5% FBS.
+
+![plate4_nf1_platemap_genotype.png](example_figures/plate4_nf1_platemap_genotype.png)
+
+There are 8 replicates of NF1 Null cells and the rest of the wells contain NF1 WT cells.
+
+![plate4_nf1_treat_dose.png](example_figures/plate4_nf1_platemap_treat_dose.png)
+
+There are three different siRNA constructs used in this plate, all with the same dose curve from 0.001 nM - 0.1 nM.
+Any well with a 0 nM concentration are not treated with a construct.
 
 ## Goal
 
-The goal of this project is to predict NF1 genotype from Schwann cell morphology. 
+It is important to study Schwann cells from NF1 patients because NF1 causes patients to develop neurofibromas, which are red bumps on the skin (tumors) that appear due to the loss of Ras-GAP neurofibromin. 
+This loss occurs when the NF1 gene is mutated (NF1 +/-).
+
+**The goal of this project is to predict NF1 genotype from Schwann cell morphology.**
 We apply cell image analysis to Cell Painting images and use representation learning to extract morphology features.
 We will apply machine learning to the morphology features to discover a biomarker of NF1 genotype.
 Once we discover a biomarker from these cells, we hope that our method can be used for drug discovery to treat this rare disease.
@@ -67,9 +82,10 @@ Once we discover a biomarker from these cells, we hope that our method can be us
 
 | Module | Purpose | Description |
 | :---- | :----- | :---------- |
-| [0.download_data](0.download_data/) | Download NF1 data | Download images from each plate of the NF1 dataset for analysis from Figshare |
-| [1.cellprofiler_ic](1.cellprofiler_ic/) | Apply CellProfiler illumination correction (IC)| Use a CellProfiler pipeline to calculate and apply IC the images and save them |
-| [2.cellprofiler_analysis](2.cellprofiler_analysis/) | Perform CellProfiler analysis on corrected images | Use a CellProfiler pipeline to segment single cells and extract features into a SQLite file |
+| [0.download_data](./0.download_data/) | Download NF1 data | Download images from each plate of the NF1 dataset for analysis from Figshare |
+| [1.cellprofiler_ic](./1.cellprofiler_ic/) | Apply CellProfiler illumination correction (IC)| Use a CellProfiler pipeline to calculate and apply IC the images and save them |
+| [2.cellprofiler_analysis](./2.cellprofiler_analysis/) | Perform CellProfiler analysis on corrected images | Use a CellProfiler pipeline to segment single cells and extract features into a SQLite file |
+| [3.processing_features](./3.processing_features/) | Convert extracted features from SQLite files to parquet files using CytoTable. Converted data are then annotated, normalized, and feature selected using pycytominer |
 
 ## Main environment
 

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# this line is needed for the sh file to properly activate a conda environment 
-eval "$(conda shell.bash hook)"
-# activate the main conda environment (if not already activated)
+# initialize the correct shell for your machine to allow conda to work (see README for note on shell names)
+conda init bash
+# activate the main conda environment
 conda activate nf1_cellpainting_data
 
 # convert the notebook into a python and run the notebook
