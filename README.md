@@ -70,8 +70,8 @@ Any well with a 0 nM concentration are not treated with a construct.
 
 ## Goal
 
-It is important to study Schwann cells from NF1 patients because NF1 causes patients to develop neurofibromas, which are red bumps on the skin (tumors) that appear due to the loss of Ras-GAP neurofibromin. 
-This loss occurs when the NF1 gene is mutated (NF1 +/-).
+It is important to study Schwann cells from NF1 patients because NF1 causes patients to develop neurofibromas, which are peripheral nerve tumors forming bumps underneath the skin that appear due to the decrease of Ras-GAP neurofibromin production. 
+This decrease in production occurs when the NF1 gene is mutated (NF1 +/-).
 
 **The goal of this project is to predict NF1 genotype from Schwann cell morphology.**
 We apply cell image analysis to Cell Painting images and use representation learning to extract morphology features.

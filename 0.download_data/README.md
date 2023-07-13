@@ -15,4 +15,5 @@ cd 0.download_data
 source download_plates.sh
 ```
 
-To download 4 plates from figshare, it took about 50 minutes. There is the option to parallelize this in the future depending on needs.
+To download 4 plates from figshare, it took about 50 minutes. 
+There is the option to parallelize this in the future depending on needs.
