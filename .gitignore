@@ -8,6 +8,9 @@
 # ignore pycache
 __pycache__
 
+# ignore corrected plates if they are put into a separate folder
+Corrected_Images
+
 # ignore corrected plates images (like in download data)
 1.cellprofiler_ic/Corrected_Plate_1
 1.cellprofiler_ic/Corrected_Plate_2
