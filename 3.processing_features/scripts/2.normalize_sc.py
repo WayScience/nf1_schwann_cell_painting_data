@@ -8,33 +8,36 @@
 # In[1]:
 
 
-import sys
 import pathlib
-import os
 import yaml
-import json
+import pprint
 
 import pandas as pd
 from pycytominer import normalize
 from pycytominer.cyto_utils import output
 
 
+# ## Set paths and load in dictionary from annotated run
+
 # In[2]:
 
 
 # output directory for normalized data
 output_dir = pathlib.Path("./data/normalized_data")
-# if directory if doesn't exist, will not raise error if it already exists
-os.makedirs(output_dir, exist_ok=True)
+output_dir.mkdir(exist_ok=True)
 
 # load in dicionary from yaml file
 dictionary_path = pathlib.Path("./plate_info_dictionary.yaml")
 with open(dictionary_path) as file:
     plate_info_dictionary = yaml.load(file, Loader=yaml.FullLoader)
 
-# view the dictionary to confirm all info is included to use for normalization
-print(json.dumps(plate_info_dictionary, indent=4))
+# view the dictionary to assess that all info is added correctly
+pprint.pprint(plate_info_dictionary)
 
+
+# ## Normalize annotated single cells from each plate
+# 
+# **Note:** Path to normalized data for each plate is added to the dictionary in this step to be used during feature selection.
 
 # In[3]:
 
@@ -42,8 +45,9 @@ print(json.dumps(plate_info_dictionary, indent=4))
 # process each run
 for plate, info in plate_info_dictionary.items():
     annotated_df = pd.read_parquet(info["annotated_path"])
+    # set output path and add to the dictionary
     output_file = str(pathlib.Path(f"{output_dir}/{plate}_sc_norm.parquet"))
-    # save path to annotated file to dictionary for downstream use
+    # save path to normalized file to dictionary for downstream use
     plate_info_dictionary[plate]["normalized_path"] = output_file
     print(f"Normalizing annotated merged single cells for {plate}!")
 

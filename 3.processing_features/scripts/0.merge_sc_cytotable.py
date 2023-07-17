@@ -11,6 +11,8 @@
 import sys
 import pathlib
 import yaml
+import pprint
+import pandas as pd
 
 # cytotable will merge objects from SQLite file into single cells and save as parquet file
 from cytotable import convert, presets
@@ -26,6 +28,20 @@ import extraction_utils as sc_utils
 
 # type of file output from CytoTable (currently only parquet)
 dest_datatype = "parquet"
+
+# set main output dir for all parquet files
+output_dir = pathlib.Path("./data/converted_data/")
+output_dir.mkdir(exist_ok=True)
+
+# directory where SQLite files are located
+sqlite_dir = pathlib.Path("../2.cellprofiler_analysis/analysis_output/")
+
+# list for plate names based on folders to use to create dictionary
+plate_names = []
+# iterate through 0.download_data and append plate names from folder names that contain image data from that plate
+for file_path in pathlib.Path("../0.download_data/").iterdir():
+    if str(file_path.stem).startswith("Plate"):
+        plate_names.append(str(file_path.stem))
 
 # preset configurations based on typical CellProfiler outputs
 preset = "cellprofiler_sqlite_pycytominer"
@@ -59,51 +75,26 @@ presets.config["cellprofiler_sqlite_pycytominer"][
                 """
 
 
+# ## Create dictionary with info for each plate
+# 
+# **Note:** All paths must be string to use with CytoTable.
+
 # In[3]:
 
 
-# dictionary with info for the sqlite file from each plate
+# create plate info dictionary with all parts of the CellProfiler CLI command to run in parallel
 plate_info_dictionary = {
-    "Plate_1": {
-        # path to outputted SQLite file
-        "source_path": str(
-            pathlib.Path(
-                "../2.cellprofiler_analysis/analysis_output/Plate_1.sqlite"
-            )
-        ),
-        "dest_path": str(pathlib.Path(f"./data/converted_data/Plate_1.parquet")),
-    },
-    "Plate_2": {
-        # path to outputted SQLite file
-        "source_path": str(
-            pathlib.Path(
-                "../2.cellprofiler_analysis/analysis_output/Plate_2.sqlite"
-            )
-        ),
-        # path for merged single cell paraquet file (without annotations)
-        "dest_path": str(pathlib.Path(f"./data/converted_data/Plate_2.parquet")),
-    },
-    "Plate_3": {
-        # path to outputted SQLite file
-        "source_path": str(
-            pathlib.Path(
-                "../2.cellprofiler_analysis/analysis_output/Plate_3.sqlite"
-            )
-        ),
-        # path for merged single cell paraquet file (without annotations)
-        "dest_path": str(pathlib.Path(f"./data/converted_data/Plate_3.parquet")),
-    },
-    "Plate_3_prime": {
-        # path to outputted SQLite file
-        "source_path": str(
-            pathlib.Path(
-                "../2.cellprofiler_analysis/analysis_output/Plate_3_prime.sqlite"
-            )
-        ),
-        # path for merged single cell paraquet file (without annotations)
-        "dest_path": str(pathlib.Path(f"./data/converted_data/Plate_3_prime.parquet")),
+    name: {
+        "source_path": str(pathlib.Path(
+            list(sqlite_dir.rglob(f"{name}_nf1_analysis.sqlite"))[0]
+        ).resolve(strict=True)),
+        "dest_path": str(pathlib.Path(f"{output_dir}/{name}.parquet")),
     }
+    for name in plate_names
 }
+
+# view the dictionary to assess that all info is added correctly
+pprint.pprint(plate_info_dictionary, indent=4)
 
 
 # ## Merge objects to single cells and convert SQLite to parquet file + add single cell metadata
@@ -133,9 +124,19 @@ for plate, info in plate_info_dictionary.items():
     print(f"Added single cell count as metadata to {pathlib.Path(dest_path).name}!")
 
 
+# In[5]:
+
+
+converted_df = pd.read_parquet(plate_info_dictionary["Plate_4"]["dest_path"])
+
+# load in and print a converted df to see if it looks correct
+print(converted_df.shape)
+converted_df.head()
+
+
 # ## Write dictionary to yaml file for use in downstream steps
 
-# In[5]:
+# In[6]:
 
 
 dictionary_path = pathlib.Path("./plate_info_dictionary.yaml")
