@@ -20,6 +20,7 @@ Corrected_Images
 
 # ignore log files
 *logs
+*.logs
 
 # ignore Mac related files
 .DS_Store
