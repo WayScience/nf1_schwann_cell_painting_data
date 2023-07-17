@@ -5,7 +5,9 @@ conda init bash
 # activate the main conda environment
 conda activate nf1_cellpainting_data
 
-# convert the notebook into a python and run the file
-jupyter nbconvert --to python \
-        --FilesWriter.build_directory=scripts/ \
-        --execute nf1_analysis.ipynb
+# convert all notebooks to python files into the scripts folder
+jupyter nbconvert --to python --output-dir=scripts/ *.ipynb
+
+# run the python scripts in order (CellProfiler analysis then rename SQLite files)
+python scripts/nf1_analysis.py
+python scripts/rename_sqlite_files.py
