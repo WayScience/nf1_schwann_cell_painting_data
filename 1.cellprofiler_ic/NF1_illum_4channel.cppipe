@@ -5,12 +5,12 @@ GitHash:
 ModuleCount:13
 HasImagePlaneDetails:False
 
-Images:[module_num:1|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['To begin creating your project, use the Images module to compile a list of files and/or folders that you want to analyze. You can also specify a set of rules to include only the desired files in your selected folders.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+Images:[module_num:1|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['Images module is blank in the GUI since we are adding the image path in CLI.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     :
     Filter images?:Images only
     Select the rule criteria:and (extension does isimage) (directory doesnot containregexp "[\\\\/]\\.")
 
-Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['The Metadata module optionally allows you to extract information describing your images (i.e, metadata) which will be stored along with your measurements. This information can be contained in the file name and/or location, or in an external file.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['We do not extract metadata when performing illumination correction']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Extract metadata?:No
     Metadata data type:Text
     Metadata types:{}
@@ -27,7 +27,7 @@ Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_win
     Metadata file name:None
     Does cached metadata exist?:No
 
-NamesAndTypes:[module_num:3|svn_version:'Unknown'|variable_revision_number:8|show_window:False|notes:['The NamesAndTypes module allows you to assign a meaningful name to each image by which other modules will refer to it.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+NamesAndTypes:[module_num:3|svn_version:'Unknown'|variable_revision_number:8|show_window:False|notes:['This pipeline is meant for correction with 4 channels specifically:', '', 'DAPI', 'GFP', 'RFP', 'CY5', '']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Assign a name to:Images matching rules
     Select the image type:Grayscale image
     Name to assign these images:DNA
@@ -66,7 +66,7 @@ NamesAndTypes:[module_num:3|svn_version:'Unknown'|variable_revision_number:8|sho
     Set intensity range from:Image metadata
     Maximum intensity:255.0
 
-Groups:[module_num:4|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['The Groups module optionally allows you to split your list of images into image subsets (groups) which will be processed independently of each other. Examples of groupings include screening batches, microtiter plates, time-lapse movies, etc.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+Groups:[module_num:4|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['We do not use the Groups module.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Do you want to group your images?:No
     grouping metadata count:1
     Metadata category:None
@@ -171,7 +171,7 @@ CorrectIlluminationCalculate:[module_num:8|svn_version:'Unknown'|variable_revisi
     Maximum number of iterations:40
     Residual value for convergence:0.001
 
-CorrectIlluminationApply:[module_num:9|svn_version:'Unknown'|variable_revision_number:5|show_window:False|notes:['Apply illumination correction functions to all channel groups']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+CorrectIlluminationApply:[module_num:9|svn_version:'Unknown'|variable_revision_number:5|show_window:False|notes:['Apply illumination correction functions to all channels']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the input image:OrigDAPI
     Name the output image:CorrDAPI
     Select the illumination function:IllumDAPI
@@ -251,7 +251,7 @@ SaveImages:[module_num:12|svn_version:'Unknown'|variable_revision_number:16|show
     How to save the series:T (Time)
     Save with lossless compression?:Yes
 
-SaveImages:[module_num:13|svn_version:'Unknown'|variable_revision_number:16|show_window:False|notes:['Save CY5 images as the same bit-deph']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+SaveImages:[module_num:13|svn_version:'Unknown'|variable_revision_number:16|show_window:False|notes:['Save CY5 images as the same bit-depth']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the type of image to save:Image
     Select the image to save:CorrMito
     Select method for constructing file names:From image filename

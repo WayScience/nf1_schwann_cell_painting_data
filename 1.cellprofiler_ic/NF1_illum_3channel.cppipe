@@ -5,12 +5,12 @@ GitHash:
 ModuleCount:11
 HasImagePlaneDetails:False
 
-Images:[module_num:1|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['To begin creating your project, use the Images module to compile a list of files and/or folders that you want to analyze. You can also specify a set of rules to include only the desired files in your selected folders.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+Images:[module_num:1|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['Images module is blank since we are adding the path to the images in the CLI']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     :
     Filter images?:Images only
     Select the rule criteria:and (extension does isimage) (directory doesnot containregexp "[\\\\/]\\.")
 
-Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['The Metadata module optionally allows you to extract information describing your images (i.e, metadata) which will be stored along with your measurements. This information can be contained in the file name and/or location, or in an external file.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['No metadata is extracted during illumination correction']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Extract metadata?:No
     Metadata data type:Text
     Metadata types:{}
@@ -27,7 +27,7 @@ Metadata:[module_num:2|svn_version:'Unknown'|variable_revision_number:6|show_win
     Metadata file name:None
     Does cached metadata exist?:No
 
-NamesAndTypes:[module_num:3|svn_version:'Unknown'|variable_revision_number:8|show_window:False|notes:['The NamesAndTypes module allows you to assign a meaningful name to each image by which other modules will refer to it.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+NamesAndTypes:[module_num:3|svn_version:'Unknown'|variable_revision_number:8|show_window:False|notes:['In this pipeline, we only have three channels to correct:', '', 'DAPI', 'GFP', 'RFP']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Assign a name to:Images matching rules
     Select the image type:Grayscale image
     Name to assign these images:DNA
@@ -60,7 +60,7 @@ NamesAndTypes:[module_num:3|svn_version:'Unknown'|variable_revision_number:8|sho
     Set intensity range from:Image metadata
     Maximum intensity:255.0
 
-Groups:[module_num:4|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['The Groups module optionally allows you to split your list of images into image subsets (groups) which will be processed independently of each other. Examples of groupings include screening batches, microtiter plates, time-lapse movies, etc.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+Groups:[module_num:4|svn_version:'Unknown'|variable_revision_number:2|show_window:False|notes:['We do not use the Groups module']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Do you want to group your images?:No
     grouping metadata count:1
     Metadata category:None
@@ -156,7 +156,7 @@ CorrectIlluminationApply:[module_num:8|svn_version:'Unknown'|variable_revision_n
     Set output image values less than 0 equal to 0?:Yes
     Set output image values greater than 1 equal to 1?:Yes
 
-SaveImages:[module_num:9|svn_version:'Unknown'|variable_revision_number:16|show_window:False|notes:['Save DAPI images as same tiff bit depth']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+SaveImages:[module_num:9|svn_version:'Unknown'|variable_revision_number:16|show_window:False|notes:['Save DAPI images as same bit depth']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select the type of image to save:Image
     Select the image to save:CorrDAPI
     Select method for constructing file names:From image filename

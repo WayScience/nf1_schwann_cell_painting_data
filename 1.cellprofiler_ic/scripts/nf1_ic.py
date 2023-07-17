@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Correct illumination and save images for each plate using CellProfiler
+# # Correct illumination and save images for each plate using CellProfiler Parallel
 
 # ## Import libraries
 
@@ -9,84 +9,80 @@
 
 
 import pathlib
+import pprint
 
 import sys
 
-sys.path.append("../")
-from utils import cp_utils
+sys.path.append("../utils")
+import cp_parallel
 
 
-# ## Set paths for each plate
-#
-# Note: Output file path does not need to be strict since the `run_cellprofiler` function can create the output folder directory if it doesn't already exist. The other paths must be strict since these files should already exist for CellProfiler to run. The output directory doesn't need to already exist.
+# ## Set paths and variables
 
 # In[2]:
 
 
-plates_info_dictionary = {
-    "Plate_1": {
-        # this pipeline is specific to plates 1 and 2 (due to channel difference from plates 3 and 3 prime)
-        "path_to_pipeline": pathlib.Path("NF1_illum_Plates_1_2.cppipe").resolve(
-            strict=True
-        ),
-        "path_to_images": pathlib.Path("../0.download_data/Plate_1/").resolve(
-            strict=True
-        ),
-        "path_to_output": pathlib.Path("Corrected_Plate_1").resolve(),
-    },
-    "Plate_2": {
-        # this pipeline is specific to plates 1 and 2 (due to channel difference from plates 3 and 3 prime)
-        "path_to_pipeline": pathlib.Path("NF1_illum_Plates_1_2.cppipe").resolve(
-            strict=True
-        ),
-        "path_to_images": pathlib.Path("../0.download_data/Plate_2/").resolve(
-            strict=True
-        ),
-        "path_to_output": pathlib.Path("Corrected_Plate_2").resolve(),
-    },
-    "Plate_3": {
-        # this pipeline is specific to plates 3 and 3 prime (due to channel difference from plates 1 and 2)
-        "path_to_pipeline": pathlib.Path("NF1_illum_Plate3_Plate3prime.cppipe").resolve(
-            strict=True
-        ),
-        "path_to_images": pathlib.Path("../0.download_data/Plate_3/").resolve(
-            strict=True
-        ),
-        "path_to_output": pathlib.Path("Corrected_Plate_3").resolve(),
-    },
-    "Plate_3_prime": {
-        # this pipeline is specific to plates 3 and 3 prime (due to channel difference from plates 1 and 2)
-        "path_to_pipeline": pathlib.Path("NF1_illum_Plate3_Plate3prime.cppipe").resolve(
-            strict=True
-        ),
-        "path_to_images": pathlib.Path("../0.download_data/Plate_3_prime/").resolve(
-            strict=True
-        ),
-        "path_to_output": pathlib.Path("Corrected_Plate_3_prime").resolve(),
-    },
-}
+# set the run type for the parallelization
+run_name = "illum_correction"
+
+# set path for pipeline for all plates for whole image analysis
+path_to_pipeline = pathlib.Path("./pipelines/nuclei_analysis.cppipe").resolve()
+
+# set main output dir for all plates
+output_dir = pathlib.Path("./Corrected_Images")
+output_dir.mkdir(exist_ok=True)
+
+# directory where images are located within folders
+images_dir = pathlib.Path("../0.download_data/")
+
+# list for plate names based on folders to use to create dictionary
+plate_names = []
+# iterate through 0.download_data and append plate names from folder names that contain image data from that plate
+for file_path in pathlib.Path("../0.download_data/").iterdir():
+    if str(file_path.stem).startswith("Plate"):
+        plate_names.append(str(file_path.stem))
 
 
-# ## Run illumination correction pipeline on each plate
-#
-# In this notebook, we do not run the cells to completion as we prefer to run the notebooks as nbconverted python files due to better stability.
+# ## Create dictionary with all info for each plate
 
 # In[3]:
 
 
-# run through each plate with each set of paths based on dictionary
-for plate, info in plates_info_dictionary.items():
-    path_to_pipeline = info["path_to_pipeline"]
-    path_to_output = info["path_to_output"]
-    path_to_images = info["path_to_images"]
-    print(f"Correcting {plate}")
+# create plate info dictionary with all parts of the CellProfiler CLI command to run in parallel
+plate_info_dictionary = {
+    name: {
+        "path_to_images": pathlib.Path(list(images_dir.rglob(name))[0]).resolve(
+            strict=True
+        ),
+        "path_to_output": pathlib.Path(f"{output_dir}/Corrected_{name}"),
+    }
+    for name in plate_names
+}
 
-    # run illumination correction pipeline and save images
-    cp_utils.run_cellprofiler(
-        path_to_pipeline=path_to_pipeline,
-        path_to_output=path_to_output,
-        path_to_images=path_to_images,
-        # these variables are turned off for illum pipeline
-        sqlite_name=None,
-        analysis_run=False,
-    )
+# iterate over the dictionary and add the path_to_pipeline specific for each plate
+for name, info in plate_info_dictionary.items():
+    # only plates 1 and 2 have 3 channels so these are the only plates that use this path
+    if name == "Plate_1" or name == "Plate_2":
+        info["path_to_pipeline"] = pathlib.Path(f"./NF1_illum_3channel.cppipe").resolve(
+            strict=True
+        )
+    # all other plates have 4 channels and will use that specific pipeline
+    else:
+        info["path_to_pipeline"] = pathlib.Path(f"./NF1_illum_4channel.cppipe").resolve(
+            strict=True
+        )
+
+# view the dictionary to assess that all info is added correctly
+pprint.pprint(plate_info_dictionary, indent=4)
+
+
+# ## Run illumination correction pipeline on each plate in parallel
+#
+# In this notebook, we do not run the cells to completion as we prefer to run the notebooks as nbconverted python files due to better stability.
+
+# In[4]:
+
+
+cp_parallel.run_cellprofiler_parallel(
+    plate_info_dictionary=plate_info_dictionary, run_name=run_name
+)
