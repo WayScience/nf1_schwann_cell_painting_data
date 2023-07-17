@@ -1,92 +1,86 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Perform segmentation and feature extraction for each plate using CellProfiler
+# # Perform segmentation and feature extraction for each plate using CellProfiler Parallel
 
 # ## Import libraries
 
 # In[1]:
 
 
-import sys
 import pathlib
+import pprint
 
-sys.path.append("../")
-from utils import cp_utils
+import sys
+
+sys.path.append("../utils")
+import cp_parallel
 
 
-# ## Set paths for each plate
-# 
-# Note: Due to the different channel numbers between plates 1 + 2 (3 channels) and plates 3 + 3 prime (4 channels), there needs to be two different cppipe files (like in the IC module). 
+# ## Set paths and variables
 
 # In[2]:
 
 
-# create output directory for SQLite files if needed
-path_to_output = pathlib.Path("./analysis_output").resolve()
-path_to_output.mkdir(exist_ok=True)
+# set the run type for the parallelization
+run_name = "analysis"
 
-# dictionary with paths for each plate
-plates_info_dictionary = {
-    "Plate_1": {
-        # this pipeline is specific to plates 1 and 2
-        "path_to_pipeline": pathlib.Path("NF1_analysis_plate1_plate2.cppipe").resolve(
-            strict=True
-        ),
-        "path_to_images": pathlib.Path(
-            "../1.cellprofiler_ic/Corrected_Plate_1/"
-        ).resolve(strict=True),
-    },
-    "Plate_2": {
-        # this pipeline is specific to plates 1 and 2
-        "path_to_pipeline": pathlib.Path("NF1_analysis_plate1_plate2.cppipe").resolve(
-            strict=True
-        ),
-        "path_to_images": pathlib.Path(
-            "../1.cellprofiler_ic/Corrected_Plate_2/"
-        ).resolve(strict=True),
-    },
-    "Plate_3": {
-        # this pipeline is specific to plates 3 and 3'
-        "path_to_pipeline": pathlib.Path("NF1_analysis_plate3_plate3prime.cppipe").resolve(
-            strict=True
-        ),
-        "path_to_images": pathlib.Path(
-            "../1.cellprofiler_ic/Corrected_Plate_3/"
-        ).resolve(strict=True),
-    },
-    "Plate_3_prime": {
-        # this pipeline is specific to plates 3 and 3'
-        "path_to_pipeline": pathlib.Path("NF1_analysis_plate3_plate3prime.cppipe").resolve(
-            strict=True
-        ),
-        "path_to_images": pathlib.Path(
-            "../1.cellprofiler_ic/Corrected_Plate_3_prime/"
-        ).resolve(strict=True),
-    },
-}
+# set main output dir for all plates
+output_dir = pathlib.Path("./analysis_output")
+output_dir.mkdir(exist_ok=True)
+
+# directory where images are located within folders
+images_dir = pathlib.Path("../1.cellprofiler_ic/Corrected_Images/")
+
+# list for plate names based on folders to use to create dictionary
+plate_names = []
+# iterate through 0.download_data and append plate names from folder names that contain image data from that plate
+for file_path in pathlib.Path("../0.download_data/").iterdir():
+    if str(file_path.stem).startswith("Plate"):
+        plate_names.append(str(file_path.stem))
 
 
-# ## Run analysis pipeline on each plate
-# 
-# This cell is not finished to completion due to how long it would take. It is ran in the python file instead.
+# ## Create dictionary with all info for each plate
 
 # In[3]:
 
 
-# run through each plate with each set of paths based on dictionary
-for plate, info in plates_info_dictionary.items():
-    path_to_pipeline = info["path_to_pipeline"]
-    path_to_images = info["path_to_images"]
-    print(f"Running analysis on {plate}!")
+# create plate info dictionary with all parts of the CellProfiler CLI command to run in parallel
+plate_info_dictionary = {
+    name: {
+        "path_to_images": pathlib.Path(
+            list(images_dir.rglob(f"Corrected_{name}"))[0]
+        ).resolve(strict=True),
+        "path_to_output": pathlib.Path(f"{output_dir}/{name}"),
+    }
+    for name in plate_names
+}
 
-    # run analysis pipeline
-    cp_utils.run_cellprofiler(
-        path_to_pipeline=path_to_pipeline,
-        path_to_output=path_to_output,
-        path_to_images=path_to_images,
-        # name each SQLite file after plate name
-        sqlite_name=plate,
-        analysis_run=True,
-    )
+# iterate over the dictionary and add the path_to_pipeline specific for each plate
+for name, info in plate_info_dictionary.items():
+    # only plates 1 and 2 have 3 channels so these are the only plates that use this path
+    if name == "Plate_1" or name == "Plate_2":
+        info["path_to_pipeline"] = pathlib.Path(
+            f"./NF1_analysis_3channel.cppipe"
+        ).resolve(strict=True)
+    # all other plates have 4 channels and will use that specific pipeline
+    else:
+        info["path_to_pipeline"] = pathlib.Path(
+            f"./NF1_analysis_4channel.cppipe"
+        ).resolve(strict=True)
+
+# view the dictionary to assess that all info is added correctly
+pprint.pprint(plate_info_dictionary, indent=4)
+
+
+# ## Run analysis pipeline on each plate in parallel
+# 
+# This cell is not finished to completion due to how long it would take. It is ran in the python file instead.
+
+# In[4]:
+
+
+cp_parallel.run_cellprofiler_parallel(
+    plate_info_dictionary=plate_info_dictionary, run_name=run_name
+)
 
