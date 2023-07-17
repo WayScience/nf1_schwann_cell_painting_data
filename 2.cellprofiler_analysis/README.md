@@ -20,15 +20,16 @@ source nf1_analysis.sh
 
 To improve the speed for analysis, we have implemented `CellProfiler Parallel`, which utilizes multi-processing to run one plate per CPU core.
 
+All analysis is performed on a Linux-based machine running Pop_OS! LTS 22.04 with an AMD Ryzen 7 3700X 8-Core Processor, 16 CPU cores, and 64GB of RAM.
+
 ### Speed when running CellProfiler Parallel
 
-When using CellProfiler Parallel to run analysis on 5 plates, it took approximately 28 hours to finish on a Linux-based machine running Pop_OS! LTS 22.04 with an AMD Ryzen 7 3700X 8-Core Processor with 16 CPU workers.
+When using CellProfiler Parallel to run analysis on 5 plates, it took approximately 28 hours to finish.
 
 ### Speed when running CellProfiler Sequential
 
 To run analysis on plates 1 and 2, it took approximately one hour. 
 To run analysis on plates 3 and 3 prime, it took approximately 31 hours (~ 16 hours each).
-The analysis was run on a Linux-based machine running Pop_OS! LTS 22.04 with an AMD Ryzen 7 3700X 8-Core Processor.
 
 #### Difference in speed
 
