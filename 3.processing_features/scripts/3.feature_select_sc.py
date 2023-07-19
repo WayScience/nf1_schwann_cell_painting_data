@@ -8,11 +8,9 @@
 # In[1]:
 
 
-import sys
 import pathlib
-import os
 import yaml
-import json
+import pprint
 
 import pandas as pd
 from pycytominer import feature_select
@@ -26,16 +24,15 @@ from pycytominer.cyto_utils import output
 
 # output directory for feature selected data
 output_dir = pathlib.Path("./data/feature_selected_data")
-# if directory if doesn't exist, will not raise error if it already exists
-os.makedirs(output_dir, exist_ok=True)
+output_dir.mkdir(exist_ok=True)
 
 # load in dicionary from yaml file
 dictionary_path = pathlib.Path("./plate_info_dictionary.yaml")
 with open(dictionary_path) as file:
     plate_info_dictionary = yaml.load(file, Loader=yaml.FullLoader)
 
-# view the dictionary to confirm all info is included to use for normalization
-print(json.dumps(plate_info_dictionary, indent=4))
+# view the dictionary to assess that all info is added correctly
+pprint.pprint(plate_info_dictionary)
 
 
 # ## Perform feature selection
@@ -64,7 +61,7 @@ feature_select_ops = [
 # process each run
 for plate, info in plate_info_dictionary.items():
     normalized_df = pd.read_parquet(info["normalized_path"])
-    # output_file does not need to be saved to dictionary as there are no more processin steps after this
+    # output_file does not need to be saved to dictionary as there are no more processing steps after this
     output_file = str(pathlib.Path(f"{output_dir}/{plate}_sc_norm_fs.parquet"))
     print(f"Performing feature selection on normalized annotated merged single cells for {plate}!")
 
