@@ -45,7 +45,7 @@ with open(dictionary_path) as file:
 
 
 # add path to platemaps for each plate 
-for plate, _ in plate_info_dictionary.items():
+for plate in plate_info_dictionary.keys():
     # since Plate_3_prime has the same platemap as Plate_3, we need an else statement so that we make sure it adds the 
     # path that was given to Plate_3
     if plate != "Plate_3_prime":
