@@ -62,11 +62,43 @@ for plate in plate_info_dictionary.keys():
 pprint.pprint(plate_info_dictionary, indent=4)
 
 
+# ## Annotate bulk profiles
+# 
+# **Note:** The path to the annotated bulk file to be used for normalization is adding during this step.
+
+# In[4]:
+
+
+for plate, info in plate_info_dictionary.items():
+    # single_cell_df is the dataframe loaded in from the converted parquet file
+    single_cell_df = pd.read_parquet(info["bulk_path"])
+    platemap_df = pd.read_csv(info["platemap_path"])
+    output_file = str(pathlib.Path(f"{output_dir}/{plate}_bulk_annotated.parquet"))
+    # save path to annotated file to dictionary for downstream use
+    plate_info_dictionary[plate]["bulk_annotated_path"] = output_file
+    print(f"Adding annotations to merged single cells for {plate}!")
+
+    # add metadata from platemap file to extracted single cell features
+    annotated_df = annotate(
+        profiles=single_cell_df,
+        platemap=platemap_df,
+        join_on=["Metadata_well_position", "Image_Metadata_Well"],
+    )
+
+    # save annotated df as parquet file
+    output(
+        df=annotated_df,
+        output_filename=output_file,
+        output_type="parquet",
+    )
+    print(f"Annotations have been added to {plate} bulk profiles and saved!")
+
+
 # ## Annotate merged single cells
 # 
 # **Note:** The path to the annotated file to be used for normalization is adding during this step.
 
-# In[4]:
+# In[5]:
 
 
 for plate, info in plate_info_dictionary.items():
@@ -107,7 +139,7 @@ for plate, info in plate_info_dictionary.items():
     print(f"Annotations have been added to {plate} and saved!")
 
 
-# In[5]:
+# In[6]:
 
 
 # print last annotated df to see if annotation occurred
@@ -117,7 +149,7 @@ annotated_df.head()
 
 # ## Write updated dictionary to yaml file for use in downstream steps
 
-# In[6]:
+# In[7]:
 
 
 with open(dictionary_path, "w") as file:
