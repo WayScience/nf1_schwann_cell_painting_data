@@ -213,12 +213,12 @@ MeasureObjectNeighbors:[module_num:13|svn_version:'Unknown'|variable_revision_nu
     Name the output image:PercentTouching
     Select colormap:Oranges
 
-MeasureObjectIntensityDistribution:[module_num:14|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['Measure object intensity distributions witin objects using center x,y coords for each single object.', '', 'We do not calculate Zernikes currently.']|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
+MeasureObjectIntensityDistribution:[module_num:14|svn_version:'Unknown'|variable_revision_number:6|show_window:False|notes:['Measure object intensity distributions witin objects using center x,y coords for each single object.', '', "We calculate Zernikes for magnitudes and phases as we are interested in seeing phase even if it doesn't help with classifying phenotypes."]|batch_state:array([], dtype=uint8)|enabled:True|wants_pause:False]
     Select images to measure:CY5, DAPI, GFP, RFP
     Hidden:3
     Hidden:1
     Hidden:0
-    Calculate intensity Zernikes?:None
+    Calculate intensity Zernikes?:Magnitudes and phase
     Maximum zernike moment:9
     Select objects to measure:Nuclei
     Object to use as center?:These objects
