@@ -48,6 +48,8 @@ pprint.pprint(plate_info_dictionary)
 # For more information regarding these operations, please visit [the Pycytominer operations folder](https://github.com/cytomining/pycytominer/tree/master/pycytominer/operations) on GitHub.
 # To view how `blocklist` works, please visit [the separate file](https://github.com/cytomining/pycytominer/blob/a5ae6c81a275b692ef5d4c85cfeb37696bf69242/pycytominer/cyto_utils/features.py#L13) for that function.
 
+# ### Set operations for feature selection
+
 # In[3]:
 
 
@@ -58,7 +60,41 @@ feature_select_ops = [
     "blocklist",
 ]
 
-# process each run
+
+# ### Bulk profiles
+
+# In[4]:
+
+
+# process each bulk run
+for plate, info in plate_info_dictionary.items():
+    normalized_df = pd.read_parquet(info["bulk_normalized_path"])
+    # output_file does not need to be saved to dictionary as there are no more processing steps after this
+    output_file = str(pathlib.Path(f"{output_dir}/{plate}_bulk_norm_fs.parquet"))
+    print(f"Performing feature selection on normalized annotated bulk profiles for {plate}!")
+
+    # perform feature selection with the operations specified
+    feature_select_df = feature_select(
+        normalized_df,
+        operation=feature_select_ops,
+        output_file="none",
+    )
+
+    # save features selected df as parquet file
+    output(
+        df=feature_select_df,
+        output_filename=output_file,
+        output_type="parquet"
+    )
+    print(f"Features have been selected for {plate} bulk profiles and saved!")
+
+
+# ### Single cell profiles
+
+# In[5]:
+
+
+# process each single cell run
 for plate, info in plate_info_dictionary.items():
     normalized_df = pd.read_parquet(info["normalized_path"])
     # output_file does not need to be saved to dictionary as there are no more processing steps after this
@@ -81,7 +117,7 @@ for plate, info in plate_info_dictionary.items():
     print(f"Features have been selected for {plate} and saved!")
 
 
-# In[4]:
+# In[6]:
 
 
 # print last feature selected df to assess if feature selection occurred (less columns)

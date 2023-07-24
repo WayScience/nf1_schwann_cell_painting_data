@@ -55,6 +55,7 @@ presets.config["cellprofiler_sqlite_pycytominer"][
 ] = """WITH Per_Image_Filtered AS (
                 SELECT
                     Metadata_ImageNumber,
+                    Image_Metadata_Plate,
                     Image_Metadata_Well,
                     Image_Metadata_Site
                 FROM
