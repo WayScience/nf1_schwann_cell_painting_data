@@ -38,10 +38,19 @@ sqlite_dir = pathlib.Path("../2.cellprofiler_analysis/analysis_output/")
 
 # list for plate names based on folders to use to create dictionary
 plate_names = []
-# iterate through 0.download_data and append plate names from folder names that contain image data from that plate
+
+# iterate through 0.download_data and append plate names from folder names
+# that contain image data from that plate
+# (Note, you must first run `0.download_data/download_plates.ipynb`)
 for file_path in pathlib.Path("../0.download_data/").iterdir():
     if str(file_path.stem).startswith("Plate"):
         plate_names.append(str(file_path.stem))
+        
+plate_names
+
+
+# In[3]:
+
 
 # preset configurations based on typical CellProfiler outputs
 preset = "cellprofiler_sqlite_pycytominer"
@@ -80,7 +89,7 @@ presets.config["cellprofiler_sqlite_pycytominer"][
 # 
 # **Note:** All paths must be string to use with CytoTable.
 
-# In[3]:
+# In[4]:
 
 
 # create plate info dictionary with all parts of the CellProfiler CLI command to run in parallel
@@ -100,13 +109,14 @@ pprint.pprint(plate_info_dictionary, indent=4)
 
 # ## Merge objects to single cells and convert SQLite to parquet file + add single cell metadata
 
-# In[4]:
+# In[5]:
 
 
 # run through each run with each set of paths based on dictionary
 for plate, info in plate_info_dictionary.items():
     source_path = info["source_path"]
     dest_path = info["dest_path"]
+    
     print(f"Performing merge single cells and conversion on {plate}!")
 
     # merge single cells and output as parquet file
@@ -122,22 +132,24 @@ for plate, info in plate_info_dictionary.items():
     sc_utils.add_sc_count_metadata_file(
         data_path=dest_path, well_column_name="Image_Metadata_Well", file_type="parquet"
     )
+    
     print(f"Added single cell count as metadata to {pathlib.Path(dest_path).name}!")
 
 
-# In[5]:
+# ### Check if converted data looks correct
+
+# In[6]:
 
 
 converted_df = pd.read_parquet(plate_info_dictionary["Plate_4"]["dest_path"])
 
-# load in and print a converted df to see if it looks correct
 print(converted_df.shape)
 converted_df.head()
 
 
 # ## Write dictionary to yaml file for use in downstream steps
 
-# In[6]:
+# In[7]:
 
 
 dictionary_path = pathlib.Path("./plate_info_dictionary.yaml")
