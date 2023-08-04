@@ -7,6 +7,7 @@ dependencies:
 # this is restricted to Python 3.8 at this time due to other conflicts
 - conda-forge::python=3.8
 - conda-forge::ipykernel
+- conda-forge::jupyterlab
 - conda-forge::nbconvert=6.4.4
 - conda-forge::pip
 - conda-forge::numpy
@@ -27,6 +28,5 @@ dependencies:
 - conda-forge::wxpython=4.1.0
 - conda-forge::sentry-sdk=0.18.0
 - pip:
-    - cellprofiler==4.2.4
     - git+https://github.com/cytomining/CytoTable@e3773183b8fd930a6513c65dd3e45418e9a5e80d
-    - git+https://github.com/cytomining/pycytominer@7e571322d211f66e716bf135c8b52898556fb960
+    - git+https://github.com/cytomining/pycytominer@c4de0a9a4fecbf1ad11872bb14c18d24d1b1851e
