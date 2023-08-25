@@ -87,7 +87,6 @@ for plate, info in plate_info_dictionary.items():
     output_annotated_file = str(pathlib.Path(f"{output_dir}/{plate}_sc_annotated.parquet"))
     output_normalized_file = str(pathlib.Path(f"{output_dir}/{plate}_sc_normalized.parquet"))
     output_feature_select_file = str(pathlib.Path(f"{output_dir}/{plate}_sc_feature_selected.parquet"))
-    output_feature_select_file = str(pathlib.Path(f"{output_dir}/{plate}_sc_feature_selected.parquet"))
     output_aggregated_file = str(pathlib.Path(f"{output_dir}/{plate}_bulk_camerons_method.parquet"))
 
     # Load single-cell profiles
@@ -142,6 +141,7 @@ for plate, info in plate_info_dictionary.items():
 
     # Step 4: Cameron's method of aggregation
     feature_select_df = load_profiles(output_feature_select_file)
+    # Specify metadata columns in aggregation step to ensure they are retained for downstream analysis
     metadata_cols = infer_cp_features(feature_select_df, metadata=True)
     metadata_cols = [x for x in metadata_cols if all(col not in x for col in cameron_unwanted_aggregate_cols)]
     
