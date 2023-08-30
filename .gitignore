@@ -24,3 +24,6 @@ Corrected_Images
 
 # ignore Mac related files
 .DS_Store
+
+# ignore jupyter files
+.ipynb_checkpoints/
