@@ -28,5 +28,6 @@ dependencies:
 - conda-forge::wxpython=4.1.0
 - conda-forge::sentry-sdk=0.18.0
 - pip:
+    - cellprofiler==4.2.4
     - git+https://github.com/cytomining/CytoTable@e3773183b8fd930a6513c65dd3e45418e9a5e80d
     - git+https://github.com/cytomining/pycytominer@c4de0a9a4fecbf1ad11872bb14c18d24d1b1851e
