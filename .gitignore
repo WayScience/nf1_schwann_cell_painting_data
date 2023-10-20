@@ -1,22 +1,8 @@
-# ignore all plates as they are downloaded from figshare in instructions
-0.download_data/Plate_1
-0.download_data/Plate_2
-0.download_data/Plate_3
-0.download_data/Plate_3_prime
-0.download_data/Plate_4
-
 # ignore pycache
 __pycache__
 
-# ignore corrected plates if they are put into a separate folder
-Corrected_Images
-
-# ignore corrected plates images (like in download data)
-1.cellprofiler_ic/Corrected_Plate_1
-1.cellprofiler_ic/Corrected_Plate_2
-1.cellprofiler_ic/Corrected_Plate_3
-1.cellprofiler_ic/Corrected_Plate_3_prime
-1.cellprofiler_ic/Corrected_Plate_4
+# ignore VSCode files
+.vscode
 
 # ignore log files
 *logs
@@ -27,3 +13,21 @@ Corrected_Images
 
 # ignore jupyter files
 .ipynb_checkpoints/
+
+# ignore zip files (large)
+*.zip
+
+# ignore all plates as they are downloaded from figshare in instructions
+0.download_data/Plate_1
+0.download_data/Plate_2
+0.download_data/Plate_3
+0.download_data/Plate_3_prime
+0.download_data/Plate_4
+
+# ignore corrected plates images as they are generated in IC notebook
+Corrected_Images/
+Corrected_Plate_1
+Corrected_Plate_2
+Corrected_Plate_3
+Corrected_Plate_3_prime
+Corrected_Plate_4
