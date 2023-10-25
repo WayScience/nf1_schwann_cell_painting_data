@@ -8,7 +8,7 @@ lm_file <- file.path(lm_results_dir, "./linear_model_cp_features_plate1.tsv")
 
 # save path for figure
 lm_fig_dir <- file.path("./figures")
-lm_fig <- file.path("linear_model_cp_features_plate1.png")
+lm_fig <- file.path(lm_fig_dir, "linear_model_cp_features_plate1.png")
 
 # Load and process linear model data
 lm_df <- readr::read_tsv(
@@ -50,6 +50,7 @@ lm_df$channel_cleaned <-
         .missing = "other"
     )
 
+# Print to make sure that the above clean up worked
 print(dim(lm_df))
 head(lm_df, 10)
 
@@ -57,6 +58,9 @@ head(lm_df, 10)
 # Specify order so that the organelles match the correct color (red, green, blue)
 color_order <- c("actin", "ER", "nuclei", "other")
 
+# Plot the linear model coefficients for the WT genotype contribution
+# Positive coeff = more likely to be WT cell if feature increases
+# Negative coeff = more likely to be Null cell if feature increases
 lm_fig_gg <- (
     ggplot(lm_df, aes(x = cell_count_coef, y = WT_coef))
     +
@@ -77,11 +81,12 @@ lm_fig_gg <- (
         +
         xlab("Cell count contribution (LM beta coefficient)")
         +
-        ggtitle("Scatter plot of linear model coefficients per CellProfiler feature\nshows ER features are most differential between WT and Null") # nolint
+        ggtitle("Scatter plot of linear model coefficients per CellProfiler feature\n for Plate 1") # nolint
 )
 
 # Output figure
 ggsave(lm_fig, lm_fig_gg, dpi = 500, height = 6, width = 6)
 
+# Show figure
 lm_fig_gg
 
