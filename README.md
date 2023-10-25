@@ -1,5 +1,12 @@
 # NF1 Cell Painting Data 
 
+In this repository, we perform the image-based analysis and some analysis of the morphology data.
+
+We train a machine learning model to predict NF1 genotype within a separate repository called: [NF1_SchwannCell_data_analysis](https://github.com/WayScience/NF1_SchwannCell_data_analysis).
+Please visit the above repository for further information on the generation and validation of the logistic regression model.
+
+**Note:** All metadata files are located in the [download data module](./0.download_data/). All larger files, including `SQLite` outputs from CellProfiler and `parquet` processed data file from pycytominer, will need to be downloaded using git LFS after the repo is cloned.
+
 ## Data
 
 The data we use is a modified Cell Painting assay on [Schwann cells](https://www.ncbi.nlm.nih.gov/books/NBK544316/) from patients with [Neurofibromatosis type 1 (NF1)](https://medlineplus.gov/genetics/condition/neurofibromatosis-type-1/). 
@@ -54,7 +61,7 @@ As well, the plates have different culturing conditions, where plate 3 cells wer
 ![plate3_nf1_platemap.png](example_figures/plate3_nf1_platemap.png)
 
 **Plate 4**
-For plate 4, we will be looking at how using different siRNA constructs to downregulate neurofibromin production in NF1 WT cells impacts the morpholgy as dose increases. 
+For plate 4, we will be looking at how using different siRNA constructs to downregulate neurofibromin production in NF1 WT cells impacts the morphology as dose increases. 
 We will be able to compare this to controls (e.g., untreated WT and Null cells).
 
 The cells were cultured in 5% FBS.
