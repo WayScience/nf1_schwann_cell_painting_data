@@ -89,10 +89,11 @@ Once we discover a biomarker from these cells, we hope that our method can be us
 
 | Module | Purpose | Description |
 | :---- | :----- | :---------- |
-| [0.download_data](./0.download_data/) | Download NF1 data | Download images from each plate of the NF1 dataset for analysis from Figshare |
-| [1.cellprofiler_ic](./1.cellprofiler_ic/) | Apply CellProfiler illumination correction (IC)| Use a CellProfiler pipeline to calculate and apply IC the images and save them |
-| [2.cellprofiler_analysis](./2.cellprofiler_analysis/) | Perform CellProfiler analysis on corrected images | Use a CellProfiler pipeline to segment single cells and extract features into a SQLite file |
-| [3.processing_features](./3.processing_features/) | Convert extracted features from SQLite files to parquet files using CytoTable. Converted data are then annotated, normalized, and feature selected using pycytominer |
+| [0.download_data](./0.download_data/) | Download NF1 data | We download images from each plate of the NF1 dataset for analysis from Figshare |
+| [1.cellprofiler_ic](./1.cellprofiler_ic/) | Apply CellProfiler illumination correction (IC)| We use a CellProfiler pipeline to calculate and apply IC the images and save them |
+| [2.cellprofiler_analysis](./2.cellprofiler_analysis/) | Perform CellProfiler analysis on corrected images | We use a CellProfiler pipeline to segment single cells and extract features into a SQLite file |
+| [3.processing_features](./3.processing_features/) | Process CellProfiler SQLite files | We use CytoTable to convert extracted features from SQLite files to parquet files. We then use pycytominer to annotate, normalize, and feature select profiles |
+| [4.analyze_data](./4.analyze_data/) | Perform various analysis of morphology data | Using different statistical methods, like linear modeling, we analyze the data to assess the difference in morphology between genotypes |
 
 ## Main environment
 
