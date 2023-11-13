@@ -1,0 +1,20 @@
+name: python_analysis_nf1
+channels:
+  - conda-forge
+dependencies:
+  - conda-forge::python=3.9.12
+  - conda-forge::jupyter=1.0.0
+  - conda-forge::pip
+  - conda-forge::opencv
+  - conda-forge::tifffile
+  - conda-forge::jupyterlab
+  - conda-forge::pandas=1.4.4
+  - conda-forge::ipykernel
+  - conda-forge::scipy=1.10.0
+  - conda-forge::numpy=1.22
+  - conda-forge::scikit-learn
+  - conda-forge::seaborn
+  - conda-forge::umap-learn
+  - conda-forge::matplotlib
+  - pip:
+    - git+https://github.com/cytomining/pycytominer@afac3ea16818ad25f37318ecd5c5090c0eff5806
