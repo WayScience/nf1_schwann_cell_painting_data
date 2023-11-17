@@ -23,7 +23,7 @@ from pycytominer.cyto_utils import infer_cp_features
 
 
 # Set constants
-umap_random_seed = 1234
+umap_random_seed = 0
 umap_n_components = 2
 
 output_dir = pathlib.Path("results")
@@ -101,6 +101,9 @@ for plate in cp_dfs:
         embeddings
     ], axis=1)
     
+    # randomize the rows of the dataframe to plot the order of the data evenly
+    cp_umap_with_metadata_df = cp_umap_with_metadata_df.sample(frac=1, random_state=0)
+
     # Generate output file and save
     output_umap_file = pathlib.Path(output_dir, f"UMAP_{plate_name}.tsv")
     cp_umap_with_metadata_df.to_csv(output_umap_file, index=False, sep="\t")

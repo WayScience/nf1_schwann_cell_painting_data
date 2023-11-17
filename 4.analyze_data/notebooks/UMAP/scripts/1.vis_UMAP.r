@@ -1,5 +1,5 @@
-suppressPackageStartupMessages(library(ggplot2))
-suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(ggplot2)) #plotting
+suppressPackageStartupMessages(library(dplyr)) #work with data frames
 
 
 # Set directory and file structure
@@ -57,32 +57,33 @@ for (plate in names(output_umap_files)) {
 
 
 for (plate in names(umap_cp_df)) {
-    # Genotype UMAP
+    # Genotype UMAP file path
     output_file <- output_umap_files[[plate]]
     output_file <- paste0(output_file, "_genotype.png")
 
+    # UMAP labeled with genotype
     genotype_gg <- (
         ggplot(umap_cp_df[[plate]], aes(x = UMAP0, y = UMAP1))
         + geom_point(
-            aes(color = Metadata_genotype), size = 0.4, alpha = 0.7
+            aes(color = Metadata_genotype), size = 1.2, alpha = 0.6
         )
         + theme_bw()
         + scale_color_manual(
             name = "Genotype",
-            values = c("Null" = "#BA5A31", "WT" = "#69DC9E", "HET" = "#3c47dd")
+            values = c("Null" = "#BA5A31", "WT" = "#32be73", "HET" = "#3c47dd")
         )
     )
     
     ggsave(output_file, genotype_gg, dpi = 500, height = 6, width = 6)
 
-    # Cell Count UMAP
+    # UMAP labeled with cell count
     output_file <- output_umap_files[[plate]]
     output_file <- paste0(output_file, "_cell_count.png")
     
     umap_cell_count_gg <- (
         ggplot(umap_cp_df[[plate]], aes(x = UMAP0, y = UMAP1))
         + geom_point(
-            aes(color = Metadata_number_of_singlecells), size = 0.4, alpha = 0.7
+            aes(color = Metadata_number_of_singlecells), size = 1.2, alpha = 0.6
         )
         + theme_bw()
         + theme(
@@ -104,6 +105,11 @@ platemap_df <- read.csv("../../../0.download_data/metadata/platemap_NF1_plate4.c
 platemap_df <- platemap_df[, c("well_position", "siRNA", "Concentration")]
 colnames(platemap_df) <- c("Metadata_Well", "Metadata_siRNA", "Metadata_dose")
 
+# Set the 0 dose to NA to make grey in the plot
+platemap_df <- platemap_df %>%
+mutate(Metadata_dose = ifelse(Metadata_dose == 0, NA, Metadata_dose))
+
+# Select plate 4 file path from list of umap files
 plate_4_path <- umap_files[[5]]
 
 # Load in the umap data for plate 4 only
@@ -124,17 +130,19 @@ combined_df <- platemap_df %>% inner_join(df, by = "Metadata_Well")
 # siRNA construct UMAP
 output_file <- "./figures/UMAP_Plate_4_siRNA_construct.png"
 
+# UMAP faceted by siRNA treatment and labeled with dose
 umap_siRNA_construct_gg <- (
     ggplot(combined_df, aes(x = UMAP0, y = UMAP1))
     + geom_point(
-            aes(shape = Metadata_siRNA, color = Metadata_dose), size = 2, alpha = 0.5
+            aes(color = Metadata_dose), size = 2, alpha = 0.5
     )
-    + scale_shape_discrete(name = "siRNA Treatments")
     + theme_bw()
     + scale_color_gradient(
-            name = "Dose",
-            low = "#FFA500", high = "#004b00"
+            name = "Dose (nM)",
+            low = "#feaaa3", high = "#ee2711",
+            na.value = "#727272"  # Set color for "none" facet to grey
         )
+    + facet_wrap(~ Metadata_siRNA, drop = FALSE)
 )
 
 ggsave(output_file, umap_siRNA_construct_gg, dpi = 500, height = 6, width = 6)
