@@ -2,11 +2,11 @@
 
 In this module, we perform analysis on the data to uncover answers to our goals as specified in [the main README](../README.md).
 
-
 The analyses we perform are:
 
-1. Linear modeling per feature in each plate. The beta coefficients for WT treatment contribution and cell count contribution are plotted as a scatter plot.
-
+1. Linear modeling per feature in each plate where beta coefficients for WT treatment contribution and cell count contribution are plotted as a scatter plot.
+2. UMAPs of single-cell morphology space to assess if single-cell morphologies cluster when labeled with different metadata (e.g., genotype, cell count, siRNA treatment, etc.)
+   
 # R visualization environment
 
 To visualize results, we use R to create plots. 
