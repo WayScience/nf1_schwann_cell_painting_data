@@ -18,16 +18,10 @@ __pycache__
 *.zip
 
 # ignore all plates as they are downloaded from figshare in instructions
-0.download_data/Plate_1
-0.download_data/Plate_2
-0.download_data/Plate_3
-0.download_data/Plate_3_prime
-0.download_data/Plate_4
+0.download_data/Plate_*
 
 # ignore corrected plates images as they are generated in IC notebook
 Corrected_Images/
-Corrected_Plate_1
-Corrected_Plate_2
-Corrected_Plate_3
-Corrected_Plate_3_prime
-Corrected_Plate_4
+
+# ignore Cytotable runinfo logs
+runinfo

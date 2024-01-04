@@ -17,6 +17,7 @@ import pandas as pd
 # cytotable will merge objects from SQLite file into single cells and save as parquet file
 from cytotable import convert, presets
 
+# import utility to use function that will add single-cell count per well as a metadata column
 sys.path.append("../utils")
 import extraction_utils as sc_utils
 
@@ -28,6 +29,15 @@ import extraction_utils as sc_utils
 
 # type of file output from CytoTable (currently only parquet)
 dest_datatype = "parquet"
+
+# preset configurations based on typical CellProfiler outputs
+preset = "cellprofiler_sqlite_pycytominer"
+
+# update preset to include site metadata and cell counts
+joins = presets.config["cellprofiler_sqlite_pycytominer"]["CONFIG_JOINS"].replace(
+    "Image_Metadata_Well,",
+    "Image_Metadata_Well, Image_Metadata_Site,",
+)
 
 # set main output dir for all parquet files
 output_dir = pathlib.Path("./data/converted_data/")
@@ -46,50 +56,14 @@ for file_path in pathlib.Path("../0.download_data/").iterdir():
     if str(file_path.stem).startswith("Plate"):
         plate_names.append(str(file_path.stem))
         
-plate_names
-
-
-# In[3]:
-
-
-# preset configurations based on typical CellProfiler outputs
-preset = "cellprofiler_sqlite_pycytominer"
-# remove Image_Metadata_Plate from SELECT as this metadata was not extracted from file names
-# add Image_Metadata_Site as this is an important metadata when finding where single cells are located
-presets.config["cellprofiler_sqlite_pycytominer"][
-    "CONFIG_JOINS"
-    # create filtered list of image features to be extracted and used for merging tables
-    # with the list of image features, this will merge the objects together using the image number,
-    # and parent objects to create all single cells (all objects associated to one cell)
-] = """WITH Per_Image_Filtered AS (
-                SELECT
-                    Metadata_ImageNumber,
-                    Image_Metadata_Plate,
-                    Image_Metadata_Well,
-                    Image_Metadata_Site
-                FROM
-                    read_parquet('per_image.parquet')
-                )
-            SELECT
-                *
-            FROM
-                Per_Image_Filtered AS per_image
-            LEFT JOIN read_parquet('per_cytoplasm.parquet') AS per_cytoplasm ON
-                per_cytoplasm.Metadata_ImageNumber = per_image.Metadata_ImageNumber
-            LEFT JOIN read_parquet('per_cells.parquet') AS per_cells ON
-                per_cells.Metadata_ImageNumber = per_cytoplasm.Metadata_ImageNumber
-                AND per_cells.Metadata_Cells_Number_Object_Number = per_cytoplasm.Metadata_Cytoplasm_Parent_Cells
-            LEFT JOIN read_parquet('per_nuclei.parquet') AS per_nuclei ON
-                per_nuclei.Metadata_ImageNumber = per_cytoplasm.Metadata_ImageNumber
-                AND per_nuclei.Metadata_Nuclei_Number_Object_Number = per_cytoplasm.Metadata_Cytoplasm_Parent_Nuclei
-                """
+print(plate_names)
 
 
 # ## Create dictionary with info for each plate
 # 
 # **Note:** All paths must be string to use with CytoTable.
 
-# In[4]:
+# In[3]:
 
 
 # create plate info dictionary with all parts of the CellProfiler CLI command to run in parallel
@@ -100,7 +74,7 @@ plate_info_dictionary = {
         ).resolve(strict=True)),
         "dest_path": str(pathlib.Path(f"{output_dir}/{name}.parquet")),
     }
-    for name in plate_names
+    for name in plate_names if name=="Plate_5" # focus on plate 5
 }
 
 # view the dictionary to assess that all info is added correctly
@@ -109,7 +83,7 @@ pprint.pprint(plate_info_dictionary, indent=4)
 
 # ## Merge objects to single cells and convert SQLite to parquet file + add single cell metadata
 
-# In[5]:
+# In[4]:
 
 
 # run through each run with each set of paths based on dictionary
@@ -125,6 +99,7 @@ for plate, info in plate_info_dictionary.items():
         dest_path=dest_path,
         dest_datatype=dest_datatype,
         preset=preset,
+        joins=joins,
     )
     print(f"Merged and converted {pathlib.Path(dest_path).name}!")
 
@@ -138,10 +113,10 @@ for plate, info in plate_info_dictionary.items():
 
 # ### Check if converted data looks correct
 
-# In[6]:
+# In[5]:
 
 
-converted_df = pd.read_parquet(plate_info_dictionary["Plate_4"]["dest_path"])
+converted_df = pd.read_parquet(plate_info_dictionary["Plate_5"]["dest_path"])
 
 print(converted_df.shape)
 converted_df.head()
@@ -149,7 +124,7 @@ converted_df.head()
 
 # ## Write dictionary to yaml file for use in downstream steps
 
-# In[7]:
+# In[6]:
 
 
 dictionary_path = pathlib.Path("./plate_info_dictionary.yaml")
