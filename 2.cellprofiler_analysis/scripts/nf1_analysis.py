@@ -39,6 +39,8 @@ for file_path in pathlib.Path("../0.download_data/").iterdir():
     if str(file_path.stem).startswith("Plate"):
         plate_names.append(str(file_path.stem))
 
+print(plate_names)
+
 
 # ## Create dictionary with all info for each plate
 
@@ -53,7 +55,7 @@ plate_info_dictionary = {
         ).resolve(strict=True),
         "path_to_output": pathlib.Path(f"{output_dir}/{name}"),
     }
-    for name in plate_names
+    for name in plate_names if name=="Plate_5" # focus on plate 5
 }
 
 # iterate over the dictionary and add the path_to_pipeline specific for each plate

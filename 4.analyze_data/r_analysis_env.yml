@@ -23,3 +23,4 @@ dependencies:
   - conda-forge::r-patchwork
   - conda-forge::r-pwr
   - conda-forge::r-platetools
+  - conda-forge::r-arrow

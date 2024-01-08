@@ -42,6 +42,8 @@ for file_path in pathlib.Path("../0.download_data/").iterdir():
     if str(file_path.stem).startswith("Plate"):
         plate_names.append(str(file_path.stem))
 
+print(plate_names)
+
 
 # ## Create dictionary with all info for each plate
 
@@ -56,7 +58,7 @@ plate_info_dictionary = {
         ),
         "path_to_output": pathlib.Path(f"{output_dir}/Corrected_{name}"),
     }
-    for name in plate_names
+    for name in plate_names if name=="Plate_5" # focus on plate 5
 }
 
 # iterate over the dictionary and add the path_to_pipeline specific for each plate
@@ -77,7 +79,7 @@ pprint.pprint(plate_info_dictionary, indent=4)
 
 
 # ## Run illumination correction pipeline on each plate in parallel
-#
+# 
 # In this notebook, we do not run the cells to completion as we prefer to run the notebooks as nbconverted python files due to better stability.
 
 # In[4]:
@@ -86,3 +88,4 @@ pprint.pprint(plate_info_dictionary, indent=4)
 cp_parallel.run_cellprofiler_parallel(
     plate_info_dictionary=plate_info_dictionary, run_name=run_name
 )
+

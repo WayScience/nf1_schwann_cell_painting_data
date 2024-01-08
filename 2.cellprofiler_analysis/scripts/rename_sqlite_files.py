@@ -30,7 +30,7 @@ sqlite_dir = pathlib.Path("../2.cellprofiler_analysis/analysis_output/")
 # iterate through all folders in directory to get paths to each SQLite file
 for file_path in sqlite_dir.rglob('*.sqlite'):
     # if the SQLite files already start with `Plate`, then the file has already been renamed
-    if str(file_path).startswith("Plate"):
+    if str(file_path.stem).startswith("Plate"):
         print(f"{file_path.name} already has the `Plate` prefix, which means it was already corrected.")
         continue
     # create new file name where the folder name is included as the prefix

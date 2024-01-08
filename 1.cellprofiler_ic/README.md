@@ -31,13 +31,13 @@ To improve the speed for correcting the images, we have implemented `CellProfile
 
 ### Speed when running CellProfiler Parallel
 
-To run **five plates** through illumination correction, it took approximately **1 hour** in total on a computer using Pop_OS! 22.04 LTS with an AMD Ryzen 7 3700X 8-Core Processor.
+To run **five plates** through illumination correction (plates 1-4), it took approximately **1 hour** in total on a computer using Pop_OS! 22.04 LTS with an AMD Ryzen 7 3700X 8-Core Processor.
 
 This means that we are saving 2 hours (assuming the fifth plate running sequentially would take another hour totalling 3 hours) when running five plates.
 
 ### Speed when running CellProfiler sequentially
 
-In the past, we ran one command per plate in seqential order (e.g., one plate is ran and once it finishes the next plate starts).
+In the past, we ran one command per plate in sequential order (e.g., one plate is ran and once it finishes the next plate starts).
 
 For four plates, it took about 2 hours to calculate, apply, and save illumination corrected images on a computer using Pop_OS! 22.04 LTS with an AMD Ryzen 7 3700X 8-Core Processor.
 

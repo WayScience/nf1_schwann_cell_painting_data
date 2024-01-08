@@ -10,7 +10,6 @@ from __future__ import annotations
 from typing import Optional
 import pathlib
 import pandas as pd
-from sqlalchemy import create_engine
 import numpy as np
 
 

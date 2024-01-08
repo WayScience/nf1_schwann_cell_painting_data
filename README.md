@@ -35,14 +35,14 @@ Plates 1 and 2 measure Cell Painting in isogenic Schwann cells with two differen
 - Null (`Null -/-`): In column 7 from the plate (e.g C7, D7, etc.)
 There are only rows C-F in this plate.
 
-![plate1_nf1_platemap.png](example_figures/plate1_nf1_platemap.png)
+![plate1_platemap](./0.download_data/metadata/platemap_figures/plate1_platemap_figure.png)
 
 **Plate 2**
 - Wild type (`WT +/+`): Columns 1 and 6
 - Null (`Null -/-`): Columns 7 and 12
 This plate uses all rows (e.g., A-H)
 
-![plate2_nf1_platemap.png](example_figures/plate2_nf1_platemap.png)
+![plate2_platemap](./0.download_data/metadata/platemap_figures/plate2_platemap_figure.png)
 
 Plates 3 and 3' measure Cell Painting in isogenic Schwann cells with all three different NF1 genotypes:
 
@@ -58,7 +58,7 @@ As well, the plates have different culturing conditions, where plate 3 cells wer
   - 2000 -> Columns 3, 7, and 11
   - 4000 -> Columns 4, 8, and 12
 
-![plate3_nf1_platemap.png](example_figures/plate3_nf1_platemap.png)
+![plate3_platemap](./0.download_data/metadata/platemap_figures/plate3_platemap_figure.png)
 
 **Plate 4**
 For plate 4, we will be looking at how using different siRNA constructs to downregulate neurofibromin production in NF1 WT cells impacts the morphology as dose increases. 
@@ -66,14 +66,22 @@ We will be able to compare this to controls (e.g., untreated WT and Null cells).
 
 The cells were cultured in 5% FBS.
 
-![plate4_nf1_platemap_genotype.png](example_figures/plate4_nf1_platemap_genotype.png)
+![plate4_platemap_genotype](./0.download_data/metadata/platemap_figures/plate4_platemap_figure_genotype.png)
 
 There are 8 replicates of NF1 Null cells and the rest of the wells contain NF1 WT cells.
 
-![plate4_nf1_treat_dose.png](example_figures/plate4_nf1_platemap_treat_dose.png)
+![plate4_platemap_dose](./0.download_data/metadata/platemap_figures/plate4_platemap_figure_dose.png)
 
 There are three different siRNA constructs used in this plate, all with the same dose curve from 0.001 nM - 0.1 nM.
 Any well with a 0 nM concentration are not treated with a construct.
+
+**Plate 5**
+For plate 5, we are specifically comparing morphology between genotypes with the same seeding density (n=4000).
+We use all three genotypes (WT, HET, and Null).
+
+The cells were cultured in 5% FBS.
+
+![plate5_platemap](./0.download_data/metadata/platemap_figures/plate5_platemap_figure.png)
 
 ## Goal
 
