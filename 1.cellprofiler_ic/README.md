@@ -1,9 +1,28 @@
-# Perform illumination correction and save corrected images
+# Perform whole image quality control and illumination correction and save corrected images
 
-In this module, we perform illumination correction (IC) on images for each plate and save the corrected images into new folders. 
+In this module, we perform whole image quality control (QC) evalutation, illumination correction (IC) on images for each plate and save the corrected images into new folders. 
 Images are saved as 16-bit depth, which is the same as the raw data.
 
-## CellProfiler Pipeline
+## Whole image QC
+
+To remove poor quality images, we use the `MeasureImageQuality` module from CellProfiler to extract blur and saturation metrics and generate optimal thresholds for detection using the z-scoring method.
+
+Blur metrics will detect both out-of-focus and empty images.
+Saturation metrics will detect large artifacts or overly saturated/blown out channels.
+
+### Run the `image_quality_control` notebooks
+
+To process, evaluate, and generate a QC report for the NF1 data, you can run the below script to run the notebooks.
+
+```bash
+# Run this script in terminal
+# move to the 1.cellprofiler_ic directory to access the `sh` script
+cd 1.cellprofiler_ic
+# run the notebook as a python script
+source nf1_quality_control.sh
+```
+
+## Illumination Correction
 
 Due to there being differences in channel number between plates, we have two different illumination correction pipelines.
 
@@ -13,7 +32,7 @@ Due to there being differences in channel number between plates, we have two dif
 **Note:** The parameters for correction between pipelines in the same channel might be slightly different. 
 But, the parameters in both perform and output the best corrected images at this point
 
-## Run the `nf1_ic` notebook
+### Run the `nf1_ic` notebook
 
 To calculate and apply an IC function on each channel, run the [nf1_ic.ipynb](nf1_ic.ipynb) notebook as a python script using the code block below:
 
