@@ -13,6 +13,7 @@ dependencies:
 - conda-forge::numpy
 - conda-forge::pyyaml
 - conda-forge::matplotlib
+- conda-forge::seaborn
 - conda-forge::pandas
 # this package must be hardcoded to work with Mac 
 - conda-forge::mysqlclient=1.4.6
@@ -29,7 +30,7 @@ dependencies:
 - conda-forge::wxpython=4.1.0
 - conda-forge::sentry-sdk=0.18.0
 - pip:
-    # must have 4.2.4 or higher (4.2.4 was used in the analysis at this time)
-    - cellprofiler>=4.2.4
-    - Cytotable
+    # Install CellProfiler (do not install higher due to possible differences in output)
+    - cellprofiler==4.2.4
+    - CytoTable
     - pycytominer
