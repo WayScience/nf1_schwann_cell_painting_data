@@ -25,8 +25,8 @@ import cp_parallel
 # set the run type for the parallelization
 run_name = "illum_correction"
 
-# set path for pipeline for all plates for whole image analysis
-path_to_pipeline = pathlib.Path("./pipelines/nuclei_analysis.cppipe").resolve()
+# Directory with pipelines
+pipeline_dir = pathlib.Path("./pipelines/").resolve(strict=True)
 
 # set main output dir for all plates
 output_dir = pathlib.Path("./Corrected_Images")
@@ -65,12 +65,12 @@ plate_info_dictionary = {
 for name, info in plate_info_dictionary.items():
     # only plates 1 and 2 have 3 channels so these are the only plates that use this path
     if name == "Plate_1" or name == "Plate_2":
-        info["path_to_pipeline"] = pathlib.Path(f"./NF1_illum_3channel.cppipe").resolve(
+        info["path_to_pipeline"] = pathlib.Path(f"{pipeline_dir}/NF1_illum_3channel.cppipe").resolve(
             strict=True
         )
     # all other plates have 4 channels and will use that specific pipeline
     else:
-        info["path_to_pipeline"] = pathlib.Path(f"./NF1_illum_4channel.cppipe").resolve(
+        info["path_to_pipeline"] = pathlib.Path(f"{pipeline_dir}/NF1_illum_4channel.cppipe").resolve(
             strict=True
         )
 
@@ -82,7 +82,7 @@ pprint.pprint(plate_info_dictionary, indent=4)
 # 
 # In this notebook, we do not run the cells to completion as we prefer to run the notebooks as nbconverted python files due to better stability.
 
-# In[4]:
+# In[ ]:
 
 
 cp_parallel.run_cellprofiler_parallel(
