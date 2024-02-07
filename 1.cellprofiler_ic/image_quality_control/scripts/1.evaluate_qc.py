@@ -84,12 +84,12 @@ for channel in channels:
     for plate, qc_df in all_qc_data_frames.items():
         plate_df = qc_df.filter(like="Metadata_").copy()
 
-        # Add PowerLogLogSlope column
+        # Add PowerLogLogSlope column (blur metric)
         plate_df[f"ImageQuality_PowerLogLogSlope"] = qc_df[
             f"ImageQuality_PowerLogLogSlope_Orig{channel}"
         ]
 
-        # Add PercentMaximal column
+        # Add PercentMaximal column (saturation metric)
         plate_df[f"ImageQuality_PercentMaximal"] = qc_df[
             f"ImageQuality_PercentMaximal_Orig{channel}"
         ]
@@ -149,7 +149,7 @@ unique_combos = blur_outliers[["Metadata_Well", "Metadata_Site"]].drop_duplicate
 
 print(blur_outliers["Channel"].value_counts())
 # Print example outliers to visualize
-blur_outliers.sort_values(by="ImageQuality_PowerLogLogSlope").head()
+blur_outliers.sort_values(by="ImageQuality_PowerLogLogSlope")
 
 
 # ### Identify threshold values to use to find outliers above and below the mean
@@ -309,7 +309,7 @@ plt.show()
 # - Smudged images or images containing large artifacts (usually seen in `DNA` channel regardless of stain)
 # - Overly saturated channels which can occur in any channel, but specifically we are seeing `Mito` having the most problems with this.
 # 
-# This means that we will only be setting threshold for outliers for all channels just like for blur.
+# This means that we will be setting a threshold for outliers for all channels just like for blur. There will be only one threshold for images that are above the mean (**2 standard deviations**) since we are trying to remove over-saturated or images contain artifacts.
 
 # In[10]:
 

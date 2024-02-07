@@ -1,25 +1,9 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# # Whole Image Quality Control Report
-
-# ## Import libraries
-
-# In[1]:
-
-
 suppressPackageStartupMessages(library(dplyr))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(platetools))
 suppressPackageStartupMessages(library(stringr))
 suppressPackageStartupMessages(library(arrow))
 suppressPackageStartupMessages(library(RColorBrewer))
-
-
-# ## Set paths and variables
-
-# In[2]:
-
 
 # Paths to CSV files to generate QC report
 path_to_qc_results <- file.path("../Corrected_Images/Corrected_Plate_5/IC_QC_RunImage.csv")
@@ -33,23 +17,11 @@ platemap_output_file <- file.path(paste0("./qc_figures/Plate_5_platemap_flagged_
 # Output path for site bar plot
 site_FOV_output_file <- file.path(paste0("./qc_figures/Plate_5_per_site_flagged_fov.png"))
 
-
-# ## Load in outlier and quality control results
-
-# In[3]:
-
-
 # Read in CSV files
 qc_df <- read.csv(path_to_qc_results)
 
 dim(qc_df)
 head(qc_df)
-
-
-# ## Generate data frame removing poor quality sites and counting the number of sites left per well
-
-# In[4]:
-
 
 # Count the number of flagged image sets
 flagged_image_sets <- sum(qc_df$Image_Quality_Control_QC_Flag == 1)
@@ -62,11 +34,6 @@ well_flag_counts <- qc_df %>%
 print(flagged_image_sets)
 # Print the table
 head(well_flag_counts)
-
-
-# ## Generate bar chart to show how many FOVs were flagged after QC
-
-# In[5]:
 
 
 # Extract the first letter from 'Metadata_Well' to create a color palette
@@ -103,11 +70,6 @@ ggsave(
 
 # Display the plot in the notebook
 print(fov_chart)
-
-
-# ## Generate plate map to show distribution of flagged FOVs from QC
-
-# In[6]:
 
 
 # Add genotype to data frame to label on plot
@@ -153,12 +115,6 @@ fov_platemap <- platetools::raw_map(
 # Display the plot in the notebook
 print(fov_platemap)
 
-
-# ## Count of flagged FOVs based on site number
-
-# In[7]:
-
-
 # Replace 'path_to_qc_results' with your actual data frame name
 flagged_qc_df <- qc_df[qc_df$Image_Quality_Control_QC_Flag == 1, ]
 
@@ -167,7 +123,7 @@ dim(flagged_qc_df)
 # Example using viridis palette
 site_FOV_plot <- ggplot(flagged_qc_df, aes(x = factor(Metadata_Site))) +
   geom_bar(fill = "steelblue") +
-  labs(title = "Count Plot of Site Integers",
+  labs(title = "Count of Flagged FOVs per Site Integer in Plate 5",
        x = "Site",
        y = "Count")
 
@@ -180,11 +136,8 @@ ggsave(
         width = 10
     )
 
-
-# ## Determine how many misclassified cells match with flagged images from QC (from training ML without QC)
-
-# In[8]:
-
+# Display the plot in the notebook
+print(site_FOV_plot)
 
 # Load the parquet file into misclassed_df
 misclassed_df <- arrow::read_parquet("./misclassified_cells.parquet")
@@ -204,4 +157,3 @@ filtered_misclassed_df <- misclassed_df %>%
   anti_join(flagged_qc_df, by = c("Metadata_Well", "Metadata_Site"))
 
 dim(filtered_misclassed_df)
-
