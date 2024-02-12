@@ -47,7 +47,7 @@ print(plate_names)
 # In[3]:
 
 
-# create plate info dictionary with all parts of the CellProfiler CLI command to run in parallel
+# create plate info dictionary with specified plates for the CellProfiler CLI command
 plate_info_dictionary = {
     name: {
         "path_to_images": pathlib.Path(
@@ -55,7 +55,7 @@ plate_info_dictionary = {
         ).resolve(strict=True),
         "path_to_output": pathlib.Path(f"{output_dir}/{name}"),
     }
-    for name in plate_names if name=="Plate_5" # focus on plate 5
+    for name in plate_names if name in ["Plate_3", "Plate_3_prime", "Plate_4"]  # focus on Plate_3, Plate_3_prime, and Plate_4
 }
 
 # iterate over the dictionary and add the path_to_pipeline specific for each plate
