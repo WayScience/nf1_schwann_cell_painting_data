@@ -58,7 +58,7 @@ plate_info_dictionary = {
         ),
         "path_to_output": pathlib.Path(f"{output_dir}/Corrected_{name}"),
     }
-    for name in plate_names if name=="Plate_5" # focus on plate 5
+    for name in plate_names if name in ["Plate_3", "Plate_3_prime", "Plate_4"]  # focus on Plate_3, Plate_3_prime, and Plate_4
 }
 
 # iterate over the dictionary and add the path_to_pipeline specific for each plate
