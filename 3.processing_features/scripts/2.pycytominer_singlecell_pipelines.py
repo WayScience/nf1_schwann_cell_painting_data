@@ -35,6 +35,7 @@ feature_select_ops = [
     "variance_threshold",
     "correlation_threshold",
     "blocklist",
+    "drop_na_columns"
 ]
 
 # Columns to remove prior to single-cell aggregation via cameron's method
@@ -135,6 +136,7 @@ for plate, info in plate_info_dictionary.items():
     feature_select(
         output_normalized_file,
         operation=feature_select_ops,
+        na_cutoff=0,
         output_file=output_feature_select_file,
         output_type="parquet"
     )
