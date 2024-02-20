@@ -74,7 +74,7 @@ plate_info_dictionary = {
         ).resolve(strict=True)),
         "dest_path": str(pathlib.Path(f"{output_dir}/{name}.parquet")),
     }
-    for name in plate_names if name in ["Plate_3", "Plate_3_prime", "Plate_4"]  # focus on Plate_3, Plate_3_prime, and Plate_4
+    for name in plate_names if not name in ["Plate_1", "Plate_2"]  # focus on non-pilot plates
 }
 
 # view the dictionary to assess that all info is added correctly
@@ -111,9 +111,33 @@ for plate, info in plate_info_dictionary.items():
     print(f"Added single cell count as metadata to {pathlib.Path(dest_path).name}!")
 
 
-# ### Check if converted data looks correct
+# ## Update the files to remove NA rows added as artifacts of CytoTable
 
 # In[5]:
+
+
+for file_path in output_dir.iterdir():
+    if file_path.stem not in ["Plate_1", "Plate_2"]:
+        # Load the DataFrame from the Parquet file
+        df = pd.read_parquet(file_path)
+
+        # If any, drop rows where "Metadata_ImageNumber" is NaN (artifact of cytotable)
+        df = df.dropna(subset=["Metadata_ImageNumber"])
+
+        # Columns to move to the front
+        columns_to_move = ['Nuclei_Location_Center_X', 'Nuclei_Location_Center_Y', 'Cells_Location_Center_X', 'Cells_Location_Center_Y']
+
+        # Rearrange columns and add "Metadata" prefix in one line
+        df = (df[columns_to_move + [col for col in df.columns if col not in columns_to_move]]
+                    .rename(columns=lambda col: 'Metadata_' + col if col in columns_to_move else col))
+
+        # Save the processed DataFrame as Parquet in the same path
+        df.to_parquet(file_path, index=False)
+
+
+# ### Check if converted data looks correct
+
+# In[6]:
 
 
 converted_df = pd.read_parquet(plate_info_dictionary["Plate_4"]["dest_path"])
@@ -124,7 +148,7 @@ converted_df.head()
 
 # ## Write dictionary to yaml file for use in downstream steps
 
-# In[6]:
+# In[7]:
 
 
 dictionary_path = pathlib.Path("./plate_info_dictionary.yaml")
