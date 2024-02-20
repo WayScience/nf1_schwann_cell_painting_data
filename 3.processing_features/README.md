@@ -6,6 +6,8 @@ In this module, we extract single cell data from the CellProfiler .sqlite file o
 
 We use [CytoTable](https://github.com/cytomining/CytoTable/tree/main) to extract single cells and merge them from the SQLite outputs and convert into paraquet files.
 
+**NOTE:** There is currently a bug where extra rows of all `NaNs` are being added into the converted files. In the notebook, we rewrite the file to remove those artifacts. This issue is noted in the CytoTable repo here: https://github.com/cytomining/CytoTable/issues/86
+
 ## Pycytominer
 
 We use [Pycytominer](https://github.com/cytomining/pycytominer) to perform the annotation, normalization, and feature selection of the merged single cell data (parquet files from CytoTable).
