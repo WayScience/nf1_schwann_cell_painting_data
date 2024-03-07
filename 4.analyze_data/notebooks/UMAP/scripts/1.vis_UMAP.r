@@ -1,7 +1,6 @@
 suppressPackageStartupMessages(library(ggplot2)) #plotting
 suppressPackageStartupMessages(library(dplyr)) #work with data frames
 
-
 # Set directory and file structure
 umap_dir <- file.path("results")
 umap_files <- list.files(umap_dir, full.names = TRUE)

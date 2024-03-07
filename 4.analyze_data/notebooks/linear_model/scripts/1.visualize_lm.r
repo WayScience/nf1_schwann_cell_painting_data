@@ -4,11 +4,11 @@ suppressPackageStartupMessages(library(dplyr))
 
 # path to tsv with LM coefficients
 lm_results_dir <- file.path("./results")
-lm_file <- file.path(lm_results_dir, "./linear_model_cp_features_plate1.tsv")
+lm_file <- file.path(lm_results_dir, "./linear_model_cp_features_plate5_WT_HET.tsv")
 
 # save path for figure
 lm_fig_dir <- file.path("./figures")
-lm_fig <- file.path(lm_fig_dir, "linear_model_cp_features_plate1.png")
+lm_fig <- file.path(lm_fig_dir, "linear_model_cp_features_plate5_WT_HET.png")
 
 # Load and process linear model data
 lm_df <- readr::read_tsv(
@@ -23,7 +23,7 @@ head(lm_df)
 # Arrange by absolute value coefficient
 # Split out components of feature name for visualization
 lm_df <- lm_df %>%
-    dplyr::arrange(desc(abs(Null_coef))) %>%
+    dplyr::arrange(desc(abs(WT_coef))) %>%
     tidyr::separate(
         feature,
         into = c(
@@ -46,6 +46,7 @@ lm_df$channel_cleaned <-
         "DAPI" = "nuclei",
         "GFP" = "ER",
         "RFP" = "actin",
+        "CY5" = 'mito',
         .default = "other",
         .missing = "other"
     )
@@ -56,13 +57,13 @@ head(lm_df, 10)
 
 
 # Specify order so that the organelles match the correct color (red, green, blue)
-color_order <- c("actin", "ER", "nuclei", "other")
+color_order <- c("actin", "ER", "nuclei", "mito", "other")
 
 # Plot the linear model coefficients for the WT genotype contribution
 # Positive coeff = more likely to be WT cell if feature increases
 # Negative coeff = more likely to be Null cell if feature increases
 lm_fig_gg <- (
-    ggplot(lm_df, aes(x = cell_count_coef, y = WT_coef))
+    ggplot(lm_df, aes(x = cell_count_coef, y = HET_coef))
     +
         geom_point(aes(size = r2_score, color = factor(channel_cleaned, levels = color_order)), alpha = 0.7)
         +
@@ -81,7 +82,7 @@ lm_fig_gg <- (
         +
         xlab("Cell count contribution (LM beta coefficient)")
         +
-        ggtitle("Scatter plot of linear model coefficients per CellProfiler feature\n for Plate 1") # nolint
+        ggtitle("Scatter plot of linear model coefficients per CellProfiler feature\n for Plate 5 comparing WT to HET genotype") # nolint
 )
 
 # Output figure

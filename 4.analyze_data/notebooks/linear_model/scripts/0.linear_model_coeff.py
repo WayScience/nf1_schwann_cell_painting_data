@@ -15,6 +15,7 @@ import pandas as pd
 
 from sklearn.linear_model import LinearRegression
 
+from pycytominer import feature_select
 from pycytominer.cyto_utils import infer_cp_features
 
 
@@ -25,12 +26,12 @@ from pycytominer.cyto_utils import infer_cp_features
 
 
 # Define inputs and outputs
-data_dir = pathlib.Path("../3.processing_features/data/single_cell_profiles/")
-cp_file = pathlib.Path(data_dir, "Plate_4_sc_normalized.parquet")
+data_dir = pathlib.Path("../../../3.processing_features/data/single_cell_profiles/")
+cp_file = pathlib.Path(data_dir, "Plate_5_sc_normalized.parquet")
 
 output_dir = pathlib.Path("./results")
 output_dir.mkdir(exist_ok=True)
-output_cp_file = pathlib.Path(output_dir, "linear_model_cp_features_plate4.tsv")
+output_cp_file = pathlib.Path(output_dir, "linear_model_cp_features_plate5_WT_HET.tsv")
 
 
 # ## Read in normalized data
@@ -42,8 +43,16 @@ output_cp_file = pathlib.Path(output_dir, "linear_model_cp_features_plate4.tsv")
 # Load data
 cp_df = pd.read_parquet(cp_file)
 
-# Remove rows where Metadata_genotype is "HET" to avoid using in the LM
-cp_df = cp_df[cp_df["Metadata_genotype"] != "HET"]
+# Remove rows where Metadata_genotype is a certain genotype to avoid using in the LM
+cp_df = cp_df[cp_df["Metadata_genotype"] != "Null"]
+
+# Make sure there are no NaNs
+cp_df = feature_select(
+        cp_df,
+        operation="drop_na_columns",
+        na_cutoff=0
+    )
+    
 
 # Define CellProfiler features
 cp_features = infer_cp_features(cp_df)
@@ -63,7 +72,7 @@ cp_df.head()
 variables = ["Metadata_number_of_singlecells"]
 X = cp_df.loc[:, variables]
 
-# Add dummy matrix of categorical genotypes, excluding "HET"
+# Add dummy matrix of categorical genotypes
 genotype_x = pd.get_dummies(data=cp_df.Metadata_genotype)
 
 X = pd.concat([X, genotype_x], axis=1)
@@ -101,7 +110,7 @@ for cp_feature in cp_features:
 # Convert results to a pandas DataFrame
 lm_results = pd.DataFrame(
     lm_results,
-    columns=["feature", "r2_score", "cell_count_coef", "Null_coef", "WT_coef"],
+    columns=["feature", "r2_score", "cell_count_coef", "HET_coef", "WT_coef"],
 )
 
 # Output file
@@ -118,11 +127,5 @@ lm_results.head()
 
 
 # Small exploration visualization
-lm_results.plot(x="cell_count_coef", y="WT_coef", kind="scatter")
-
-
-# In[ ]:
-
-
-
+lm_results.plot(x="cell_count_coef", y="HET_coef", kind="scatter")
 

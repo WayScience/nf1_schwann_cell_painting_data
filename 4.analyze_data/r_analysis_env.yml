@@ -5,10 +5,11 @@ dependencies:
   - conda-forge::jupyter
   - conda-forge::jupyterlab
   - conda-forge::ipykernel
-  - conda-forge::python<=3.11
+  - conda-forge::python
   - conda-forge::r-irkernel
   - conda-forge::nb_conda_kernels
   - conda-forge::widgetsnbextension
+  - conda-forge::jupyter_contrib_nbextensions
   - conda-forge::r-base=4.2.2
   - conda-forge::r-dplyr=1.0.10
   - conda-forge::r-tidyr
@@ -21,6 +22,6 @@ dependencies:
   - conda-forge::r-reshape2
   - conda-forge::r-cowplot
   - conda-forge::r-patchwork
-  - conda-forge::r-pwr
+  - conda-forge::r-magick
   - conda-forge::r-platetools
   - conda-forge::r-arrow
