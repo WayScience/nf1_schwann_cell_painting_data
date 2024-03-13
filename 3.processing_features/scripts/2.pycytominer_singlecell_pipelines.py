@@ -124,19 +124,23 @@ for plate, info in plate_info_dictionary.items():
         output_type="parquet",
     )
 
-    # Step 2: Normalization
-    norm_args = {
-        "profiles": output_annotated_file,
-        "method": "standardize",
-        "output_file": output_normalized_file,
-        "output_type": "parquet"
-    }
+    # set default for samples to use in normalization
+    samples = "all"
 
-    # Estimate standard scalar parameters from cell not treated with siRNA constructs
+    # Only for Plate 4, we want to normalize to no siRNA treatment (controls)
     if plate == "Plate_4":
-        norm_args["samples"] = "Metadata_Concentration == 0.0"
+        samples = "Metadata_Concentration == 0.0"
 
-    normalized_df = normalize(**norm_args)
+    print(f"Performing normalization for {plate} using samples parameter: {samples}")
+
+    # Step 2: Normalization
+    normalized_df = normalize(
+        profiles=output_annotated_file,
+        method="standardize",
+        output_file=output_normalized_file,
+        output_type="parquet",
+        samples=samples,
+    )
 
     # Step 3: Feature selection
     feature_select(
