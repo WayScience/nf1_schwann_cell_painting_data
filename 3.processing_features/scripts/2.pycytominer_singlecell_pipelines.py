@@ -55,10 +55,10 @@ with open(dictionary_path) as file:
 # In[3]:
 
 
-# add path to platemaps for each plate 
+# add path to platemaps for each plate
 for plate in plate_info_dictionary.keys():
     # since Plate_3_prime has the same platemap as Plate_3,
-    # we need an else statement so that we make sure it adds the 
+    # we need an else statement so that we make sure it adds the
     # path that was given to Plate_3
     if plate != "Plate_3_prime":
         # match the naming format of the plates to the platemap file
@@ -92,10 +92,10 @@ for plate, info in plate_info_dictionary.items():
 
     # Load single-cell profiles
     single_cell_df = pd.read_parquet(info["dest_path"])
-    
+
     # Load platemap
     platemap_df = pd.read_csv(info["platemap_path"])
-    
+
     # Step 1: Annotation
     # add metadata from platemap file to extracted single cell features
     annotated_df = annotate(
@@ -110,7 +110,7 @@ for plate, info in plate_info_dictionary.items():
     # move metadata well, single cell count, and site to the front of the df (for easy visualization in python)
     well_column = annotated_df.pop("Metadata_Well")
     singlecell_column = annotated_df.pop("Metadata_number_of_singlecells")
-    site_column = annotated_df.pop("Metadata_Site")    
+    site_column = annotated_df.pop("Metadata_Site")
 
     # insert the columns in specific parts of the dataframe
     annotated_df.insert(2, "Metadata_Well", well_column)
@@ -123,15 +123,21 @@ for plate, info in plate_info_dictionary.items():
         output_filename=output_annotated_file,
         output_type="parquet",
     )
-    
+
     # Step 2: Normalization
-    normalized_df = normalize(
-        profiles=output_annotated_file,
-        method="standardize",
-        output_file=output_normalized_file,
-        output_type="parquet",
-    )
-    
+    norm_args = {
+        "profiles": output_annotated_file,
+        "method": "standardize",
+        "output_file": output_normalized_file,
+        "output_type": "parquet"
+    }
+
+    # Estimate standard scalar parameters from cell not treated with siRNA constructs
+    if plate == "Plate_4":
+        norm_args["samples"] = "Metadata_Concentration == 0.0"
+
+    normalized_df = normalize(**norm_args)
+
     # Step 3: Feature selection
     feature_select(
         output_normalized_file,
@@ -146,7 +152,7 @@ for plate, info in plate_info_dictionary.items():
     # Specify metadata columns in aggregation step to ensure they are retained for downstream analysis
     metadata_cols = infer_cp_features(feature_select_df, metadata=True)
     metadata_cols = [x for x in metadata_cols if all(col not in x for col in cameron_unwanted_aggregate_cols)]
-    
+
     aggregate_df = aggregate(
         population_df=feature_select_df,
         operation="median",
