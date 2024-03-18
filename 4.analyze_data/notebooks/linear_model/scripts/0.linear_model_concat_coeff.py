@@ -3,24 +3,11 @@
 
 # # Perform linear model per CellProfiler feature on concatenated normalized data from plates 5, 3 prime, and 3
 # 
-# We will include 4 co-variates:
+# We will include 3 co-variates:
 # 
 # 1. Cell count per well contribution
-# 2. Plate contribution -> need variability across plates for cell count per well 
-# 3. Genotype contribution (WT versus Null) -> could be imbalance 
-# 4. Interaction term between genotype and cell count -> remove first, Natalie think this might be too correlated
-# 
-# Assumes Gaussian for LM -> need to check for that LM
-# 
-# If co-variates are too highly correlated, then coefficients will "explode"
-# 
-# Can Python show if there was convergence or not
-# 
-# QC plot -> density and qq (do for one first for qq), and scatterplot with each of the covariantes 
-# 
-# Might need multiple test correction which uses p-value -> Bonferonni and Benjamini - Hockberg
-# 
-# Under null hypothesis the p-values are evenly distributed but if there is a significant value of p-value that is low than reject null
+# 2. Plate contribution
+# 3. Genotype contribution (WT versus Null)
 
 # In[1]:
 
