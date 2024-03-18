@@ -3,7 +3,7 @@ suppressPackageStartupMessages(library(dplyr)) #work with data frames
 
 # Set directory and file structure
 umap_dir <- file.path("results")
-umap_files <- list.files(umap_dir, full.names = TRUE)
+umap_files <- list.files(umap_dir, pattern = "\\.tsv$", full.names = TRUE)
 print(umap_files)
 
 output_fig_dir <- file.path("figures")
@@ -43,6 +43,7 @@ for (plate in names(output_umap_files)) {
         umap_file,
         col_types = readr::cols(
             .default = "d",
+            "Metadata_Plate" = "c",
             "Metadata_Well" = "c",
             "Metadata_Site" = "c",
             "Metadata_number_of_singlecells" = "d",
@@ -109,13 +110,14 @@ platemap_df <- platemap_df %>%
 mutate(Metadata_dose = ifelse(Metadata_dose == 0, NA, Metadata_dose))
 
 # Select plate 4 file path from list of umap files
-plate_4_path <- umap_files[[5]]
+plate_4_path <- umap_files[[6]]
 
 # Load in the umap data for plate 4 only
 df <- readr::read_tsv(
     plate_4_path,
     col_types = readr::cols(
         .default = "d",
+        "Metadata_Plate" = "c",
         "Metadata_Well" = "c",
         "Metadata_Site" = "c",
         "Metadata_number_of_singlecells" = "c",
@@ -139,11 +141,46 @@ umap_siRNA_construct_gg <- (
     + scale_color_gradient(
             name = "Dose (nM)",
             low = "#feaaa3", high = "#ee2711",
-            na.value = "#727272"  # Set color for "none" facet to grey
+            na.value = "#727272"
         )
     + facet_wrap(~ Metadata_siRNA, drop = FALSE)
 )
 
 ggsave(output_file, umap_siRNA_construct_gg, dpi = 500, height = 6, width = 6)
 
+
+
+# Select concat plate file path from list of umap files
+concat_plate_path <- umap_files[[1]]
+
+# Load in the umap data for plate 4 only
+df <- readr::read_tsv(
+    concat_plate_path,
+    col_types = readr::cols(
+        .default = "d",
+        "Metadata_Plate" = "c",
+        "Metadata_Well" = "c",
+        "Metadata_Site" = "c",
+        "Metadata_number_of_singlecells" = "c",
+        "Metadata_genotype" = "c"
+    )
+)
+
+# Plate UMAP
+output_file <- "./figures/UMAP_Concat_plate.png"
+
+# UMAP labeled with plate
+umap_plate_gg <- (
+    ggplot(df, aes(x = UMAP0, y = UMAP1))
+    + geom_point(
+            aes(color = Metadata_Plate), size = 1.2, alpha = 0.5
+    )
+    + theme_bw()
+    + scale_color_manual(
+        name = "Plate",
+        values = c("Plate_3" = "#7570b3", "Plate_3_prime" = "#e7298a", "Plate_5" = "#d95f02")
+    )
+)
+
+ggsave(output_file, umap_plate_gg, dpi = 500, height = 6, width = 6)
 
