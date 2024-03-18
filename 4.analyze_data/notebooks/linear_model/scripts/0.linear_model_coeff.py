@@ -11,12 +11,11 @@
 
 
 import pathlib
+
 import pandas as pd
-
-from sklearn.linear_model import LinearRegression
-
 from pycytominer import feature_select
 from pycytominer.cyto_utils import infer_cp_features
+from sklearn.linear_model import LinearRegression
 
 
 # ## Set up paths and variables
@@ -62,7 +61,7 @@ print(cp_df.shape)
 cp_df.head()
 
 
-# ## Set up the dummy matrix between null and WT cell types
+# ## Set up the dummy matrix between Null and WT cell types
 # 
 
 # In[4]:
