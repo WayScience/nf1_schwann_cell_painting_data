@@ -24,7 +24,7 @@ from sklearn.linear_model import LinearRegression
 
 
 # Define inputs and outputs
-data_dir = pathlib.Path("../../../../nf1_cellpainting_data/3.processing_features/data/single_cell_profiles/")
+data_dir = pathlib.Path("../../../3.processing_features/data/single_cell_profiles/")
 cp_files = [
     pathlib.Path(data_dir, f"Plate_{plate}_sc_normalized.parquet")
     for plate in ["5", "3", "3_prime"]
@@ -40,24 +40,18 @@ output_cp_file = pathlib.Path(
 )
 
 # Filter and load the specified files
-metadata_mapping = {"Plate_3_prime": "Plate_3_prime"}
-
-# Filter and load the specified files
 df_list = []
 
 for plate in cp_files:
     cp_file = pathlib.Path(plate)
 
     if cp_file.exists():
-        # Load data
-        df = pd.read_parquet(cp_file)
+        # Load the parquet file into a DataFrame without HET rows
+        df = pd.read_parquet(cp_file, filters=[('Metadata_genotype', '!=', 'HET')])
 
-        # Update Metadata_Plate only for Plate_3_prime
+        # Update Metadata_Plate only for Plate_3_prime since during CellProfiler analysis, the metadata only caught Plate_3
         if plate.stem.replace("_sc_normalized", "") == "Plate_3_prime":
             df["Metadata_Plate"] = "Plate_3_prime"
-
-        # Remove rows with 'HET' in 'Metadata_genotype'
-        df = df[df["Metadata_genotype"] != "HET"]
 
         df_list.append(df)
 
@@ -75,7 +69,7 @@ print(concat_df.shape)
 concat_df.head()
 
 
-# ## Set up dummy framework for WT versus Null and plate to plate comparison
+# ## Set up binary framework for WT versus Null and plate to plate comparison
 
 # In[3]:
 
@@ -84,10 +78,10 @@ concat_df.head()
 variables = ["Metadata_number_of_singlecells"]
 X = concat_df.loc[:, variables]
 
-# Add dummy matrix of categorical genotypes
+# Add binary matrix of categorical genotypes
 genotype_x = pd.get_dummies(data=concat_df.Metadata_genotype)
 
-# Add dummy matrix of categorical plates
+# Add binary matrix of categorical plates
 plate_x = pd.get_dummies(data=concat_df.Metadata_Plate)
 
 X = pd.concat([X, genotype_x, plate_x], axis=1)
@@ -96,7 +90,7 @@ print(X.shape)
 X.head()
 
 
-# In[5]:
+# In[4]:
 
 
 # Fit linear model for each feature
@@ -118,6 +112,10 @@ for cp_feature in cp_features:
 
     # Add results to a growing list
     lm_results.append([cp_feature, r2_score] + list(coef))
+
+
+# In[5]:
+
 
 # Convert results to a pandas DataFrame
 lm_results = pd.DataFrame(
