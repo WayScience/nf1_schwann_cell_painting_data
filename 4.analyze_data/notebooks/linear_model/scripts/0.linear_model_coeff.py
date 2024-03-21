@@ -11,12 +11,11 @@
 
 
 import pathlib
+
 import pandas as pd
-
-from sklearn.linear_model import LinearRegression
-
 from pycytominer import feature_select
 from pycytominer.cyto_utils import infer_cp_features
+from sklearn.linear_model import LinearRegression
 
 
 # ## Set up paths and variables
@@ -62,7 +61,7 @@ print(cp_df.shape)
 cp_df.head()
 
 
-# ## Set up the dummy matrix between null and WT cell types
+# ## Set up the binary matrix between Null and WT cell types
 # 
 
 # In[4]:
@@ -72,7 +71,7 @@ cp_df.head()
 variables = ["Metadata_number_of_singlecells"]
 X = cp_df.loc[:, variables]
 
-# Add dummy matrix of categorical genotypes
+# Add binary matrix of categorical genotypes
 genotype_x = pd.get_dummies(data=cp_df.Metadata_genotype)
 
 X = pd.concat([X, genotype_x], axis=1)
