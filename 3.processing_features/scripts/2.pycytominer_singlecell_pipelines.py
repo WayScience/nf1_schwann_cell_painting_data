@@ -35,7 +35,7 @@ feature_select_ops = [
     "variance_threshold",
     "correlation_threshold",
     "blocklist",
-    "drop_na_columns"
+    "drop_na_columns",
 ]
 
 # Columns to remove prior to single-cell aggregation via cameron's method
@@ -65,14 +65,16 @@ for plate in plate_info_dictionary.keys():
         plate_info_dictionary[plate]["platemap_path"] = str(
             pathlib.Path(
                 list(
-                    metadata_dir.rglob(f"platemap_NF1_{plate.replace('_', '').lower()}.csv")
+                    metadata_dir.rglob(
+                        f"platemap_NF1_{plate.replace('_', '').lower()}.csv"
+                    )
                 )[0]
             ).resolve(strict=True)
         )
     else:
-        plate_info_dictionary["Plate_3_prime"]["platemap_path"] = (
-            plate_info_dictionary["Plate_3"]["platemap_path"]
-        )
+        plate_info_dictionary["Plate_3_prime"]["platemap_path"] = plate_info_dictionary[
+            "Plate_3"
+        ]["platemap_path"]
 
 # view the dictionary to assess that all info is added correctly
 pprint.pprint(plate_info_dictionary, indent=4)
@@ -85,19 +87,27 @@ pprint.pprint(plate_info_dictionary, indent=4)
 
 for plate, info in plate_info_dictionary.items():
     print(f"Now performing single-cell pycytominer pipeline for {plate}")
-    output_annotated_file = str(pathlib.Path(f"{output_dir}/{plate}_sc_annotated.parquet"))
-    output_normalized_file = str(pathlib.Path(f"{output_dir}/{plate}_sc_normalized.parquet"))
-    output_feature_select_file = str(pathlib.Path(f"{output_dir}/{plate}_sc_feature_selected.parquet"))
-    output_aggregated_file = str(pathlib.Path(f"{output_dir}/{plate}_bulk_camerons_method.parquet"))
+    output_annotated_file = str(
+        pathlib.Path(f"{output_dir}/{plate}_sc_annotated.parquet")
+    )
+    output_normalized_file = str(
+        pathlib.Path(f"{output_dir}/{plate}_sc_normalized.parquet")
+    )
+    output_feature_select_file = str(
+        pathlib.Path(f"{output_dir}/{plate}_sc_feature_selected.parquet")
+    )
+    output_aggregated_file = str(
+        pathlib.Path(f"{output_dir}/{plate}_bulk_camerons_method.parquet")
+    )
 
     # Load single-cell profiles
     single_cell_df = pd.read_parquet(info["dest_path"])
 
-    # Load platemap
+    # Load plate map
     platemap_df = pd.read_csv(info["platemap_path"])
 
     # Step 1: Annotation
-    # add metadata from platemap file to extracted single cell features
+    # add metadata from plate map file to extracted single cell features
     annotated_df = annotate(
         profiles=single_cell_df,
         platemap=platemap_df,
@@ -112,12 +122,18 @@ for plate, info in plate_info_dictionary.items():
     singlecell_column = annotated_df.pop("Metadata_number_of_singlecells")
     site_column = annotated_df.pop("Metadata_Site")
 
-    # insert the columns in specific parts of the dataframe
+    # insert the columns in specific parts of the data frame
     annotated_df.insert(2, "Metadata_Well", well_column)
     annotated_df.insert(3, "Metadata_Site", site_column)
     annotated_df.insert(4, "Metadata_number_of_singlecells", singlecell_column)
 
-    # save annotated df as parquet file
+    # for only plates 3 and 3 prime, remove any rows with HET due to contamination
+    if plate in ["Plate_3", "Plate_3_prime"]:
+        # Filter single-cell profiles, removing HET genotype
+        annotated_df = annotated_df[annotated_df["Metadata_genotype"] != "HET"]
+        print("HET cells have been removed from", plate)
+
+    # use output to save annotated df as you can not use the output parameter in the annotate which will not return data frame
     output(
         df=annotated_df,
         output_filename=output_annotated_file,
@@ -148,21 +164,25 @@ for plate, info in plate_info_dictionary.items():
         operation=feature_select_ops,
         na_cutoff=0,
         output_file=output_feature_select_file,
-        output_type="parquet"
+        output_type="parquet",
     )
 
     # Step 4: Cameron's method of aggregation
     feature_select_df = load_profiles(output_feature_select_file)
     # Specify metadata columns in aggregation step to ensure they are retained for downstream analysis
     metadata_cols = infer_cp_features(feature_select_df, metadata=True)
-    metadata_cols = [x for x in metadata_cols if all(col not in x for col in cameron_unwanted_aggregate_cols)]
+    metadata_cols = [
+        x
+        for x in metadata_cols
+        if all(col not in x for col in cameron_unwanted_aggregate_cols)
+    ]
 
     aggregate_df = aggregate(
         population_df=feature_select_df,
         operation="median",
         strata=metadata_cols,
         output_file=output_aggregated_file,
-        output_type="parquet"
+        output_type="parquet",
     )
 
     print(aggregate_df.shape)
