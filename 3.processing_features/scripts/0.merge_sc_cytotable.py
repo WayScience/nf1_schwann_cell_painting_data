@@ -27,6 +27,9 @@ import extraction_utils as sc_utils
 # In[2]:
 
 
+# Set pilot plates as list to avoid running
+pilot_plates = ["Plate_1", "Plate_2"]
+
 # type of file output from CytoTable (currently only parquet)
 dest_datatype = "parquet"
 
@@ -74,7 +77,7 @@ plate_info_dictionary = {
         ).resolve(strict=True)),
         "dest_path": str(pathlib.Path(f"{output_dir}/{name}.parquet")),
     }
-    for name in plate_names if not name in ["Plate_1", "Plate_2"]  # focus on non-pilot plates
+    for name in plate_names if not name in pilot_plates  # focus on non-pilot plates
 }
 
 # view the dictionary to assess that all info is added correctly
@@ -117,7 +120,7 @@ for plate, info in plate_info_dictionary.items():
 
 
 for file_path in output_dir.iterdir():
-    if file_path.stem not in ["Plate_1", "Plate_2"]:
+    if file_path.stem not in pilot_plates:
         # Load the DataFrame from the Parquet file
         df = pd.read_parquet(file_path)
 

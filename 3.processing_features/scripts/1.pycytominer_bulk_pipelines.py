@@ -20,7 +20,7 @@ import pprint
 import pandas as pd
 
 from pycytominer import aggregate, annotate, normalize, feature_select
-from pycytominer.cyto_utils import load_profiles
+from pycytominer.cyto_utils import load_profiles, output
 
 
 # In[2]:
@@ -31,7 +31,7 @@ feature_select_ops = [
     "variance_threshold",
     "correlation_threshold",
     "blocklist",
-    "drop_na_columns"
+    "drop_na_columns",
 ]
 
 # Set paths
@@ -48,24 +48,26 @@ with open(dictionary_path) as file:
 # In[3]:
 
 
-# add path to platemaps for each plate 
+# add path to platemaps for each plate
 for plate in plate_info_dictionary.keys():
     # since Plate_3_prime has the same platemap as Plate_3,
-    # we need an else statement so that we make sure it adds the 
+    # we need an else statement so that we make sure it adds the
     # path that was given to Plate_3
     if plate != "Plate_3_prime":
         # match the naming format of the plates to the platemap file
         plate_info_dictionary[plate]["platemap_path"] = str(
             pathlib.Path(
                 list(
-                    metadata_dir.rglob(f"platemap_NF1_{plate.replace('_', '').lower()}.csv")
+                    metadata_dir.rglob(
+                        f"platemap_NF1_{plate.replace('_', '').lower()}.csv"
+                    )
                 )[0]
             ).resolve(strict=True)
         )
     else:
-        plate_info_dictionary["Plate_3_prime"]["platemap_path"] = (
-            plate_info_dictionary["Plate_3"]["platemap_path"]
-        )
+        plate_info_dictionary["Plate_3_prime"]["platemap_path"] = plate_info_dictionary[
+            "Plate_3"
+        ]["platemap_path"]
 
 # view the dictionary to assess that all info is added correctly
 pprint.pprint(plate_info_dictionary, indent=4)
@@ -79,13 +81,19 @@ pprint.pprint(plate_info_dictionary, indent=4)
 for plate, info in plate_info_dictionary.items():
     print(f"Now performing pycytominer pipeline for {plate}")
     output_aggregated_file = str(pathlib.Path(f"{output_dir}/{plate}_bulk.parquet"))
-    output_annotated_file = str(pathlib.Path(f"{output_dir}/{plate}_bulk_annotated.parquet"))
-    output_normalized_file = str(pathlib.Path(f"{output_dir}/{plate}_bulk_normalized.parquet"))
-    output_feature_select_file = str(pathlib.Path(f"{output_dir}/{plate}_bulk_feature_selected.parquet"))
-    
+    output_annotated_file = str(
+        pathlib.Path(f"{output_dir}/{plate}_bulk_annotated.parquet")
+    )
+    output_normalized_file = str(
+        pathlib.Path(f"{output_dir}/{plate}_bulk_normalized.parquet")
+    )
+    output_feature_select_file = str(
+        pathlib.Path(f"{output_dir}/{plate}_bulk_feature_selected.parquet")
+    )
+
     # Load single-cell profiles
     single_cell_df = pd.read_parquet(info["dest_path"])
-    
+
     # Load platemap
     platemap_df = pd.read_csv(info["platemap_path"])
 
@@ -95,33 +103,44 @@ for plate, info in plate_info_dictionary.items():
         operation="median",
         strata=["Image_Metadata_Plate", "Image_Metadata_Well"],
         output_file=output_aggregated_file,
-        output_type="parquet"
+        output_type="parquet",
     )
-    
+
     # Step 2: Annotation
-    annotate(
+    annotated_df = annotate(
         profiles=output_aggregated_file,
         platemap=platemap_df,
         join_on=["Metadata_well_position", "Image_Metadata_Well"],
-        output_file=output_annotated_file,
+    )
+
+    # For only plates 3 and 3 prime, remove any rows with HET due to contamination
+    if plate in ["Plate_3", "Plate_3_prime"]:
+        # Filter single-cell profiles, removing HET genotype
+        annotated_df = annotated_df[annotated_df["Metadata_genotype"] != "HET"]
+        print("HET cells have been removed from", plate)
+
+    # use output to save annotated df as you can not use the output parameter in the annotate which will not return data frame
+    output(
+        df=annotated_df,
+        output_filename=output_annotated_file,
         output_type="parquet",
     )
-    
+
     # Step 3: Normalization
     normalized_df = normalize(
-        profiles=output_annotated_file,
+        profiles=annotated_df,
         method="standardize",
         output_file=output_normalized_file,
         output_type="parquet",
     )
-    
+
     # Step 4: Feature selection
     feature_select(
         output_normalized_file,
         operation=feature_select_ops,
         na_cutoff=0,
         output_file=output_feature_select_file,
-        output_type="parquet"
+        output_type="parquet",
     )
 
 
