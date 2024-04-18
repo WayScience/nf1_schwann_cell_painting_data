@@ -143,9 +143,10 @@ for plate, info in plate_info_dictionary.items():
     # set default for samples to use in normalization
     samples = "all"
 
-    # Only for Plate 4, we want to normalize to no siRNA treatment Null cells (controls)
+    # Only for Plate 4, we want to normalize to no siRNA treatment Null and WT cells (controls)
     if plate == "Plate_4":
-        samples = "Metadata_Concentration == 0.0 and Metadata_genotype == 'Null'"
+        samples = "Metadata_Concentration == 0.0 and (Metadata_genotype == 'Null' or Metadata_genotype == 'WT')"
+
 
     print(f"Performing normalization for {plate} using samples parameter: {samples}")
 
