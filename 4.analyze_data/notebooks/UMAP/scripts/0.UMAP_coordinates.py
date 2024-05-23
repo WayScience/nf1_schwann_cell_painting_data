@@ -233,6 +233,6 @@ cp_umap_with_metadata_df = pd.concat([
 cp_umap_with_metadata_df = cp_umap_with_metadata_df.sample(frac=1, random_state=0)
 
 # Generate output file and save
-output_umap_file = pathlib.Path(output_dir, f"UMAP_Concat_sc_feature_selected.tsv")
+output_umap_file = pathlib.Path(output_dir, f"UMAP_concat_model_plates_sc_feature_selected.tsv")
 cp_umap_with_metadata_df.to_csv(output_umap_file, index=False, sep="\t")
 

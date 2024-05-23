@@ -168,7 +168,7 @@ df <- readr::read_tsv(
 )
 
 # Plate UMAP
-output_file <- "./figures/UMAP_Concat_plate.png"
+output_file <- "./figures/UMAP_concat_model_plate.png"
 
 # UMAP labeled with plate
 umap_plate_gg <- (
