@@ -53,13 +53,16 @@ for (plate in names(output_umap_files)) {
 
     # Append the data frame to the list
     umap_cp_df[[plate]] <- df 
-}
 
+    # Remove rows with Metadata_Plate == "Plate_3_prime" if plate is Plate_3
+    if (plate == "Plate_3") {
+        umap_cp_df[[plate]] <- umap_cp_df[[plate]][umap_cp_df[[plate]]$Metadata_Plate != "Plate_3_prime", ]
+    }
+}
 
 for (plate in names(umap_cp_df)) {
     # Genotype UMAP file path
-    output_file <- output_umap_files[[plate]]
-    output_file <- paste0(output_file, "_genotype.png")
+    genotype_output_file <- paste0(output_umap_files[[plate]], "_genotype.png")
 
     # UMAP labeled with genotype
     genotype_gg <- (
@@ -74,11 +77,10 @@ for (plate in names(umap_cp_df)) {
         )
     )
     
-    ggsave(output_file, genotype_gg, dpi = 500, height = 6, width = 6)
+    ggsave(genotype_output_file, genotype_gg, dpi = 500, height = 6, width = 6)
 
     # UMAP labeled with cell count
-    output_file <- output_umap_files[[plate]]
-    output_file <- paste0(output_file, "_cell_count.png")
+    cell_count_output_file <- paste0(output_umap_files[[plate]], "_cell_count.png")
     
     umap_cell_count_gg <- (
         ggplot(umap_cp_df[[plate]], aes(x = UMAP0, y = UMAP1))
@@ -92,8 +94,7 @@ for (plate in names(umap_cp_df)) {
         + scale_color_continuous(name = "Number of\nsingle cells\nper well")
     )
 
-    ggsave(output_file, umap_cell_count_gg, dpi = 500, height = 6, width = 6)
-
+    ggsave(cell_count_output_file, umap_cell_count_gg, dpi = 500, height = 6, width = 6)
 }
 
 
@@ -167,7 +168,7 @@ df <- readr::read_tsv(
 )
 
 # Plate UMAP
-output_file <- "./figures/UMAP_Concat_plate.png"
+output_file <- "./figures/UMAP_concat_model_plate.png"
 
 # UMAP labeled with plate
 umap_plate_gg <- (
@@ -178,7 +179,7 @@ umap_plate_gg <- (
     + theme_bw()
     + scale_color_manual(
         name = "Plate",
-        values = c("Plate_3" = "#7570b3", "Plate_3_prime" = "#e7298a", "Plate_5" = "#d95f02")
+        values = c("Plate_3" = "#7570b3", "Plate_3_prime" = "#e7298a", "Plate_5" = "#d95f02", "Plate_4" = "#39e729")
     )
 )
 

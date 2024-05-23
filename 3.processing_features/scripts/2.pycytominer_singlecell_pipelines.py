@@ -127,8 +127,8 @@ for plate, info in plate_info_dictionary.items():
     annotated_df.insert(3, "Metadata_Site", site_column)
     annotated_df.insert(4, "Metadata_number_of_singlecells", singlecell_column)
 
-    # for only plates 3 and 3 prime, remove any rows with HET due to contamination
-    if plate in ["Plate_3", "Plate_3_prime"]:
+    # for plates 5, 3, and 3 prime, remove any rows with HET due to contamination/not using in model
+    if plate in ["Plate_5", "Plate_3", "Plate_3_prime"]:
         # Filter single-cell profiles, removing HET genotype
         annotated_df = annotated_df[annotated_df["Metadata_genotype"] != "HET"]
         print("HET cells have been removed from", plate)
