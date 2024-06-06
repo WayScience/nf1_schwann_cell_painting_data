@@ -130,7 +130,7 @@ for plate, info in plate_info_dictionary.items():
     # for plates 5, 3, and 3 prime, remove any rows with HET due to contamination/not using in model
     if plate in ["Plate_5", "Plate_3", "Plate_3_prime"]:
         # Filter single-cell profiles, removing HET genotype
-        annotated_df = annotated_df[annotated_df["Metadata_genotype"] != "HET"]
+        annotated_df = annotated_df[annotated_df["Metadata_genotype"] != "HET"].reset_index(drop=True)
         print("HET cells have been removed from", plate)
 
     # use output to save annotated df as you can not use the output parameter in the annotate which will not return data frame
