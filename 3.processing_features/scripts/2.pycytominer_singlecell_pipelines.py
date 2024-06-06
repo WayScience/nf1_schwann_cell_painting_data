@@ -39,7 +39,7 @@ feature_select_ops = [
 ]
 
 # Columns to remove prior to single-cell aggregation via cameron's method
-cameron_unwanted_aggregate_cols = {"Object", "Parent", "Site", "Image"}
+cameron_unwanted_aggregate_cols = {"Object", "Parent", "Site", "Image", "Location"}
 
 # Set paths
 output_dir = pathlib.Path("data/single_cell_profiles")
