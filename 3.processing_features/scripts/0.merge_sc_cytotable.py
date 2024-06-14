@@ -143,7 +143,7 @@ for file_path in output_dir.iterdir():
 # In[6]:
 
 
-converted_df = pd.read_parquet(plate_info_dictionary["Plate_4"]["dest_path"])
+converted_df = pd.read_parquet(plate_info_dictionary["Plate_3_prime"]["dest_path"])
 
 print(converted_df.shape)
 converted_df.head()

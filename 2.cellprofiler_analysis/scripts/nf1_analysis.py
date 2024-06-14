@@ -55,7 +55,7 @@ plate_info_dictionary = {
         ).resolve(strict=True),
         "path_to_output": pathlib.Path(f"{output_dir}/{name}"),
     }
-    for name in plate_names if name in ["Plate_3", "Plate_3_prime", "Plate_4"]  # focus on Plate_3, Plate_3_prime, and Plate_4
+    for name in plate_names if name in ["Plate_3_prime"]  # focus on Plate_3_prime
 }
 
 # iterate over the dictionary and add the path_to_pipeline specific for each plate
