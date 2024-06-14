@@ -77,7 +77,7 @@ plate_info_dictionary = {
         ).resolve(strict=True)),
         "dest_path": str(pathlib.Path(f"{output_dir}/{name}.parquet")),
     }
-    for name in plate_names if not name in pilot_plates  # focus on non-pilot plates
+    for name in plate_names if name in ["Plate_3_prime"]  # focus on Plate_3_prime
 }
 
 # view the dictionary to assess that all info is added correctly
@@ -120,7 +120,7 @@ for plate, info in plate_info_dictionary.items():
 
 
 for file_path in output_dir.iterdir():
-    if file_path.stem not in pilot_plates:
+    if file_path.stem == "Plate_3_prime":
         # Load the DataFrame from the Parquet file
         df = pd.read_parquet(file_path)
 
@@ -143,7 +143,7 @@ for file_path in output_dir.iterdir():
 # In[6]:
 
 
-converted_df = pd.read_parquet(plate_info_dictionary["Plate_4"]["dest_path"])
+converted_df = pd.read_parquet(plate_info_dictionary["Plate_3_prime"]["dest_path"])
 
 print(converted_df.shape)
 converted_df.head()
