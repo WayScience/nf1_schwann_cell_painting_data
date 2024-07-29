@@ -145,7 +145,7 @@ fs_files
 
 
 # Select file paths for plates 5, 3, and 3 prime only
-selected_plates = ["Plate_5", "Plate_3", "Plate_3_prime", "Plate_4"]
+selected_plates = ["Plate_5", "Plate_3", "Plate_3_prime"]
 
 # Filter and concatenate the selected plates
 selected_dfs = []
@@ -155,18 +155,6 @@ for file_path in fs_files:
     # Only read in selected plates
     if plate_name in selected_plates:
         df = pd.read_parquet(file_path)
-
-        # Update Metadata_Plate for Plate_3_prime
-        if plate_name == "Plate_3_prime":
-            df["Metadata_Plate"] = "Plate_3_prime"
-
-        # For Plate_4, only include rows where Metadata_siRNA is "None"
-        if plate_name == "Plate_4":
-            # Fill NaN values in "Metadata_siRNA" column with "No Construct"
-            df["Metadata_siRNA"].fillna("No Construct", inplace=True)
-
-            # Filter out rows where "Metadata_siRNA" is "No Construct"
-            df = df[df["Metadata_siRNA"] == "No Construct"]
 
         selected_dfs.append(df)
 
@@ -180,7 +168,11 @@ column_sets = [set(df.columns) for df in selected_dfs]
 # Find the common column names across all DataFrames
 common_columns = list(set.intersection(*column_sets))
 
-len(common_columns)
+# Exclude columns that start with "Metadata" to print the number of features
+feature_columns = [col for col in common_columns if not col.startswith("Metadata")]
+
+# Print length of only features
+len(feature_columns)
 
 
 # In[10]:
@@ -193,7 +185,7 @@ selected_dfs_filtered = [df.loc[:, common_columns] for df in selected_dfs]
 concatenated_df = pd.concat(selected_dfs_filtered, ignore_index=True)
 
 # Save the concatenated dataframe to a file
-output_concatenated_file = pathlib.Path(output_dir, "concatenated_norm_fs_plates_5_3_3prime_4controls.parquet")
+output_concatenated_file = pathlib.Path(output_dir, "concatenated_norm_fs_plates_5_3_3prime.parquet")
 concatenated_df.to_parquet(output_concatenated_file, index=False)
 
 print(concatenated_df.shape)

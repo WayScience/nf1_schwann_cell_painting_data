@@ -54,7 +54,7 @@ for (plate in names(output_umap_files)) {
     # Append the data frame to the list
     umap_cp_df[[plate]] <- df 
 
-    # Remove rows with Metadata_Plate == "Plate_3_prime" if plate is Plate_3
+    # Remove rows with Metadata_Plate == "Plate_3_prime" if plate is Plate_3 (error when loading in the data)
     if (plate == "Plate_3") {
         umap_cp_df[[plate]] <- umap_cp_df[[plate]][umap_cp_df[[plate]]$Metadata_Plate != "Plate_3_prime", ]
     }
