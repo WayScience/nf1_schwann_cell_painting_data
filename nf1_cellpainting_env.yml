@@ -27,7 +27,7 @@ dependencies:
 # these are strict because that is how it is on the CellProfiler wiki (Jinja updated for nbconvert)
 - conda-forge::Jinja2=3.0.3
 - conda-forge::inflect=5.3.0
-- conda-forge::wxpython=4.1.0
+- conda-forge::wxpython=4.2.0
 - conda-forge::sentry-sdk=0.18.0
 - pip:
     # Install CellProfiler (do not install higher due to possible differences in output)
