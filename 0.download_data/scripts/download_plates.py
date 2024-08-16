@@ -71,6 +71,14 @@ download_plates_info_dictionary = {
         # save extracted zip file from figshare download to a folder in the `0.download_data` directory
         "output_dir": pathlib.Path("./Plate_4_zip"),
     },
+    # need to be extracted in a second step
+    "Plate_5": {
+        "figshare_id": "26759914",
+        "version_number": "1",
+        "output_folder": "Plates_5_zip",
+        # save extracted zip file from figshare download to a folder in the `0.download_data` directory
+        "output_dir": pathlib.Path("./Plate_5_zip"),
+    },
 }
 
 
@@ -119,6 +127,10 @@ zip_images_dictionary = {
         "path_to_zip_file": pathlib.Path("./Plate_4_zip/plate_4.zip"),
         "extraction_path": pathlib.Path("./Plate_4"),
     },
+    "Plate_5": {
+        "path_to_zip_file": pathlib.Path("./Plate_5_zip/Plate_5.zip"),
+        "extraction_path": pathlib.Path("./Plate_5"),
+    }
 }
 
 for plate, info in zip_images_dictionary.items():
