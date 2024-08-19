@@ -53,8 +53,8 @@ download_plates_info_dictionary = {
         # save extracted files from figshare download to a folder in the `0.download_data` directory
         "output_dir": pathlib.Path("./Plate_2"),
     },
-    # these plates are combined due to the figshare project containing zip files with the images for each
-    # plate that will need to be extracted in a second step
+    # these plates are combined due to the figshare project containing zip files with the images for each plate and
+    # is extracted in a second step
     "Plates_3_and_3_prime": {
         "figshare_id": "22592890",
         "version_number": "2",
@@ -62,8 +62,8 @@ download_plates_info_dictionary = {
         # save extracted zip files from figshare download to a folder in the `0.download_data` directory
         "output_dir": pathlib.Path("./Plates_3_and_3_prime"),
     },
-    # this plate data was added to figshare as a zip file due to the size of the data (13GB) and will
-    # need to be extracted in a second step
+    # this plate data was added to figshare as a zip file due to the size of the data and
+    # is extracted in a second step
     "Plate_4": {
         "figshare_id": "23671056",
         "version_number": "1",
@@ -71,7 +71,8 @@ download_plates_info_dictionary = {
         # save extracted zip file from figshare download to a folder in the `0.download_data` directory
         "output_dir": pathlib.Path("./Plate_4_zip"),
     },
-    # need to be extracted in a second step
+    # this plate data was added to figshare as a zip file due to the size of the data and
+    # is extracted in a second step
     "Plate_5": {
         "figshare_id": "26759914",
         "version_number": "1",
@@ -133,6 +134,10 @@ zip_images_dictionary = {
     }
 }
 
+
+# In[6]:
+
+
 for plate, info in zip_images_dictionary.items():
     # set the parameters for the function as variables based on the plate dictionary info
     path_to_zip_file = info["path_to_zip_file"]
@@ -147,17 +152,18 @@ for plate, info in zip_images_dictionary.items():
     )
 
 
-# ### Remove folder with zip files for both plates 3 and 3 prime since all files have been extracted
+# ### Remove folder with zip files since all files have been extracted
 
-# In[6]:
+# In[7]:
 
 
-# remove the directory with the zip files for Plates 3 and 3 prime only since the zips are no longer needed
-if zip_images_dictionary["Plate_3"]["path_to_zip_file"].exists():
-    # remove the parent directory with the zip files as we have moved all the images
-    parent_directory = os.path.dirname(zip_images_dictionary["Plate_3"]["path_to_zip_file"])
-    shutil.rmtree(parent_directory)
-    print("The directory containing zip files from Figshare has been deleted as the files have been extracted!")
-else:
-    print("The path to the zip file does not exist. Please check to make sure that the data was downloaded properly from figshare.")
+# remove the directory with the zip files for Plates 3, 3 prime, 4, and 5 only since the zips are no longer needed
+for plate in ["Plate_3", "Plate_4", "Plate_5"]:
+    if zip_images_dictionary[plate]["path_to_zip_file"].exists():
+        # remove the parent directory with the zip files as we have moved all the images
+        parent_directory = os.path.dirname(zip_images_dictionary[plate]["path_to_zip_file"])
+        shutil.rmtree(parent_directory)
+        print(f"The directory containing zip files from Figshare for {plate} has been deleted as the files have been extracted!")
+    else:
+        print(f"The path to the zip file for {plate} does not exist. Please check to make sure that the data was downloaded properly from Figshare.")
 
