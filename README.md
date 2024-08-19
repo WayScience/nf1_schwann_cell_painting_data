@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13345304.svg)](https://doi.org/10.5281/zenodo.13345304)
+
 # NF1 Cell Painting Data 
 
 In this repository, we generate image analysis and image-based profiling pipelines to extract and format single-cell morphological profiles.
