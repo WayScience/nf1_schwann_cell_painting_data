@@ -28,3 +28,6 @@ runinfo
 
 # ignore bash scripts for running whole plates
 run_plate*.sh
+
+# ignore yaml file for preprocessing plates (is created after CytoTable run)
+*plate_info_dictionary.yaml
