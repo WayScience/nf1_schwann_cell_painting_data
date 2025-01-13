@@ -27,9 +27,6 @@ import extraction_utils as sc_utils
 # In[2]:
 
 
-# Set pilot plates as list to avoid running
-pilot_plates = ["Plate_1", "Plate_2"]
-
 # type of file output from CytoTable (currently only parquet)
 dest_datatype = "parquet"
 
@@ -77,7 +74,7 @@ plate_info_dictionary = {
         ).resolve(strict=True)),
         "dest_path": str(pathlib.Path(f"{output_dir}/{name}.parquet")),
     }
-    for name in plate_names if not name in pilot_plates  # focus on non-pilot plates
+    for name in plate_names if not pathlib.Path(f"{output_dir}/{name}.parquet").exists()  # skip if parquet file exists
 }
 
 # view the dictionary to assess that all info is added correctly
@@ -119,23 +116,24 @@ for plate, info in plate_info_dictionary.items():
 # In[5]:
 
 
-for file_path in output_dir.iterdir():
-    if file_path.stem not in pilot_plates:
-        # Load the DataFrame from the Parquet file
-        df = pd.read_parquet(file_path)
+for plate, info in plate_info_dictionary.items():
+    file_path = pathlib.Path(info["dest_path"])
+    
+    # Load the DataFrame from the Parquet file
+    df = pd.read_parquet(file_path)
 
-        # If any, drop rows where "Metadata_ImageNumber" is NaN (artifact of cytotable)
-        df = df.dropna(subset=["Metadata_ImageNumber"])
+    # If any, drop rows where "Metadata_ImageNumber" is NaN (artifact of cytotable)
+    df = df.dropna(subset=["Metadata_ImageNumber"])
 
-        # Columns to move to the front
-        columns_to_move = ['Nuclei_Location_Center_X', 'Nuclei_Location_Center_Y', 'Cells_Location_Center_X', 'Cells_Location_Center_Y']
+    # Columns to move to the front
+    columns_to_move = ['Nuclei_Location_Center_X', 'Nuclei_Location_Center_Y', 'Cells_Location_Center_X', 'Cells_Location_Center_Y']
 
-        # Rearrange columns and add "Metadata" prefix in one line
-        df = (df[columns_to_move + [col for col in df.columns if col not in columns_to_move]]
-                    .rename(columns=lambda col: 'Metadata_' + col if col in columns_to_move else col))
+    # Rearrange columns and add "Metadata" prefix in one line
+    df = (df[columns_to_move + [col for col in df.columns if col not in columns_to_move]]
+                .rename(columns=lambda col: 'Metadata_' + col if col in columns_to_move else col))
 
-        # Save the processed DataFrame as Parquet in the same path
-        df.to_parquet(file_path, index=False)
+    # Save the processed DataFrame as Parquet in the same path
+    df.to_parquet(file_path, index=False)
 
 
 # ### Check if converted data looks correct
@@ -143,8 +141,14 @@ for file_path in output_dir.iterdir():
 # In[6]:
 
 
-converted_df = pd.read_parquet(plate_info_dictionary["Plate_3_prime"]["dest_path"])
+# Automatically select one plate from the current dictionary
+selected_plate = next(iter(plate_info_dictionary))
+print(f"Selected plate: {selected_plate}")
 
+# Load the DataFrame from the Parquet file of the selected plate
+converted_df = pd.read_parquet(plate_info_dictionary[selected_plate]["dest_path"])
+
+# Print the shape and head of the DataFrame
 print(converted_df.shape)
 converted_df.head()
 

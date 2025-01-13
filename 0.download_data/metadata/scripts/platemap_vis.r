@@ -199,4 +199,34 @@ for (plate in names(platemap_dfs)) {
     }
 }
 
+for (plate in names(platemap_dfs)) {
+    if (plate == "plate6") {
+        # Get the updated plate name
+        updated_plate <- paste0("Plate ", as.numeric(gsub("plate", "", plate)))
 
+        # Output for the plate
+        output_file <- output_platemap_files[[plate]]
+        output_file <- paste0(output_file)
+        
+        platemap <-
+            platetools::raw_map(
+                data = platemap_dfs[[plate]]$genotype,
+                well = platemap_dfs[[plate]]$well_position,
+                plate = 96,
+                size = 8
+            ) +
+            ggtitle(paste("Platemap layout for", updated_plate)) +
+            theme(plot.title = element_text(size = 10, face = "bold")) +
+            ggplot2::scale_fill_discrete(name = "Genotype") +
+            ggplot2::geom_point(aes(shape = platemap_dfs[[plate]]$Institution)) +
+            ggplot2::scale_shape_discrete(name = "Institution\n(cell line)")
+
+        ggsave(
+            output_file,
+            platemap,
+            dpi = 500,
+            height = 3.5,
+            width = 6
+        )
+    }
+}

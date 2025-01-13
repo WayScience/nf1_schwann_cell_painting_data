@@ -15,6 +15,7 @@ import sys
 
 sys.path.append("../utils")
 import cp_parallel
+from cp_sequential import rename_sqlite_file
 
 
 # ## Set paths and variables
@@ -55,7 +56,8 @@ plate_info_dictionary = {
         ).resolve(strict=True),
         "path_to_output": pathlib.Path(f"{output_dir}/{name}"),
     }
-    for name in plate_names if name in ["Plate_3_prime"]  # focus on Plate_3_prime
+    for name in plate_names
+    if not (output_dir / name).exists() # only process plates that have not been processed yet
 }
 
 # iterate over the dictionary and add the path_to_pipeline specific for each plate
@@ -63,12 +65,12 @@ for name, info in plate_info_dictionary.items():
     # only plates 1 and 2 have 3 channels so these are the only plates that use this path
     if name == "Plate_1" or name == "Plate_2":
         info["path_to_pipeline"] = pathlib.Path(
-            f"./NF1_analysis_3channel.cppipe"
+            "./NF1_analysis_3channel.cppipe"
         ).resolve(strict=True)
     # all other plates have 4 channels and will use that specific pipeline
     else:
         info["path_to_pipeline"] = pathlib.Path(
-            f"./NF1_analysis_4channel.cppipe"
+            "./NF1_analysis_4channel.cppipe"
         ).resolve(strict=True)
 
 # view the dictionary to assess that all info is added correctly
@@ -79,10 +81,15 @@ pprint.pprint(plate_info_dictionary, indent=4)
 # 
 # This cell is not finished to completion due to how long it would take. It is ran in the python file instead.
 
-# In[4]:
+# In[ ]:
 
 
+# Process data with cp_parallel
 cp_parallel.run_cellprofiler_parallel(
     plate_info_dictionary=plate_info_dictionary, run_name=run_name
 )
+
+# rename the sqlite files to match the plate names
+for name in plate_names:
+    rename_sqlite_file(pathlib.Path(f"{output_dir}/{name}"), name)
 
