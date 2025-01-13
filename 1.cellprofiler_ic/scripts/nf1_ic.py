@@ -47,7 +47,7 @@ print(plate_names)
 
 # ## Create dictionary with all info for each plate
 
-# In[ ]:
+# In[3]:
 
 
 # create plate info dictionary with all parts of the CellProfiler CLI command to run in parallel
