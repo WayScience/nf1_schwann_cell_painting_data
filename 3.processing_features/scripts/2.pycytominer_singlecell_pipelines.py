@@ -139,6 +139,7 @@ for plate, info in plate_info_dictionary.items():
         output_filename=output_annotated_file,
         output_type="parquet",
     )
+    print("Annotated dataframe shape", annotated_df.shape)
 
     # set default for samples to use in normalization
     samples = "all"
@@ -186,5 +187,5 @@ for plate, info in plate_info_dictionary.items():
         output_type="parquet",
     )
 
-    print(aggregate_df.shape)
+    print("Aggregated dataframe shape", aggregate_df.shape)
 

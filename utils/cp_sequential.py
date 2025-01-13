@@ -20,25 +20,24 @@ def rename_sqlite_file(sqlite_dir_path: pathlib.Path, name: str):
         name (str): new name for the SQLite file
 
     Raises:
-        FileNotFoundError: This error will occur if you do not have a SQLite file with the hard coded file name in the specified directory.
-        This means that this function can not find the right file to rename, so it raises an error.
+        FileNotFoundError: This error will occur if no .sqlite file is found in the specified directory.
+        This means that this function cannot find a file to rename, so it raises an error.
     """
     try:
-        # CellProfiler requires a name to be set in to pipeline, so regardless of plate or method, all sqlite files name are hardcoded
-        sqlite_file_path = pathlib.Path(f"{sqlite_dir_path}/NF1_data.sqlite")
+        # Find the first .sqlite file in the directory
+        sqlite_file_path = next(sqlite_dir_path.glob("*.sqlite"))
 
-        new_file_name = str(sqlite_file_path).replace(
-            sqlite_file_path.name, f"{name}.sqlite"
-        )
+        # Create a new file name with the specified name
+        new_file_name = sqlite_dir_path / f"{name}_nf1_analysis.sqlite"
 
-        # change the file name in the directory
-        pathlib.Path(sqlite_file_path).rename(pathlib.Path(new_file_name))
-        print(f"The file is renamed to {pathlib.Path(new_file_name).name}!")
+        # Change the file name in the directory
+        sqlite_file_path.rename(new_file_name)
+        print(f"The file is renamed to {new_file_name.name}!")
 
-    except FileNotFoundError as e:
-        print(
-            f"The NF1_data.sqlite file is not found in directory. Either the pipeline wasn't ran properly or the file is already renamed.\n"
-            f"{e}"
+    except StopIteration:
+        # Handle case where no .sqlite file is found
+        raise FileNotFoundError(
+            f"No .sqlite file found in the directory: {sqlite_dir_path}"
         )
 
 
@@ -62,9 +61,13 @@ def run_cellprofiler(
     """
     # check to make sure paths to pipeline and directory of images are correct before running the pipeline
     if not pathlib.Path(path_to_pipeline):
-        raise FileNotFoundError(f"The file '{pathlib.Path(path_to_pipeline).name}' does not exist")
+        raise FileNotFoundError(
+            f"The file '{pathlib.Path(path_to_pipeline).name}' does not exist"
+        )
     if not pathlib.Path(path_to_images).is_dir():
-        raise FileNotFoundError(f"Directory '{pathlib.Path(path_to_images).name}' does not exist or is not a directory")
+        raise FileNotFoundError(
+            f"Directory '{pathlib.Path(path_to_images).name}' does not exist or is not a directory"
+        )
 
     # make logs directory
     log_dir = pathlib.Path("./logs")

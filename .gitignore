@@ -25,3 +25,6 @@ Corrected_Images/
 
 # ignore Cytotable runinfo logs
 runinfo
+
+# ignore bash scripts for running whole plates
+run_plate*.sh

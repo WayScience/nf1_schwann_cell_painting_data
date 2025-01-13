@@ -1,12 +1,3 @@
-Plate_3:
-  dest_path: data/converted_data/Plate_3.parquet
-  source_path: /home/jenna/nf1_cellpainting_data/2.cellprofiler_analysis/analysis_output/Plate_3/Plate_3_nf1_analysis.sqlite
-Plate_3_prime:
-  dest_path: data/converted_data/Plate_3_prime.parquet
-  source_path: /home/jenna/nf1_cellpainting_data/2.cellprofiler_analysis/analysis_output/Plate_3_prime/Plate_3_prime_nf1_analysis.sqlite
-Plate_4:
-  dest_path: data/converted_data/Plate_4.parquet
-  source_path: /home/jenna/nf1_cellpainting_data/2.cellprofiler_analysis/analysis_output/Plate_4/Plate_4_nf1_analysis.sqlite
-Plate_5:
-  dest_path: data/converted_data/Plate_5.parquet
-  source_path: /home/jenna/nf1_cellpainting_data/2.cellprofiler_analysis/analysis_output/Plate_5/Plate_5_nf1_analysis.sqlite
+Plate_6:
+  dest_path: data/converted_data/Plate_6.parquet
+  source_path: /media/18tbdrive/1.Github_Repositories/nf1_schwann_cell_painting_data/2.cellprofiler_analysis/analysis_output/Plate_6/Plate_6_nf1_analysis.sqlite

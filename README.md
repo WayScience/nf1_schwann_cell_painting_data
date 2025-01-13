@@ -31,6 +31,7 @@ The data is as follows:
 | Plates 3 and 3 prime | https://doi.org/10.6084/m9.figshare.22592890 | Plates utilized for modelling. Each contain 48 wells, with Plate 3 treated with 10% FBS and prime treated with 5% FBS. These plate contain all three *NF1* genotypes, with varying seeding densities. |
 | Plate 4 | https://doi.org/10.6084/m9.figshare.23671056 | Plate containing 60 wells with null and wildtype cells either not treated or treated with siRNAs. We do not include this plate for modelling or evaluation. The seeding density is 1000 cells. |
 | Plate 5 | https://doi.org/10.6084/m9.figshare.26759914 | Plate containing 48 wells with all three *NF1* genotypes used for modelling. The seeding density is 1000 cells. |
+| Plate 6 | TBD | Plate containing 60 wells with all three *NF1* genotypes across two cell lines (`institutions`) used to assess generalizability. The seeding density is 1000 cells. |
 
 There are two versions of the Cell Painting assay in this repository:
 
