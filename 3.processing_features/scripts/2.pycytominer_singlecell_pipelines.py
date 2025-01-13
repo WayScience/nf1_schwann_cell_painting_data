@@ -141,13 +141,16 @@ for plate, info in plate_info_dictionary.items():
     )
     print("Annotated dataframe shape", annotated_df.shape)
 
-    # set default for samples to use in normalization
+    # set default for samples to use in normalization and feature selection
     samples = "all"
 
     # Only for Plate 4, we want to normalize to no siRNA treatment Null and WT cells (controls)
     if plate == "Plate_4":
         samples = "Metadata_Concentration == 0.0 and (Metadata_genotype == 'Null' or Metadata_genotype == 'WT')"
 
+    # Only for Plate 6, we want to normalize to iNFixion institution and Null and WT cells
+    if plate == "Plate_6":
+        samples = "Metadata_Institution == 'iNFixion' and (Metadata_genotype == 'Null' or Metadata_genotype == 'WT')"
 
     print(f"Performing normalization for {plate} using samples parameter: {samples}")
 
@@ -167,6 +170,7 @@ for plate, info in plate_info_dictionary.items():
         na_cutoff=0,
         output_file=output_feature_select_file,
         output_type="parquet",
+        samples=samples,
     )
 
     # Step 4: Cameron's method of aggregation

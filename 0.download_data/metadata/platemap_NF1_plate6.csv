@@ -1,4 +1,4 @@
-WellRow,WellCol,well_position,gene_name,genotype,Institution ,seed_density
+WellRow,WellCol,well_position,gene_name,genotype,Institution,seed_density
 B,2,B2,NF1,WT,iNFixion,1000
 B,3,B3,NF1,WT,iNFixion,1000
 B,4,B4,NF1,WT,iNFixion,1000
