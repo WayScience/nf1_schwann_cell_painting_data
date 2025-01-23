@@ -98,11 +98,17 @@ for plate, info in plate_info_dictionary.items():
     platemap_df = pd.read_csv(info["platemap_path"])
 
     # Step 1: Aggregation
-    aggregate(
+    aggregate_df = aggregate(
         population_df=single_cell_df,
         operation="median",
         strata=["Image_Metadata_Plate", "Image_Metadata_Well"],
-        output_file=output_aggregated_file,
+    )
+
+    print("Aggregated dataframe shape", aggregate_df.shape)
+
+    output(
+        df=aggregate_df,
+        output_filename=output_aggregated_file,
         output_type="parquet",
     )
 
@@ -119,27 +125,55 @@ for plate, info in plate_info_dictionary.items():
         annotated_df = annotated_df[annotated_df["Metadata_genotype"] != "HET"]
         print("HET cells have been removed from", plate)
 
-    # use output to save annotated df as you can not use the output parameter in the annotate which will not return data frame
+    print("Annotated dataframe shape", annotated_df.shape)
+
+    # use output to the updated annotated file
     output(
         df=annotated_df,
         output_filename=output_annotated_file,
         output_type="parquet",
     )
 
+    # set default for samples to use in normalization and feature selection
+    samples = "all"
+
+    # Only for Plate 4, we want to normalize to no siRNA treatment Null and WT cells (controls)
+    if plate == "Plate_4":
+        samples = "Metadata_Concentration == 0.0 and (Metadata_genotype == 'Null' or Metadata_genotype == 'WT')"
+
+    # Only for Plate 6, we want to normalize to iNFixion institution and Null and WT cells 
+    # to keep consistent with how the other plates are normalized (same cell line)
+    if plate == "Plate_6":
+        samples = "Metadata_Institution == 'iNFixion' and (Metadata_genotype == 'Null' or Metadata_genotype == 'WT')"
+
     # Step 3: Normalization
     normalized_df = normalize(
         profiles=annotated_df,
         method="standardize",
-        output_file=output_normalized_file,
+        samples=samples,
+    )
+
+    print("Normalized dataframe shape", normalized_df.shape)
+
+    output(
+        df=normalized_df,
+        output_filename=output_normalized_file,
         output_type="parquet",
     )
 
     # Step 4: Feature selection
-    feature_select(
-        output_normalized_file,
+    feature_select_df = feature_select(
+        normalized_df,
         operation=feature_select_ops,
         na_cutoff=0,
-        output_file=output_feature_select_file,
+        samples=samples,
+    )
+
+    print("Feature selected dataframe shape", feature_select_df.shape)
+
+    output(
+        df=feature_select_df,
+        output_filename=output_feature_select_file,
         output_type="parquet",
     )
 
