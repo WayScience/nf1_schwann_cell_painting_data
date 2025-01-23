@@ -32,5 +32,3 @@ dependencies:
 - pip:
     # Install CellProfiler (do not install higher due to possible differences in output)
     - cellprofiler==4.2.4
-    - CytoTable
-    - pycytominer
