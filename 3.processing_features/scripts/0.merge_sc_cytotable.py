@@ -55,7 +55,7 @@ plate_names = []
 for file_path in pathlib.Path("../0.download_data/").iterdir():
     if str(file_path.stem).startswith("Plate"):
         plate_names.append(str(file_path.stem))
-        
+
 print(plate_names)
 
 
@@ -69,12 +69,17 @@ print(plate_names)
 # create plate info dictionary with all parts of the CellProfiler CLI command to run in parallel
 plate_info_dictionary = {
     name: {
-        "source_path": str(pathlib.Path(
-            list(sqlite_dir.rglob(f"{name}_nf1_analysis.sqlite"))[0]
-        ).resolve(strict=True)),
+        "source_path": str(
+            pathlib.Path(
+                list(sqlite_dir.rglob(f"{name}_nf1_analysis.sqlite"))[0]
+            ).resolve(strict=True)
+        ),
         "dest_path": str(pathlib.Path(f"{output_dir}/{name}.parquet")),
     }
-    for name in plate_names if not pathlib.Path(f"{output_dir}/{name}.parquet").exists()  # skip if parquet file exists
+    for name in plate_names
+    if not pathlib.Path(
+        f"{output_dir}/{name}.parquet"
+    ).exists()  # skip if parquet file exists
 }
 
 # view the dictionary to assess that all info is added correctly
@@ -90,7 +95,7 @@ pprint.pprint(plate_info_dictionary, indent=4)
 for plate, info in plate_info_dictionary.items():
     source_path = info["source_path"]
     dest_path = info["dest_path"]
-    
+
     print(f"Performing merge single cells and conversion on {plate}!")
 
     # merge single cells and output as parquet file
@@ -107,7 +112,7 @@ for plate, info in plate_info_dictionary.items():
     sc_utils.add_sc_count_metadata_file(
         data_path=dest_path, well_column_name="Image_Metadata_Well", file_type="parquet"
     )
-    
+
     print(f"Added single cell count as metadata to {pathlib.Path(dest_path).name}!")
 
 
@@ -118,19 +123,40 @@ for plate, info in plate_info_dictionary.items():
 
 for plate, info in plate_info_dictionary.items():
     file_path = pathlib.Path(info["dest_path"])
-    
+
     # Load the DataFrame from the Parquet file
     df = pd.read_parquet(file_path)
 
-    # If any, drop rows where "Metadata_ImageNumber" is NaN (artifact of cytotable)
-    df = df.dropna(subset=["Metadata_ImageNumber"])
+    # Update Image_Metadata_Plate column if plate is Plate_6
+    # TODO: Remove this once the metadata is fixed in the CellProfiler pipeline
+    if plate == "Plate_6":
+        df["Image_Metadata_Plate"] = "Plate_6"
 
-    # Columns to move to the front
-    columns_to_move = ['Nuclei_Location_Center_X', 'Nuclei_Location_Center_Y', 'Cells_Location_Center_X', 'Cells_Location_Center_Y']
+    # Check for NaNs in "Metadata_ImageNumber" column
+    if df["Metadata_ImageNumber"].isna().any():
+        print(f"NaNs found in 'Metadata_ImageNumber' column for {plate}")
+        # If any, drop rows where "Metadata_ImageNumber" is NaN (artifact of cytotable)
+        df = df.dropna(subset=["Metadata_ImageNumber"])
+    else:
+        print(f"No NaNs found in 'Metadata_ImageNumber' column for {plate}")
 
-    # Rearrange columns and add "Metadata" prefix in one line
-    df = (df[columns_to_move + [col for col in df.columns if col not in columns_to_move]]
-                .rename(columns=lambda col: 'Metadata_' + col if col in columns_to_move else col))
+    # Columns to rename with Metadata prefix
+    columns_to_rename = [
+        "Nuclei_Location_Center_X",
+        "Nuclei_Location_Center_Y",
+        "Cells_Location_Center_X",
+        "Cells_Location_Center_Y",
+    ] + [col for col in df.columns if col.startswith("Image_FileName_")]
+
+    # Rename columns with "Metadata_" prefix
+    df = df.rename(
+        columns=lambda col: "Metadata_" + col if col in columns_to_rename else col
+    )
+
+    # Move all columns that start with "Image_" or "Metadata_" to the front
+    metadata_columns = [col for col in df.columns if col.startswith("Image_") or col.startswith("Metadata_")]
+    other_columns = [col for col in df.columns if col not in metadata_columns]
+    df = df[metadata_columns + other_columns]
 
     # Save the processed DataFrame as Parquet in the same path
     df.to_parquet(file_path, index=False)
@@ -159,6 +185,6 @@ converted_df.head()
 
 
 dictionary_path = pathlib.Path("./plate_info_dictionary.yaml")
-with open(dictionary_path, 'w') as file:
+with open(dictionary_path, "w") as file:
     yaml.dump(plate_info_dictionary, file)
 
