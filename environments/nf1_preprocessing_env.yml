@@ -1,10 +1,11 @@
-name: python_analysis_nf1
+name: nf1_preprocessing_env
 channels:
   - conda-forge
 dependencies:
   - conda-forge::python=3.9.12
   - conda-forge::jupyter=1.0.0
   - conda-forge::pip
+  - conda-forge::nbconvert
   - conda-forge::opencv
   - conda-forge::tifffile
   - conda-forge::jupyterlab
@@ -17,4 +18,5 @@ dependencies:
   - conda-forge::umap-learn
   - conda-forge::matplotlib
   - pip:
-    - pycytominer
+    - CytoTable>=0.0.12
+    - pycytominer>=1.2.2

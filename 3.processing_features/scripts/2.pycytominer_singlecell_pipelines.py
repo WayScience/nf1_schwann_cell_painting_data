@@ -24,7 +24,7 @@ import pprint
 import pandas as pd
 
 from pycytominer import aggregate, annotate, normalize, feature_select
-from pycytominer.cyto_utils import load_profiles, output, infer_cp_features
+from pycytominer.cyto_utils import output, infer_cp_features
 
 
 # In[2]:
@@ -141,13 +141,17 @@ for plate, info in plate_info_dictionary.items():
     )
     print("Annotated dataframe shape", annotated_df.shape)
 
-    # set default for samples to use in normalization
+    # set default for samples to use in normalization and feature selection
     samples = "all"
 
     # Only for Plate 4, we want to normalize to no siRNA treatment Null and WT cells (controls)
     if plate == "Plate_4":
         samples = "Metadata_Concentration == 0.0 and (Metadata_genotype == 'Null' or Metadata_genotype == 'WT')"
 
+    # Only for Plate 6, we want to normalize to iNFixion institution and Null and WT cells 
+    # to keep consistent with how the other plates are normalized (same cell line)
+    if plate == "Plate_6":
+        samples = "Metadata_Institution == 'iNFixion' and (Metadata_genotype == 'Null' or Metadata_genotype == 'WT')"
 
     print(f"Performing normalization for {plate} using samples parameter: {samples}")
 
@@ -155,22 +159,33 @@ for plate, info in plate_info_dictionary.items():
     normalized_df = normalize(
         profiles=output_annotated_file,
         method="standardize",
-        output_file=output_normalized_file,
-        output_type="parquet",
         samples=samples,
+    )
+    print("Normalized dataframe shape", normalized_df.shape)
+
+    output(
+        df=normalized_df,
+        output_filename=output_normalized_file,
+        output_type="parquet",
     )
 
     # Step 3: Feature selection
-    feature_select(
+    feature_select_df = feature_select(
         output_normalized_file,
         operation=feature_select_ops,
         na_cutoff=0,
-        output_file=output_feature_select_file,
+        samples=samples,
+    )
+
+    print("Feature selected dataframe shape", feature_select_df.shape)
+
+    output(
+        df=feature_select_df,
+        output_filename=output_feature_select_file,
         output_type="parquet",
     )
 
     # Step 4: Cameron's method of aggregation
-    feature_select_df = load_profiles(output_feature_select_file)
     # Specify metadata columns in aggregation step to ensure they are retained for downstream analysis
     metadata_cols = infer_cp_features(feature_select_df, metadata=True)
     metadata_cols = [
@@ -183,7 +198,11 @@ for plate, info in plate_info_dictionary.items():
         population_df=feature_select_df,
         operation="median",
         strata=metadata_cols,
-        output_file=output_aggregated_file,
+    )
+
+    output(
+        df=aggregate_df,
+        output_filename=output_aggregated_file,
         output_type="parquet",
     )
 
