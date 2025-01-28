@@ -118,7 +118,7 @@ for plate, info in plate_info_dictionary.items():
 
 # ## Update the files to remove NA rows added as artifacts of CytoTable
 
-# In[5]:
+# In[ ]:
 
 
 for plate, info in plate_info_dictionary.items():
@@ -126,11 +126,6 @@ for plate, info in plate_info_dictionary.items():
 
     # Load the DataFrame from the Parquet file
     df = pd.read_parquet(file_path)
-
-    # Update Image_Metadata_Plate column if plate is Plate_6
-    # TODO: Remove this once the metadata is fixed in the CellProfiler pipeline
-    if plate == "Plate_6":
-        df["Image_Metadata_Plate"] = "Plate_6"
 
     # Check for NaNs in "Metadata_ImageNumber" column
     if df["Metadata_ImageNumber"].isna().any():

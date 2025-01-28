@@ -57,7 +57,7 @@ plate_info_dictionary = {
         "path_to_output": pathlib.Path(f"{output_dir}/{name}"),
     }
     for name in plate_names
-    if not (output_dir / name).exists() # only process plates that have not been processed yet
+    if not any((output_dir / name).glob("*.sqlite")) # only process plates that have not been processed yet
 }
 
 # iterate over the dictionary and add the path_to_pipeline specific for each plate
