@@ -149,7 +149,46 @@ umap_siRNA_construct_gg <- (
 
 ggsave(output_file, umap_siRNA_construct_gg, dpi = 500, height = 6, width = 6)
 
+# Load the platemap data frame for Plate 6
+platemap_df <- read.csv("../../../0.download_data/metadata/platemap_NF1_plate6.csv")
 
+# Subset the data frame and rename columns
+platemap_df <- platemap_df[, c("well_position", "Institution")]
+colnames(platemap_df) <- c("Metadata_Well", "Metadata_Institution")
+
+# Select plate 6 file path from list of umap files
+plate_6_path <- umap_files[[8]]
+
+# Load in the umap data for plate 6 only
+df <- readr::read_tsv(
+    plate_6_path,
+    col_types = readr::cols(
+        .default = "d",
+        "Metadata_Plate" = "c",
+        "Metadata_Well" = "c",
+        "Metadata_Site" = "c",
+        "Metadata_number_of_singlecells" = "c",
+        "Metadata_genotype" = "c",
+    )
+)
+
+# Merge institution info onto UMAP df
+combined_df <- platemap_df %>% inner_join(df, by = "Metadata_Well")
+
+# siRNA construct UMAP
+output_file <- "./figures/UMAP_Plate_6_institution.png"
+
+# UMAP labeled with institution
+umap_institution_gg <- (
+    ggplot(combined_df, aes(x = UMAP0, y = UMAP1))
+    + geom_point(
+            aes(color = Metadata_Institution), size = 1.5, alpha = 0.3
+    )
+    + theme_bw()
+    + scale_color_discrete(name = "Institution")
+)
+
+ggsave(output_file, umap_institution_gg, dpi = 500, height = 6, width = 6)
 
 # Select concat plate file path from list of umap files
 concat_plate_path <- umap_files[[1]]
