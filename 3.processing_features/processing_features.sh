@@ -7,7 +7,7 @@ conda init bash
 conda activate nf1_cellpainting_data
 
 # convert all notebooks to python files into the scripts folder
-jupyter nbconvert --to python --output-dir=scripts/ *.ipynb
+jupyter nbconvert --to script --output-dir=scripts/ *.ipynb
 
 # run each python script
 python scripts/0.merge_sc_cytotable.py
