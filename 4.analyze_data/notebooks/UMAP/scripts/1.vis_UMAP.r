@@ -9,34 +9,38 @@ print(umap_files)
 output_fig_dir <- file.path("figures")
 umap_prefix <- "UMAP_"
 plate_suffix <- "_sc_feature_selected.tsv"
+alt_plate_suffix <- "_sc_only_model_features.tsv"
 
 # Define output figure paths as a dictionary where each plate has a figure output path
 output_umap_files <- list()
 for (umap_file in umap_files) {
-    # Use the file name to extract plate
-    plate <- stringr::str_remove(
-        stringr::str_remove(
-            unlist(
-                strsplit(umap_file, "/")
-            )[2],
-            umap_prefix
-        ),
-        plate_suffix
-    )
-    output_umap_files[plate] <- file.path(
-        output_fig_dir,
-        paste0(umap_prefix, plate)
-    )
-}
-        
-print(output_umap_files)
+    # Extract file name
+    file_name <- basename(umap_file)
+    
+    # Determine plate name based on file suffix
+    if (stringr::str_detect(file_name, plate_suffix)) {
+        plate <- stringr::str_remove(stringr::str_remove(file_name, umap_prefix), plate_suffix)
+    } else if (stringr::str_detect(file_name, alt_plate_suffix)) {
+        plate <- stringr::str_remove(stringr::str_remove(file_name, umap_prefix), alt_plate_suffix)
+        if (plate == "Plate_6") {
+            plate <- "Plate_6_sc_only_model_features"  # Explicit rename for the new file
+        }
+    } else {
+        next  # Skip files that don't match expected patterns
+    }
 
+    # Store in dictionary
+    output_umap_files[[plate]] <- file.path(output_fig_dir, paste0(umap_prefix, plate))
+}
+
+print(output_umap_files)
 
 # Load data
 umap_cp_df <- list()
 for (plate in names(output_umap_files)) {
     # Find the umap file associated with the plate
     umap_file <- umap_files[stringr::str_detect(umap_files, plate)]
+    print(paste("Loading file for plate:", plate, "File path:", umap_file))
     
     # Load in the umap data
     df <- readr::read_tsv(
@@ -58,22 +62,30 @@ for (plate in names(output_umap_files)) {
     if (plate == "Plate_3") {
         umap_cp_df[[plate]] <- umap_cp_df[[plate]][umap_cp_df[[plate]]$Metadata_Plate != "Plate_3_prime", ]
     }
+
+    # Remove rows with Metadata_Plate == "Plate_6_filtered" if plate is Plate_6 (error when loading in the data)
+    if (plate == "Plate_6") {
+        umap_cp_df[[plate]] <- umap_cp_df[[plate]][umap_cp_df[[plate]]$Metadata_Plate != "Plate_6_filtered", ]
+    }
 }
 
 for (plate in names(umap_cp_df)) {
+    # Remove rows with NaNs
+    umap_data <- na.omit(umap_cp_df[[plate]])
+
     # Genotype UMAP file path
     genotype_output_file <- paste0(output_umap_files[[plate]], "_genotype.png")
 
     # UMAP labeled with genotype
     genotype_gg <- (
-        ggplot(umap_cp_df[[plate]], aes(x = UMAP0, y = UMAP1))
+        ggplot(umap_data, aes(x = UMAP0, y = UMAP1))
         + geom_point(
             aes(color = Metadata_genotype), size = 1.2, alpha = 0.6
         )
         + theme_bw()
         + scale_color_manual(
             name = "Genotype",
-            values = c("Null" = "#BA5A31", "WT" = "#32be73", "HET" = "#3c47dd")
+            values = c("Null" = "#BA5A31", "WT" = "#32be73")
         )
     )
     
@@ -83,7 +95,7 @@ for (plate in names(umap_cp_df)) {
     cell_count_output_file <- paste0(output_umap_files[[plate]], "_cell_count.png")
     
     umap_cell_count_gg <- (
-        ggplot(umap_cp_df[[plate]], aes(x = UMAP0, y = UMAP1))
+        ggplot(umap_data, aes(x = UMAP0, y = UMAP1))
         + geom_point(
             aes(color = Metadata_number_of_singlecells), size = 1.2, alpha = 0.6
         )
@@ -96,7 +108,6 @@ for (plate in names(umap_cp_df)) {
 
     ggsave(cell_count_output_file, umap_cell_count_gg, dpi = 500, height = 6, width = 6)
 }
-
 
 # For only plate 4, look at labelling the constructs to see if there is any clustering
 # Load the data frame
@@ -156,39 +167,49 @@ platemap_df <- read.csv("../../../0.download_data/metadata/platemap_NF1_plate6.c
 platemap_df <- platemap_df[, c("well_position", "Institution")]
 colnames(platemap_df) <- c("Metadata_Well", "Metadata_Institution")
 
-# Select plate 6 file path from list of umap files
-plate_6_path <- umap_files[[8]]
+# Define the two Plate 6 UMAP file paths
+plate_6_paths <- umap_files[grepl("UMAP_Plate_6", umap_files)]
 
-# Load in the umap data for plate 6 only
-df <- readr::read_tsv(
-    plate_6_path,
-    col_types = readr::cols(
-        .default = "d",
-        "Metadata_Plate" = "c",
-        "Metadata_Well" = "c",
-        "Metadata_Site" = "c",
-        "Metadata_number_of_singlecells" = "c",
-        "Metadata_genotype" = "c",
+# Loop through each of the Plate 6 UMAP files
+for (plate_6_path in plate_6_paths) {
+    
+    # Load in the UMAP data for the current Plate 6 file
+    df <- readr::read_tsv(
+        plate_6_path,
+        col_types = readr::cols(
+            .default = "d",
+            "Metadata_Plate" = "c",
+            "Metadata_Well" = "c",
+            "Metadata_Site" = "c",
+            "Metadata_number_of_singlecells" = "c",
+            "Metadata_genotype" = "c"
+        )
     )
-)
-
-# Merge institution info onto UMAP df
-combined_df <- platemap_df %>% inner_join(df, by = "Metadata_Well")
-
-# siRNA construct UMAP
-output_file <- "./figures/UMAP_Plate_6_institution.png"
-
-# UMAP labeled with institution
-umap_institution_gg <- (
-    ggplot(combined_df, aes(x = UMAP0, y = UMAP1))
-    + geom_point(
-            aes(color = Metadata_Institution), size = 1.5, alpha = 0.3
+    
+    # Merge institution info onto UMAP df
+    combined_df <- platemap_df %>% inner_join(df, by = "Metadata_Well")
+    
+    # Define the output file name based on the current Plate 6 file
+    output_file <- paste0(
+        "./figures/", 
+        gsub("Plate_6_sc_feature_selected", "Plate_6", tools::file_path_sans_ext(basename(plate_6_path))),  # Handle the Plate_6_sc_feature_selected condition and remove .tsv
+        "_institution.png"
     )
-    + theme_bw()
-    + scale_color_discrete(name = "Institution")
-)
 
-ggsave(output_file, umap_institution_gg, dpi = 500, height = 6, width = 6)
+    
+    # Create UMAP plot labeled with institution
+    umap_institution_gg <- (
+        ggplot(combined_df, aes(x = UMAP0, y = UMAP1))
+        + geom_point(
+                aes(color = Metadata_Institution), size = 1.5, alpha = 0.3
+        )
+        + theme_bw()
+        + scale_color_discrete(name = "Institution")
+    )
+    
+    # Save the plot with a specific output filename
+    ggsave(output_file, umap_institution_gg, dpi = 500, height = 6, width = 6)
+}
 
 # Select concat plate file path from list of umap files
 concat_plate_path <- umap_files[[1]]
