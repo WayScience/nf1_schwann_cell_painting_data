@@ -118,7 +118,9 @@ for plate in cp_dfs:
     print("UMAP embeddings being generated for", plate_name)
 
     # Make sure to reinitialize UMAP instance per plate
-    umap_fit = umap.UMAP(random_state=umap_random_seed, n_components=umap_n_components, n_jobs=1)
+    umap_fit = umap.UMAP(
+        random_state=umap_random_seed, n_components=umap_n_components, n_jobs=1
+    )
 
     # Make sure NA columns have been removed
     cp_df = cp_dfs[plate]
@@ -206,7 +208,9 @@ desired_columns = [
 ]
 
 # Make sure to reinitialize UMAP instance
-umap_fit = umap.UMAP(random_state=umap_random_seed, n_components=umap_n_components, n_jobs=1)
+umap_fit = umap.UMAP(
+    random_state=umap_random_seed, n_components=umap_n_components, n_jobs=1
+)
 
 # Process cp_df to separate features and metadata
 cp_features = infer_cp_features(concatenated_df)
@@ -243,7 +247,9 @@ cp_umap_with_metadata_df.to_csv(output_umap_file, index=False, sep="\t")
 
 
 # Load in Plate 6 normalized data to then filter down the features with the model_columns
-plate_6_norm_df = pd.read_parquet(pathlib.Path(data_dir, "Plate_6_sc_normalized.parquet"))
+plate_6_norm_df = pd.read_parquet(
+    pathlib.Path(data_dir, "Plate_6_sc_normalized.parquet")
+)
 
 # Drop rows where Metadata_genotype is HET
 plate_6_norm_df = plate_6_norm_df[plate_6_norm_df["Metadata_genotype"] != "HET"]
@@ -252,14 +258,26 @@ plate_6_norm_df = plate_6_norm_df[plate_6_norm_df["Metadata_genotype"] != "HET"]
 plate_6_filtered_features = plate_6_norm_df[model_columns]
 
 # Add the metadata columns back
-metadata_columns = [col for col in plate_6_norm_df.columns if col.startswith("Metadata_")]
-plate_6_filtered_df = pd.concat([plate_6_norm_df[metadata_columns], plate_6_filtered_features], axis=1)
+metadata_columns = [
+    col for col in plate_6_norm_df.columns if col.startswith("Metadata_")
+]
+plate_6_filtered_df = pd.concat(
+    [plate_6_norm_df[metadata_columns], plate_6_filtered_features], axis=1
+)
 
 # Drop rows with NaN values in the feature columns
-plate_6_filtered_df = plate_6_filtered_df.dropna(subset=[col for col in plate_6_filtered_df.columns if not col.startswith("Metadata_")])
+plate_6_filtered_df = plate_6_filtered_df.dropna(
+    subset=[
+        col for col in plate_6_filtered_df.columns if not col.startswith("Metadata_")
+    ]
+)
+assert plate_6_filtered_df.isna().sum().sum() == 0, "NaN detected"
 
 # Change Metadata_Plate for all rows to Plate_6_filtered to avoid issues downstream loading in plates
 plate_6_filtered_df["Metadata_Plate"] = "Plate_6_filtered"
+
+# Confirm that index is reset to avoid any NaN issues
+plate_6_filtered_df = plate_6_filtered_df.reset_index(drop=True)
 
 print(len(plate_6_filtered_features.columns))
 
@@ -280,7 +298,9 @@ desired_columns = [
 ]
 
 # Make sure to reinitialize UMAP instance
-umap_fit = umap.UMAP(random_state=umap_random_seed, n_components=umap_n_components, n_jobs=1)
+umap_fit = umap.UMAP(
+    random_state=umap_random_seed, n_components=umap_n_components, n_jobs=1
+)
 
 # Process cp_df to separate features and metadata
 cp_features = infer_cp_features(plate_6_filtered_df)
@@ -305,8 +325,6 @@ cp_umap_with_metadata_df = pd.concat(
 cp_umap_with_metadata_df = cp_umap_with_metadata_df.sample(frac=1, random_state=0)
 
 # Generate output file and save
-output_umap_file = pathlib.Path(
-    output_dir, "UMAP_Plate_6_sc_only_model_features.tsv"
-)
+output_umap_file = pathlib.Path(output_dir, "UMAP_Plate_6_sc_only_model_features.tsv")
 cp_umap_with_metadata_df.to_csv(output_umap_file, index=False, sep="\t")
 
