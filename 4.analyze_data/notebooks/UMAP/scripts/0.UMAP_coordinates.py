@@ -243,7 +243,7 @@ cp_umap_with_metadata_df.to_csv(output_umap_file, index=False, sep="\t")
 
 # ## Generate Plate 6 UMAP embeddings using the model features specifically
 
-# In[11]:
+# In[ ]:
 
 
 # Load in Plate 6 normalized data to then filter down the features with the model_columns
@@ -271,6 +271,7 @@ plate_6_filtered_df = plate_6_filtered_df.dropna(
         col for col in plate_6_filtered_df.columns if not col.startswith("Metadata_")
     ]
 )
+assert plate_6_filtered_df.isna().sum().sum() == 0, "NaN detected"
 
 # Change Metadata_Plate for all rows to Plate_6_filtered to avoid issues downstream loading in plates
 plate_6_filtered_df["Metadata_Plate"] = "Plate_6_filtered"
