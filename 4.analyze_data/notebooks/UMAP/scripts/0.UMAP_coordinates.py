@@ -243,7 +243,7 @@ cp_umap_with_metadata_df.to_csv(output_umap_file, index=False, sep="\t")
 
 # ## Generate Plate 6 UMAP embeddings using the model features specifically
 
-# In[ ]:
+# In[11]:
 
 
 # Load in Plate 6 normalized data to then filter down the features with the model_columns
