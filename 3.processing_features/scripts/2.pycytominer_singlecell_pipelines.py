@@ -30,7 +30,10 @@ from pycytominer.cyto_utils import output, infer_cp_features
 # In[2]:
 
 
-# Set constants
+# Set the data level to process (converted/raw or cleaned/QC)
+data_level = "cleaned"
+
+# Set feature selection operations
 feature_select_ops = [
     "variance_threshold",
     "correlation_threshold",
@@ -85,6 +88,11 @@ pprint.pprint(plate_info_dictionary, indent=4)
 # In[4]:
 
 
+# Ensure output_dir is set correctly before the loop
+if data_level == "cleaned":
+    output_dir = pathlib.Path(output_dir) / "cleaned_sc_profiles"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
 for plate, info in plate_info_dictionary.items():
     print(f"Now performing single-cell pycytominer pipeline for {plate}")
     output_annotated_file = str(
@@ -101,7 +109,10 @@ for plate, info in plate_info_dictionary.items():
     )
 
     # Load single-cell profiles
-    single_cell_df = pd.read_parquet(info["dest_path"])
+    if data_level == "cleaned":
+        single_cell_df = pd.read_parquet(info["cleaned_path"])
+    elif data_level == "converted":
+        single_cell_df = pd.read_parquet(info["dest_path"])
 
     # Load plate map
     platemap_df = pd.read_csv(info["platemap_path"])
