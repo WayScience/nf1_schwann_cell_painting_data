@@ -11,5 +11,6 @@ jupyter nbconvert --to script --output-dir=scripts/ *.ipynb
 
 # run each python script
 python scripts/0.merge_sc_cytotable.py
-python scripts/1.pycytominer_bulk_pipelines.py
+python scripts/1.sc_cosmicqc.py
+python scripts/2.pycytominer_bulk_pipelines.py
 python scripts/2.pycytominer_singlecell_pipelines.py
