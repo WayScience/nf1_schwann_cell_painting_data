@@ -3,8 +3,11 @@
 
 # # Perform single-cell quality control
 # 
-# In this notebook, we perform single-cell quality control using coSMicQC. 
-# We filter the single cells by identifying outliers with z-scores, and use either combinations of features or one feature for each condition. 
+# In this notebook, we perform single-cell quality control using [coSMicQC](https://github.com/WayScience/coSMicQC). 
+# We filter the single cells by identifying outliers with z-scores, and use either combinations of features or one feature for each condition. For more information on the functions, please refer [**here**](https://github.com/WayScience/coSMicQC/blob/main/src/cosmicqc/analyze.py).
+# 
+# NOTE: As this method uses z-scoring, there is an automatic assumption that the distribution of the features are normal. If they are not, this method will be less likely to work. We have confirmed the features we are using are of normal distribution.
+# 
 # We use the feature(s) below to assess the technical quality of the segmented single-cells:
 # 
 # ### Assessing poor nuclei segmentation
@@ -47,7 +50,7 @@ def reshape_data(df: pd.DataFrame, feature_col: str, feature_name: str) -> pd.Da
     Returns:
         pd.DataFrame: reshaped dataframe to use for plotting
     """
-    return df[["Image_Metadata_Plate", feature_col, "Dataset"]].rename(
+    return df[["Image_Metadata_Plate", "plate_alias", feature_col, "Dataset"]].rename(
         columns={feature_col: "Value"}
     ).assign(Feature=feature_name)
 
@@ -71,6 +74,7 @@ qc_fig_dir.mkdir(exist_ok=True)
 # metadata columns to include in output data frame
 metadata_columns = [
     "Image_Metadata_Plate",
+    "plate_alias",
     "Image_Metadata_Well",
     "Image_Metadata_Site",
     "Metadata_Nuclei_Location_Center_X",
@@ -100,14 +104,27 @@ dfs = {plate: pd.read_parquet(plate_info[plate]['dest_path']) for plate in plate
 # Concatenate all dataframes into a single dataframe
 combined_df = pd.concat(dfs.values(), ignore_index=True)
 
+# Create a mapping for plate aliases
+plate_alias_mapping = {
+    "Plate_3": "Plate A",
+    "Plate_3_prime": "Plate B",
+    "Plate_5": "Plate C",
+    "Plate_6": "Plate D"
+}
+
+# Add the plate_alias column
+combined_df['plate_alias'] = combined_df['Image_Metadata_Plate'].map(plate_alias_mapping)
+
 # Print output
 print(combined_df.shape)
 combined_df.head()
 
 
 # ## Over-saturated nuclei (mitosis/debris)
+# 
+# NOTE: Threshold was determined with trial and error to find where the cutoff for good to bad quality or mitosis-ing single-cells are.
 
-# In[5]:
+# In[ ]:
 
 
 # Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
@@ -124,7 +141,7 @@ nuclei_high_int_outliers = find_outliers(
     feature_thresholds=feature_thresholds
 )
 
-# Sort the outliers by Nuclei_AreaShape_Area
+# Sort the outliers by Nuclei_Intensity_MeanIntensity_DAPI
 nuclei_high_int_outliers = nuclei_high_int_outliers.sort_values(by="Nuclei_Intensity_MeanIntensity_DAPI", ascending=True)
 
 print(nuclei_high_int_outliers.shape)
@@ -147,6 +164,8 @@ for plate, count in outlier_counts.items():
 
 
 # ## Over-segmented nuclei (reflected by irregular, non-circular shape)
+# 
+# NOTE: Threshold was determined with trial and error to find where the cutoff for good to bad quality single-cell are.
 
 # In[7]:
 
@@ -172,19 +191,6 @@ irregular_nuclei_outliers.sort_values(by="Nuclei_AreaShape_Solidity", ascending=
 # In[8]:
 
 
-filtered_outliers = irregular_nuclei_outliers[
-    (irregular_nuclei_outliers["Image_Metadata_Plate"] == "Plate_3_prime") &
-    (irregular_nuclei_outliers["Image_Metadata_Well"] == "B5") &
-    (irregular_nuclei_outliers["Image_Metadata_Site"] == '17')
-]
-
-print(filtered_outliers.shape)
-filtered_outliers.head()
-
-
-# In[9]:
-
-
 # Print out the number of outliers across plates
 outlier_counts = irregular_nuclei_outliers['Image_Metadata_Plate'].value_counts()
 
@@ -197,7 +203,7 @@ for plate, count in outlier_counts.items():
     print(f"{plate}: {count} outliers ({outlier_percentages[plate]:.2f}%)")
 
 
-# In[10]:
+# In[9]:
 
 
 # Remove outliers from combined_df
@@ -208,7 +214,7 @@ print(filtered_combined_df.shape[0])
 
 # ## Generate plot
 
-# In[11]:
+# In[10]:
 
 
 # Set palette for plot
@@ -239,7 +245,7 @@ for feature in plot_df["Feature"].unique():
 
     g = sns.FacetGrid(
         feature_df,
-        col="Image_Metadata_Plate",
+        col="plate_alias",
         hue="Dataset",
         palette=palette,
         height=4,
@@ -255,7 +261,7 @@ for feature in plot_df["Feature"].unique():
     # Customize labels and titles
     g.set_xlabels("Feature value (range 0-1)", fontsize=14)
     g.set_ylabels("Single-cell count", fontsize=14)
-    g.set_titles(col_template="{col_name}", size=14)
+    g.set_titles(col_template="{col_name}", size=16)
     # Adjust tick labels size
     for ax in g.axes.flat:
         ax.tick_params(labelsize=14)
@@ -272,7 +278,7 @@ for feature in plot_df["Feature"].unique():
 
 
     # Add a suptitle for the feature
-    g.figure.suptitle(feature, fontsize=16, fontweight="bold")
+    g.figure.suptitle(feature, fontsize=18, fontweight="bold")
     g.figure.subplots_adjust(top=0.85)  # Adjust spacing for title
 
     if feature == "Nuclei Intensity (Mean DAPI)":
@@ -284,7 +290,7 @@ for feature in plot_df["Feature"].unique():
     g.savefig(f"{qc_fig_dir}/cosmicqc_distribution_{feature}.png", dpi=500)
 
 
-# In[12]:
+# In[11]:
 
 
 # Collect the indices of the outliers
@@ -296,6 +302,7 @@ combined_df_cleaned = combined_df.drop(outlier_indices)
 # Save cleaned data for each plate and update the dictionary with cleaned paths
 for plate in plates:
     plate_df_cleaned = combined_df_cleaned[combined_df_cleaned['Image_Metadata_Plate'] == plate]
+    plate_df_cleaned = plate_df_cleaned.drop(columns=['plate_alias'])  # Remove plate_alias column
     cleaned_path = f"{cleaned_dir}/{plate}_cleaned.parquet"
     plate_df_cleaned.to_parquet(cleaned_path)
     plate_info[plate]['cleaned_path'] = cleaned_path
@@ -311,7 +318,7 @@ for plate in plates:
 
 # ## Dump the new cleaned path to the dictionary for downstream processing
 
-# In[13]:
+# In[12]:
 
 
 with open(dictionary_path, "w") as file:
