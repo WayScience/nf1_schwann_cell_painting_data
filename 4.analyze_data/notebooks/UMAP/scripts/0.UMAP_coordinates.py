@@ -26,8 +26,19 @@ from pycytominer.cyto_utils import infer_cp_features
 umap_random_seed = 0
 umap_n_components = 2
 
+# Set data type for the UMAP embedding generation
+data_type = "cleaned"
+
+# Set output dir
 output_dir = pathlib.Path("results")
 output_dir.mkdir(parents=True, exist_ok=True)
+
+# Adjust output dir if data_type is "cleaned"
+if data_type == "cleaned":
+    output_dir = output_dir / "qc_profiles_results"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+print(f"Output directory: {output_dir}")  # Debugging line
 
 
 # ## Create list of paths to feature selected data per plate
@@ -37,6 +48,12 @@ output_dir.mkdir(parents=True, exist_ok=True)
 
 # Set input paths
 data_dir = pathlib.Path("../../../3.processing_features/data/single_cell_profiles/")
+
+# Adjust path if data_type is "cleaned"
+if data_type == "cleaned":
+    data_dir = data_dir / "cleaned_sc_profiles"
+
+print(f"Final data_dir: {data_dir.resolve()}")  # Show full path for debugging
 
 # Select only the feature selected files
 file_suffix = "*sc_feature_selected.parquet"
@@ -158,7 +175,11 @@ for plate in cp_dfs:
     cp_umap_with_metadata_df = cp_umap_with_metadata_df.sample(frac=1, random_state=0)
 
     # Generate output file and save
-    output_umap_file = pathlib.Path(output_dir, f"UMAP_{plate_name}.tsv")
+    if data_type == "cleaned":
+        output_umap_file = pathlib.Path(output_dir, f"UMAP_{plate_name}_qc.tsv")
+    else:
+        output_umap_file = pathlib.Path(output_dir, f"UMAP_{plate_name}.tsv")
+
     cp_umap_with_metadata_df.to_csv(output_umap_file, index=False, sep="\t")
 
 
@@ -187,9 +208,14 @@ concatenated_df = pd.concat(selected_dfs_filtered, ignore_index=True)
 concatenated_df = concatenated_df[sorted(concatenated_df.columns)]
 
 # Save the concatenated dataframe to a file
-output_concatenated_file = pathlib.Path(
-    output_dir, "concatenated_norm_fs_plates_5_3_3prime.parquet"
-)
+if data_type == "cleaned":
+    output_concatenated_file = pathlib.Path(
+        output_dir, "concatenated_norm_fs_plates_5_3_3prime_qc.parquet"
+    )
+else:
+    output_concatenated_file = pathlib.Path(
+        output_dir, "concatenated_norm_fs_plates_5_3_3prime.parquet"
+    )
 concatenated_df.to_parquet(output_concatenated_file, index=False)
 
 print(concatenated_df.shape)
@@ -235,9 +261,14 @@ cp_umap_with_metadata_df = pd.concat(
 cp_umap_with_metadata_df = cp_umap_with_metadata_df.sample(frac=1, random_state=0)
 
 # Generate output file and save
-output_umap_file = pathlib.Path(
-    output_dir, "UMAP_concat_model_plates_sc_feature_selected.tsv"
-)
+if data_type == "cleaned":
+    output_umap_file = pathlib.Path(
+        output_dir, "UMAP_concat_model_plates_sc_feature_selected_qc.tsv"
+    )
+else:
+    output_umap_file = pathlib.Path(
+        output_dir, "UMAP_concat_model_plates_sc_feature_selected.tsv"
+    )
 cp_umap_with_metadata_df.to_csv(output_umap_file, index=False, sep="\t")
 
 
@@ -325,6 +356,13 @@ cp_umap_with_metadata_df = pd.concat(
 cp_umap_with_metadata_df = cp_umap_with_metadata_df.sample(frac=1, random_state=0)
 
 # Generate output file and save
-output_umap_file = pathlib.Path(output_dir, "UMAP_Plate_6_sc_only_model_features.tsv")
+if data_type == "cleaned":
+    output_umap_file = pathlib.Path(
+        output_dir, "UMAP_Plate_6_sc_only_model_features_qc.tsv"
+    )
+else:
+    output_umap_file = pathlib.Path(
+        output_dir, "UMAP_Plate_6_sc_only_model_features.tsv"
+    )
 cp_umap_with_metadata_df.to_csv(output_umap_file, index=False, sep="\t")
 
