@@ -39,6 +39,12 @@ joins = presets.config["cellprofiler_sqlite_pycytominer"]["CONFIG_JOINS"].replac
     "Image_Metadata_Well, Image_Metadata_Site,",
 )
 
+# Add the PathName columns separately
+joins = joins.replace(
+    "COLUMNS('Image_FileName_.*'),",
+    "COLUMNS('Image_FileName_.*'),\n COLUMNS('Image_PathName_.*'),"
+)
+
 # set main output dir for all parquet files
 output_dir = pathlib.Path("./data/converted_data/")
 output_dir.mkdir(exist_ok=True)
@@ -127,6 +133,9 @@ for plate, info in plate_info_dictionary.items():
     # Load the DataFrame from the Parquet file
     df = pd.read_parquet(file_path)
 
+    # assert that there are column names with PathName and FileName in the dataset
+    assert any("PathName" in col or "FileName" in col for col in df.columns)
+
     # Check for NaNs in "Metadata_ImageNumber" column
     if df["Metadata_ImageNumber"].isna().any():
         print(f"NaNs found in 'Metadata_ImageNumber' column for {plate}")
@@ -141,7 +150,7 @@ for plate, info in plate_info_dictionary.items():
         "Nuclei_Location_Center_Y",
         "Cells_Location_Center_X",
         "Cells_Location_Center_Y",
-    ] + [col for col in df.columns if col.startswith("Image_FileName_")]
+    ]
 
     # Rename columns with "Metadata_" prefix
     df = df.rename(
