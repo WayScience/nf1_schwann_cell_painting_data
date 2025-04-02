@@ -12,13 +12,15 @@
 # 
 # ### Assessing poor nuclei segmentation
 # 
-# To identify nuclei segmentations that include multiple nuclei, we use the following feature as one condition:
+# To identify nuclei segmentations that include multiple nuclei, we use the following feature(s) as one condition:
 # 
 # - **Nuclei Solidity:** This metric quantifies how irregularly shaped a nuclei segmentation is. A value of 1 indicates that the segmentation is perfectly round and lower values indicate a very irregularly shaped nuclei (e.g., lot of indentation or protrusions).
+# - **Nuclei Integrated Intensity:** This metric quantifies the total intensity of all pixels in a nuclei segmentation. Higher values mean that there are likely more pixels which can indicate multiple nuclei within the segmentation.
 # 
-# To identify nuclei segmentations where the respective nuclei is over-saturated, we use the following feature as another condition.
+# To identify nuclei segmentations where the respective nuclei is over-saturated or undergoing mitosis, we use the following feature(s) as two more conditions.
 # 
-# - **Nuclei Mean Intensity:** This metric quantifies the average intensity of all pixels in a nuclei segmentation. Higher values mean that the pixels tend to be more intense, resulting in a blow-out or over-saturated nuclei, which can sometimes because of the staining.
+# - **Nuclei Upper Quartile Intensity:** This metric quantifies the distribution of the pixel intensities in which 75% of pixels fall below the value (capturing the top 25% of pixel intensities). Values near 1 from this metric indicate that most pixel intensities are at a very high value.
+# - **Nuclei MAD (Median Absolute Deviation) Intensity:** This metric quantifies the variability of pixel intensities within the nuclei. Higher values of this metric indicate more texture while very low values indicate very little differences between pixel intensities (e.g., low variance).
 
 # ## Import libraries
 
@@ -27,11 +29,13 @@
 
 import pathlib
 import pandas as pd
+from PIL import Image
 import matplotlib.pyplot as plt
 import seaborn as sns
 import yaml
 
 from cosmicqc import find_outliers
+from cytodataframe import CytoDataFrame
 
 
 # ## Define helper function
@@ -39,20 +43,19 @@ from cosmicqc import find_outliers
 # In[2]:
 
 
-def reshape_data(df: pd.DataFrame, feature_col: str, feature_name: str) -> pd.DataFrame:
-    """Reshape the data for generating plot for each quality control feature
+# helper function for CytoDataFrame to not change the brightness of the image
+def do_not_adjust_image_brightness(image: Image.Image) -> Image.Image:
+    """
+    Function for CytoDataFrame to do nothing to the image and return it unchanged.
 
     Args:
-        df (pd.DataFrame): dataframe that will be reshaped for plotting
-        feature_col (str): feature column with CP format to rename
-        feature_name (str): renamed column
+        image (Image.Image): The input PIL Image.
 
     Returns:
-        pd.DataFrame: reshaped dataframe to use for plotting
+        Image.Image: The unchanged PIL Image.
     """
-    return df[["Image_Metadata_Plate", "plate_alias", feature_col, "Dataset"]].rename(
-        columns={feature_col: "Value"}
-    ).assign(Feature=feature_name)
+    # Return the input image as is without any modifications
+    return image
 
 
 # ## Set paths and variables
@@ -79,6 +82,12 @@ metadata_columns = [
     "Image_Metadata_Site",
     "Metadata_Nuclei_Location_Center_X",
     "Metadata_Nuclei_Location_Center_Y",
+    "Image_FileName_DAPI",
+    "Image_PathName_DAPI",
+    "Nuclei_AreaShape_BoundingBoxMaximum_X",
+    "Nuclei_AreaShape_BoundingBoxMaximum_Y",
+    "Nuclei_AreaShape_BoundingBoxMinimum_X",
+    "Nuclei_AreaShape_BoundingBoxMinimum_Y",
 ]
 
 # Path to dictionary
@@ -99,7 +108,7 @@ plates = ["Plate_3_prime", "Plate_3", "Plate_5", "Plate_6"]
 
 # Load in specified plates from plate_info_dictionary
 plates = plate_info.keys()
-dfs = {plate: pd.read_parquet(plate_info[plate]['dest_path']) for plate in plates}
+dfs = {plate: pd.read_parquet(plate_info[plate]["dest_path"]) for plate in plates}
 
 # Concatenate all dataframes into a single dataframe
 combined_df = pd.concat(dfs.values(), ignore_index=True)
@@ -109,53 +118,162 @@ plate_alias_mapping = {
     "Plate_3": "Plate A",
     "Plate_3_prime": "Plate B",
     "Plate_5": "Plate C",
-    "Plate_6": "Plate D"
+    "Plate_6": "Plate D",
 }
 
 # Add the plate_alias column
-combined_df['plate_alias'] = combined_df['Image_Metadata_Plate'].map(plate_alias_mapping)
+combined_df["plate_alias"] = combined_df["Image_Metadata_Plate"].map(
+    plate_alias_mapping
+)
 
 # Print output
 print(combined_df.shape)
 combined_df.head()
 
 
+# In[5]:
+
+
+# Define the QC features
+qc_features = [
+    "Nuclei_Intensity_UpperQuartileIntensity_DAPI",
+    "Nuclei_Intensity_IntegratedIntensity_DAPI",
+    "Nuclei_Intensity_MADIntensity_DAPI",
+    "Nuclei_AreaShape_Solidity",
+]
+
+# Filter combined_df to only include metadata columns and QC features
+filtered_combined_df = combined_df[metadata_columns + qc_features]
+
+filtered_combined_df_cdf = CytoDataFrame(
+    data=filtered_combined_df,
+    image_adjustment=do_not_adjust_image_brightness
+)[
+    [
+        "Image_FileName_DAPI",
+        "Nuclei_Intensity_MADIntensity_DAPI",
+        "Nuclei_AreaShape_Solidity",
+        "Nuclei_Intensity_UpperQuartileIntensity_DAPI"
+    ]
+]
+
+# Sample 2 rows from the dataframe
+filtered_combined_df_cdf.sample(n=2, random_state=0)
+
+
 # ## Over-saturated nuclei (mitosis/debris)
 # 
 # NOTE: Threshold was determined with trial and error to find where the cutoff for good to bad quality or mitosis-ing single-cells are.
 
-# In[ ]:
-
-
-# Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
-outlier_threshold = 2
-
-# find nuclei with overly high intensity (over-saturated)
-feature_thresholds = {
-    "Nuclei_Intensity_MeanIntensity_DAPI": outlier_threshold,
-}
-
-nuclei_high_int_outliers = find_outliers(
-    df=combined_df,
-    metadata_columns=metadata_columns,
-    feature_thresholds=feature_thresholds
-)
-
-# Sort the outliers by Nuclei_Intensity_MeanIntensity_DAPI
-nuclei_high_int_outliers = nuclei_high_int_outliers.sort_values(by="Nuclei_Intensity_MeanIntensity_DAPI", ascending=True)
-
-print(nuclei_high_int_outliers.shape)
-nuclei_high_int_outliers.head()
-
-
 # In[6]:
 
 
+# Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
+outlier_threshold = 1.0
+
+# find nuclei with overly high intensity (over-saturated)
+feature_thresholds = {
+    "Nuclei_Intensity_UpperQuartileIntensity_DAPI": 2,
+}
+
+nuclei_high_int_outliers = find_outliers(
+    df=filtered_combined_df,
+    metadata_columns=metadata_columns,
+    feature_thresholds=feature_thresholds,
+)
+
+nuclei_high_int_outliers_cdf = CytoDataFrame(
+    data=nuclei_high_int_outliers,
+    image_adjustment=do_not_adjust_image_brightness
+)[
+    [
+        "Nuclei_Intensity_UpperQuartileIntensity_DAPI",
+        "Image_FileName_DAPI",
+    
+    ]
+]
+
+# Sort the outliers
+nuclei_high_int_outliers_cdf = nuclei_high_int_outliers_cdf.sort_values(
+    by="Nuclei_Intensity_UpperQuartileIntensity_DAPI", ascending=True
+)
+
+print(nuclei_high_int_outliers_cdf.shape)
+nuclei_high_int_outliers_cdf.head(2)
+
+
+# In[7]:
+
+
+nuclei_high_int_outliers_cdf.sample(n=5, random_state=0)
+
+
+# In[8]:
+
+
 # Print out the number of outliers across plates
-outlier_counts = nuclei_high_int_outliers['Image_Metadata_Plate'].value_counts()
+outlier_counts = nuclei_high_int_outliers["Image_Metadata_Plate"].value_counts()
 
 # Calculate the percentage of outliers
-total_counts = combined_df['Image_Metadata_Plate'].value_counts()
+total_counts = combined_df["Image_Metadata_Plate"].value_counts()
+outlier_percentages = (outlier_counts / total_counts) * 100
+
+# Print the counts and percentages
+for plate, count in outlier_counts.items():
+    print(f"{plate}: {count} outliers ({outlier_percentages[plate]:.2f}%)")
+
+
+# In[9]:
+
+
+# Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
+outlier_threshold = 1.0
+
+# find nuclei with overly high intensity (over-saturated)
+feature_thresholds = {
+    "Nuclei_Intensity_MADIntensity_DAPI": 2,
+}
+
+blurry_nuclei_outliers = find_outliers(
+    df=filtered_combined_df,
+    metadata_columns=metadata_columns,
+    feature_thresholds=feature_thresholds,
+)
+
+blurry_nuclei_outliers_cdf = CytoDataFrame(
+    data=blurry_nuclei_outliers,
+    image_adjustment=do_not_adjust_image_brightness
+)[
+    [
+        "Nuclei_Intensity_MADIntensity_DAPI",
+        "Image_FileName_DAPI",
+    
+    ]
+]
+
+# Sort the outliers
+blurry_nuclei_outliers_cdf = blurry_nuclei_outliers_cdf.sort_values(
+    by="Nuclei_Intensity_MADIntensity_DAPI", ascending=True
+)
+
+print(blurry_nuclei_outliers_cdf.shape)
+blurry_nuclei_outliers_cdf.head(2)
+
+
+# In[10]:
+
+
+blurry_nuclei_outliers_cdf.sample(n=5, random_state=0)
+
+
+# In[11]:
+
+
+# Print out the number of outliers across plates
+outlier_counts = blurry_nuclei_outliers["Image_Metadata_Plate"].value_counts()
+
+# Calculate the percentage of outliers
+total_counts = combined_df["Image_Metadata_Plate"].value_counts()
 outlier_percentages = (outlier_counts / total_counts) * 100
 
 # Print the counts and percentages
@@ -167,35 +285,56 @@ for plate, count in outlier_counts.items():
 # 
 # NOTE: Threshold was determined with trial and error to find where the cutoff for good to bad quality single-cell are.
 
-# In[7]:
+# In[12]:
 
 
 # Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
-outlier_threshold = -1.5
+outlier_threshold = -2
 
 # find irregular shaped nuclei
 feature_thresholds = {
-    "Nuclei_AreaShape_Solidity": outlier_threshold,
+    "Nuclei_AreaShape_Solidity": -1.25,
+    "Nuclei_Intensity_IntegratedIntensity_DAPI": 2
 }
 
 irregular_nuclei_outliers = find_outliers(
-    df=combined_df,
+    df=filtered_combined_df,
     metadata_columns=metadata_columns,
-    feature_thresholds=feature_thresholds
+    feature_thresholds=feature_thresholds,
 )
 
-print(irregular_nuclei_outliers.shape)
-irregular_nuclei_outliers.sort_values(by="Nuclei_AreaShape_Solidity", ascending=True).head()
+irregular_nuclei_outliers_cdf = CytoDataFrame(
+    data=irregular_nuclei_outliers,
+    image_adjustment=do_not_adjust_image_brightness
+)[
+    [
+        "Nuclei_AreaShape_Solidity",
+        "Nuclei_Intensity_IntegratedIntensity_DAPI",
+        "Image_FileName_DAPI",
+    
+    ]
+]
+
+print(irregular_nuclei_outliers_cdf.shape)
+irregular_nuclei_outliers_cdf.sort_values(
+    by="Nuclei_AreaShape_Solidity", ascending=False
+).head(2)
 
 
-# In[8]:
+# In[13]:
+
+
+irregular_nuclei_outliers_cdf.sample(n=5, random_state=0)
+
+
+# In[14]:
 
 
 # Print out the number of outliers across plates
-outlier_counts = irregular_nuclei_outliers['Image_Metadata_Plate'].value_counts()
+outlier_counts = irregular_nuclei_outliers["Image_Metadata_Plate"].value_counts()
 
 # Calculate the percentage of outliers
-total_counts = combined_df['Image_Metadata_Plate'].value_counts()
+total_counts = combined_df["Image_Metadata_Plate"].value_counts()
 outlier_percentages = (outlier_counts / total_counts) * 100
 
 # Print the counts and percentages
@@ -203,122 +342,55 @@ for plate, count in outlier_counts.items():
     print(f"{plate}: {count} outliers ({outlier_percentages[plate]:.2f}%)")
 
 
-# In[9]:
+# In[15]:
 
 
 # Remove outliers from combined_df
-outlier_indices = nuclei_high_int_outliers.index.union(irregular_nuclei_outliers.index)
-filtered_combined_df = combined_df.drop(outlier_indices)
-print(filtered_combined_df.shape[0])
+outlier_indices = (
+    nuclei_high_int_outliers.index
+    .union(irregular_nuclei_outliers.index)
+    .union(blurry_nuclei_outliers.index)
+)
+dropped_outliers_combined_df = combined_df.drop(outlier_indices)
+print(dropped_outliers_combined_df.shape[0])
 
 
-# ## Generate plot
-
-# In[10]:
-
-
-# Set palette for plot
-palette = {
-    "Passing single-cells": "darkgreen",
-    "High intensity nuclei\nfailed single-cells": "magenta",
-    "Irregular shape\nfailed single-cells": "magenta",
-}
-
-# Add dataset labels
-for df, label in [
-    (filtered_combined_df, "Passing single-cells"),
-    (nuclei_high_int_outliers, "High intensity nuclei\nfailed single-cells"),
-    (irregular_nuclei_outliers, "Irregular shape\nfailed single-cells"),
-]:
-    df["Dataset"] = label
-
-plot_df = pd.concat([
-    reshape_data(filtered_combined_df, "Nuclei_Intensity_MeanIntensity_DAPI", "Nuclei Intensity (Mean DAPI)"),
-    reshape_data(nuclei_high_int_outliers, "Nuclei_Intensity_MeanIntensity_DAPI", "Nuclei Intensity (Mean DAPI)"),
-    reshape_data(irregular_nuclei_outliers, "Nuclei_AreaShape_Solidity", "Nuclei AreaShape (Solidity)"),
-    reshape_data(filtered_combined_df, "Nuclei_AreaShape_Solidity", "Nuclei AreaShape (Solidity)"),
-])
-
-# Create FacetGrid with 2x2 layout per feature
-for feature in plot_df["Feature"].unique():
-    feature_df = plot_df[plot_df["Feature"] == feature]  # Subset data
-
-    g = sns.FacetGrid(
-        feature_df,
-        col="plate_alias",
-        hue="Dataset",
-        palette=palette,
-        height=4,
-        aspect=1.5,
-        sharex=True,
-        sharey=False,
-        col_wrap=2  # Ensures 2x2 layout
-    )
-
-    # Plot histograms with dodged bars
-    g.map(sns.histplot, "Value", bins=40, binrange=(0, 1), alpha=0.7, edgecolor="black", multiple="dodge")
-
-    # Customize labels and titles
-    g.set_xlabels("Feature value (range 0-1)", fontsize=14)
-    g.set_ylabels("Single-cell count", fontsize=14)
-    g.set_titles(col_template="{col_name}", size=16)
-    # Adjust tick labels size
-    for ax in g.axes.flat:
-        ax.tick_params(labelsize=14)
-
-    # Add the legend
-    g.add_legend(title="Dataset", bbox_to_anchor=(1.05, 0.5), loc="center left", prop={"size": 14})
-
-    # Retrieve the legend object
-    legend = g._legend  # Access the legend from the FacetGrid
-
-    # Adjust the legend title font size
-    legend.set_title("Dataset")
-    legend.get_title().set_fontsize(14)
-
-
-    # Add a suptitle for the feature
-    g.figure.suptitle(feature, fontsize=18, fontweight="bold")
-    g.figure.subplots_adjust(top=0.85)  # Adjust spacing for title
-
-    if feature == "Nuclei Intensity (Mean DAPI)":
-        feature = "nuclei_int_dapi"
-    else:
-        feature = "nuclei_solidity"
-
-    plt.tight_layout()
-    g.savefig(f"{qc_fig_dir}/cosmicqc_distribution_{feature}.png", dpi=500)
-
-
-# In[11]:
+# In[16]:
 
 
 # Collect the indices of the outliers
-outlier_indices = pd.concat([nuclei_high_int_outliers, irregular_nuclei_outliers]).index
+outlier_indices = pd.concat([nuclei_high_int_outliers, irregular_nuclei_outliers, blurry_nuclei_outliers]).index
 
 # Remove rows with outlier indices from combined_df
 combined_df_cleaned = combined_df.drop(outlier_indices)
 
 # Save cleaned data for each plate and update the dictionary with cleaned paths
 for plate in plates:
-    plate_df_cleaned = combined_df_cleaned[combined_df_cleaned['Image_Metadata_Plate'] == plate]
-    plate_df_cleaned = plate_df_cleaned.drop(columns=['plate_alias'])  # Remove plate_alias column
+    plate_df = combined_df[combined_df["Image_Metadata_Plate"] == plate]  # Original plate data
+    plate_df_cleaned = combined_df_cleaned[combined_df_cleaned["Image_Metadata_Plate"] == plate]  # Cleaned plate data
+    
+    # Calculate number of failed cells (rows removed)
+    failed_cells = plate_df.shape[0] - plate_df_cleaned.shape[0]
+    
+    # Calculate percentage of failed cells
+    failed_percentage = (failed_cells / plate_df.shape[0]) * 100
+    
+    # Print the number of failed cells and the percentage
+    print(f"{plate}: {failed_cells} cells failed ({failed_percentage:.2f}% failed)")
+
+    # Clean the plate data
+    plate_df_cleaned = plate_df_cleaned.drop(columns=["plate_alias"])  # Remove plate_alias column
+    
+    # Save cleaned data for each plate
     cleaned_path = f"{cleaned_dir}/{plate}_cleaned.parquet"
     plate_df_cleaned.to_parquet(cleaned_path)
-    plate_info[plate]['cleaned_path'] = cleaned_path
+    plate_info[plate]["cleaned_path"] = cleaned_path
     print(plate, ":", plate_df_cleaned.shape)
-
-# Print the number of outliers removed and percentage from the total per plate
-for plate in plates:
-    original_count = total_counts[plate]
-    outlier_count = outlier_counts.get(plate, 0)
-    percentage_removed = outlier_percentages.get(plate, 0)
-    print(f"{plate}: {outlier_count} outliers removed ({percentage_removed:.2f}%) from {original_count} total cells")
 
 
 # ## Dump the new cleaned path to the dictionary for downstream processing
 
-# In[12]:
+# In[17]:
 
 
 with open(dictionary_path, "w") as file:
