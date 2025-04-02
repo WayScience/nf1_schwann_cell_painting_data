@@ -29,6 +29,7 @@
 
 import pathlib
 import pandas as pd
+from PIL import Image
 import matplotlib.pyplot as plt
 import seaborn as sns
 import yaml
@@ -42,22 +43,19 @@ from cytodataframe import CytoDataFrame
 # In[2]:
 
 
-def reshape_data(df: pd.DataFrame, feature_col: str, feature_name: str) -> pd.DataFrame:
-    """Reshape the data for generating plot for each quality control feature
+# helper function for CytoDataFrame to not change the brightness of the image
+def do_not_adjust_image_brightness(image: Image.Image) -> Image.Image:
+    """
+    Function for CytoDataFrame to do nothing to the image and return it unchanged.
 
     Args:
-        df (pd.DataFrame): dataframe that will be reshaped for plotting
-        feature_col (str): feature column with CP format to rename
-        feature_name (str): renamed column
+        image (Image.Image): The input PIL Image.
 
     Returns:
-        pd.DataFrame: reshaped dataframe to use for plotting
+        Image.Image: The unchanged PIL Image.
     """
-    return (
-        df[["Image_Metadata_Plate", "plate_alias", feature_col, "Dataset"]]
-        .rename(columns={feature_col: "Value"})
-        .assign(Feature=feature_name)
-    )
+    # Return the input image as is without any modifications
+    return image
 
 
 # ## Set paths and variables
@@ -136,25 +134,6 @@ combined_df.head()
 # In[5]:
 
 
-from PIL import Image
-
-def do_not_adjust_image_brightness(image: Image.Image) -> Image.Image:
-    """
-    Does nothing to the image and returns it unchanged.
-
-    Args:
-        image (Image.Image): The input PIL Image.
-
-    Returns:
-        Image.Image: The unchanged PIL Image.
-    """
-    # Return the input image as is without any modifications
-    return image
-
-
-# In[6]:
-
-
 # Define the QC features
 qc_features = [
     "Nuclei_Intensity_UpperQuartileIntensity_DAPI",
@@ -186,7 +165,7 @@ filtered_combined_df_cdf.sample(n=2, random_state=0)
 # 
 # NOTE: Threshold was determined with trial and error to find where the cutoff for good to bad quality or mitosis-ing single-cells are.
 
-# In[7]:
+# In[6]:
 
 
 # Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
@@ -223,13 +202,13 @@ print(nuclei_high_int_outliers_cdf.shape)
 nuclei_high_int_outliers_cdf.head(2)
 
 
-# In[8]:
+# In[7]:
 
 
 nuclei_high_int_outliers_cdf.sample(n=5, random_state=0)
 
 
-# In[9]:
+# In[8]:
 
 
 # Print out the number of outliers across plates
@@ -244,7 +223,7 @@ for plate, count in outlier_counts.items():
     print(f"{plate}: {count} outliers ({outlier_percentages[plate]:.2f}%)")
 
 
-# In[10]:
+# In[9]:
 
 
 # Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
@@ -281,13 +260,13 @@ print(blurry_nuclei_outliers_cdf.shape)
 blurry_nuclei_outliers_cdf.head(2)
 
 
-# In[11]:
+# In[10]:
 
 
 blurry_nuclei_outliers_cdf.sample(n=5, random_state=0)
 
 
-# In[12]:
+# In[11]:
 
 
 # Print out the number of outliers across plates
@@ -306,7 +285,7 @@ for plate, count in outlier_counts.items():
 # 
 # NOTE: Threshold was determined with trial and error to find where the cutoff for good to bad quality single-cell are.
 
-# In[13]:
+# In[12]:
 
 
 # Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
@@ -342,13 +321,13 @@ irregular_nuclei_outliers_cdf.sort_values(
 ).head(2)
 
 
-# In[14]:
+# In[13]:
 
 
 irregular_nuclei_outliers_cdf.sample(n=5, random_state=0)
 
 
-# In[15]:
+# In[14]:
 
 
 # Print out the number of outliers across plates
@@ -363,7 +342,7 @@ for plate, count in outlier_counts.items():
     print(f"{plate}: {count} outliers ({outlier_percentages[plate]:.2f}%)")
 
 
-# In[16]:
+# In[15]:
 
 
 # Remove outliers from combined_df
@@ -376,7 +355,7 @@ dropped_outliers_combined_df = combined_df.drop(outlier_indices)
 print(dropped_outliers_combined_df.shape[0])
 
 
-# In[17]:
+# In[16]:
 
 
 # Collect the indices of the outliers
@@ -411,7 +390,7 @@ for plate in plates:
 
 # ## Dump the new cleaned path to the dictionary for downstream processing
 
-# In[18]:
+# In[17]:
 
 
 with open(dictionary_path, "w") as file:
