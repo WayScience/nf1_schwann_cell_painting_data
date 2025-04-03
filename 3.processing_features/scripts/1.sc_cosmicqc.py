@@ -240,7 +240,7 @@ plt.yticks(fontsize=12)
 plt.legend(
     title="QC Status",
     loc="upper right",
-    labels=["Passed", "Failed"],
+    labels=["Failed", "Passed"],
     fontsize=12,
     title_fontsize=14,
 )
