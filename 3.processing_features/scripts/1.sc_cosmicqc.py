@@ -146,14 +146,13 @@ qc_features = [
 filtered_combined_df = combined_df[metadata_columns + qc_features]
 
 filtered_combined_df_cdf = CytoDataFrame(
-    data=filtered_combined_df,
-    image_adjustment=do_not_adjust_image_brightness
+    data=filtered_combined_df, image_adjustment=do_not_adjust_image_brightness
 )[
     [
         "Image_FileName_DAPI",
         "Nuclei_Intensity_MADIntensity_DAPI",
         "Nuclei_AreaShape_Solidity",
-        "Nuclei_Intensity_UpperQuartileIntensity_DAPI"
+        "Nuclei_Intensity_UpperQuartileIntensity_DAPI",
     ]
 ]
 
@@ -183,13 +182,11 @@ nuclei_high_int_outliers = find_outliers(
 )
 
 nuclei_high_int_outliers_cdf = CytoDataFrame(
-    data=nuclei_high_int_outliers,
-    image_adjustment=do_not_adjust_image_brightness
+    data=nuclei_high_int_outliers, image_adjustment=do_not_adjust_image_brightness
 )[
     [
         "Nuclei_Intensity_UpperQuartileIntensity_DAPI",
         "Image_FileName_DAPI",
-    
     ]
 ]
 
@@ -205,10 +202,60 @@ nuclei_high_int_outliers_cdf.head(2)
 # In[7]:
 
 
-nuclei_high_int_outliers_cdf.sample(n=5, random_state=0)
+nuclei_high_int_outliers_cdf.sample(n=2, random_state=0)
 
 
 # In[8]:
+
+
+# Create a new column 'qc_status' in filtered_combined_df
+copy_filtered_combined_df = filtered_combined_df.copy()
+copy_filtered_combined_df["qc_status"] = copy_filtered_combined_df.index.map(
+    lambda idx: "Failed" if idx in nuclei_high_int_outliers.index else "Passed"
+)
+
+# Set figure size
+plt.figure(figsize=(6, 6))
+
+# Histogram plot for nuclei high intensity outliers, grouped by qc_status
+sns.histplot(
+    data=copy_filtered_combined_df,
+    x="Nuclei_Intensity_UpperQuartileIntensity_DAPI",
+    hue="qc_status",  # Color bins by qc_status
+    multiple="layer",  # Stack the bars for better comparison
+    bins=30,  # Adjust the number of bins as needed
+    kde=False,  # Disable KDE
+    palette={
+        "Passed": "#006400",
+        "Failed": "#CC0099",
+    },  # Custom colors for Passed and Failed
+    legend=False,
+)
+
+# Customize the plot
+plt.xlabel("Nuclei upper quartile intensity (DAPI)", fontsize=14)
+plt.ylabel("Count", fontsize=14)
+plt.xticks(fontsize=12)
+plt.yticks(fontsize=12)
+plt.legend(
+    title="QC Status",
+    loc="upper right",
+    labels=["Failed", "Passed"],
+    fontsize=12,
+    title_fontsize=14,
+)
+
+plt.savefig(
+    qc_fig_dir / "high_intensity_nuclei_outliers_histogram.png",
+    dpi=500,
+    bbox_inches="tight",
+)
+
+# Show the plot
+plt.show()
+
+
+# In[9]:
 
 
 # Print out the number of outliers across plates
@@ -223,7 +270,7 @@ for plate, count in outlier_counts.items():
     print(f"{plate}: {count} outliers ({outlier_percentages[plate]:.2f}%)")
 
 
-# In[9]:
+# In[10]:
 
 
 # Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
@@ -241,13 +288,11 @@ blurry_nuclei_outliers = find_outliers(
 )
 
 blurry_nuclei_outliers_cdf = CytoDataFrame(
-    data=blurry_nuclei_outliers,
-    image_adjustment=do_not_adjust_image_brightness
+    data=blurry_nuclei_outliers, image_adjustment=do_not_adjust_image_brightness
 )[
     [
         "Nuclei_Intensity_MADIntensity_DAPI",
         "Image_FileName_DAPI",
-    
     ]
 ]
 
@@ -260,13 +305,63 @@ print(blurry_nuclei_outliers_cdf.shape)
 blurry_nuclei_outliers_cdf.head(2)
 
 
-# In[10]:
-
-
-blurry_nuclei_outliers_cdf.sample(n=5, random_state=0)
-
-
 # In[11]:
+
+
+blurry_nuclei_outliers_cdf.sample(n=2, random_state=0)
+
+
+# In[12]:
+
+
+# Create a new column 'qc_status' in filtered_combined_df
+copy_filtered_combined_df = filtered_combined_df.copy()
+copy_filtered_combined_df["qc_status"] = copy_filtered_combined_df.index.map(
+    lambda idx: "Failed" if idx in blurry_nuclei_outliers.index else "Passed"
+)
+
+# Set figure size
+plt.figure(figsize=(6, 6))
+
+# Histogram plot for blurry nuclei outliers, grouped by qc_status
+sns.histplot(
+    data=copy_filtered_combined_df,
+    x="Nuclei_Intensity_MADIntensity_DAPI",
+    hue="qc_status",  # Color bins by qc_status
+    multiple="layer",  # Stack the bars for better comparison
+    bins=30,  # Adjust the number of bins as needed
+    kde=False,  # Disable KDE
+    palette={
+        "Passed": "#006400",
+        "Failed": "#CC0099",
+    },  # Custom colors for Passed and Failed
+    legend=False,
+)
+
+# Customize the plot
+plt.xlabel("Nuclei MAD intensity (DAPI)", fontsize=14)
+plt.ylabel("Count", fontsize=14)
+plt.xticks(fontsize=12)
+plt.yticks(fontsize=12)
+plt.legend(
+    title="QC Status",
+    loc="upper right",
+    labels=["Passed", "Failed"],
+    fontsize=12,
+    title_fontsize=14,
+)
+
+plt.savefig(
+    qc_fig_dir / "blurry_nuclei_outliers_histogram.png",
+    dpi=500,
+    bbox_inches="tight",
+)
+
+# Show the plot
+plt.show()
+
+
+# In[13]:
 
 
 # Print out the number of outliers across plates
@@ -285,7 +380,7 @@ for plate, count in outlier_counts.items():
 # 
 # NOTE: Threshold was determined with trial and error to find where the cutoff for good to bad quality single-cell are.
 
-# In[12]:
+# In[14]:
 
 
 # Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
@@ -294,7 +389,7 @@ outlier_threshold = -2
 # find irregular shaped nuclei
 feature_thresholds = {
     "Nuclei_AreaShape_Solidity": -1.25,
-    "Nuclei_Intensity_IntegratedIntensity_DAPI": 2
+    "Nuclei_Intensity_IntegratedIntensity_DAPI": 2,
 }
 
 irregular_nuclei_outliers = find_outliers(
@@ -304,14 +399,15 @@ irregular_nuclei_outliers = find_outliers(
 )
 
 irregular_nuclei_outliers_cdf = CytoDataFrame(
-    data=irregular_nuclei_outliers,
-    image_adjustment=do_not_adjust_image_brightness
+    data=irregular_nuclei_outliers, image_adjustment=do_not_adjust_image_brightness
 )[
     [
         "Nuclei_AreaShape_Solidity",
         "Nuclei_Intensity_IntegratedIntensity_DAPI",
+        "Image_Metadata_Plate",
+        "Image_Metadata_Well",
+        "Image_Metadata_Site",
         "Image_FileName_DAPI",
-    
     ]
 ]
 
@@ -321,13 +417,65 @@ irregular_nuclei_outliers_cdf.sort_values(
 ).head(2)
 
 
-# In[13]:
+# In[15]:
 
 
-irregular_nuclei_outliers_cdf.sample(n=5, random_state=0)
+irregular_nuclei_outliers_cdf.sample(n=2, random_state=0)
 
 
-# In[14]:
+# In[16]:
+
+
+# Create a new column 'qc_status' in filtered_combined_df
+copy_filtered_combined_df = filtered_combined_df.copy()
+copy_filtered_combined_df["qc_status"] = copy_filtered_combined_df.index.map(
+    lambda idx: "Failed" if idx in irregular_nuclei_outliers.index else "Passed"
+)
+
+# Set figure size
+plt.figure(figsize=(12, 6))
+
+# Scatterplot for intensity and solidity in the DataFrame
+ax = sns.scatterplot(
+    data=copy_filtered_combined_df,
+    x="Nuclei_AreaShape_Solidity",
+    y="Nuclei_Intensity_IntegratedIntensity_DAPI",
+    hue="qc_status",  # Color points by qc_status
+    alpha=0.5,  # Set transparency for better visibility
+    palette={
+        "Passed": "#006400",
+        "Failed": "#CC0099",
+    },  # Custom colors for Passed and Failed
+)
+
+# Customize the plot
+plt.xlabel("Nuclei solidity", fontsize=14)
+plt.ylabel("Nuclei sum intensity (DAPI)", fontsize=14)
+plt.xticks(fontsize=12)
+plt.yticks(fontsize=12)
+
+# Retrieve handles and labels correctly
+handles, labels = ax.get_legend_handles_labels()
+ax.legend(
+    handles=handles,
+    labels=labels,
+    title="QC Status",
+    loc="upper left",
+    fontsize=12,
+    title_fontsize=14,
+)
+
+plt.savefig(
+    qc_fig_dir / "irregular_nuclei_outliers_scatterplot.png",
+    dpi=500,
+    bbox_inches="tight",
+)
+
+# Show the plot
+plt.show()
+
+
+# In[17]:
 
 
 # Print out the number of outliers across plates
@@ -342,45 +490,51 @@ for plate, count in outlier_counts.items():
     print(f"{plate}: {count} outliers ({outlier_percentages[plate]:.2f}%)")
 
 
-# In[15]:
+# In[18]:
 
 
 # Remove outliers from combined_df
-outlier_indices = (
-    nuclei_high_int_outliers.index
-    .union(irregular_nuclei_outliers.index)
-    .union(blurry_nuclei_outliers.index)
-)
+outlier_indices = nuclei_high_int_outliers.index.union(
+    irregular_nuclei_outliers.index
+).union(blurry_nuclei_outliers.index)
 dropped_outliers_combined_df = combined_df.drop(outlier_indices)
 print(dropped_outliers_combined_df.shape[0])
 
 
-# In[16]:
+# In[19]:
 
 
 # Collect the indices of the outliers
-outlier_indices = pd.concat([nuclei_high_int_outliers, irregular_nuclei_outliers, blurry_nuclei_outliers]).index
+outlier_indices = pd.concat(
+    [nuclei_high_int_outliers, irregular_nuclei_outliers, blurry_nuclei_outliers]
+).index
 
 # Remove rows with outlier indices from combined_df
 combined_df_cleaned = combined_df.drop(outlier_indices)
 
 # Save cleaned data for each plate and update the dictionary with cleaned paths
 for plate in plates:
-    plate_df = combined_df[combined_df["Image_Metadata_Plate"] == plate]  # Original plate data
-    plate_df_cleaned = combined_df_cleaned[combined_df_cleaned["Image_Metadata_Plate"] == plate]  # Cleaned plate data
-    
+    plate_df = combined_df[
+        combined_df["Image_Metadata_Plate"] == plate
+    ]  # Original plate data
+    plate_df_cleaned = combined_df_cleaned[
+        combined_df_cleaned["Image_Metadata_Plate"] == plate
+    ]  # Cleaned plate data
+
     # Calculate number of failed cells (rows removed)
     failed_cells = plate_df.shape[0] - plate_df_cleaned.shape[0]
-    
+
     # Calculate percentage of failed cells
     failed_percentage = (failed_cells / plate_df.shape[0]) * 100
-    
+
     # Print the number of failed cells and the percentage
     print(f"{plate}: {failed_cells} cells failed ({failed_percentage:.2f}% failed)")
 
     # Clean the plate data
-    plate_df_cleaned = plate_df_cleaned.drop(columns=["plate_alias"])  # Remove plate_alias column
-    
+    plate_df_cleaned = plate_df_cleaned.drop(
+        columns=["plate_alias"]
+    )  # Remove plate_alias column
+
     # Save cleaned data for each plate
     cleaned_path = f"{cleaned_dir}/{plate}_cleaned.parquet"
     plate_df_cleaned.to_parquet(cleaned_path)
@@ -390,7 +544,7 @@ for plate in plates:
 
 # ## Dump the new cleaned path to the dictionary for downstream processing
 
-# In[17]:
+# In[20]:
 
 
 with open(dictionary_path, "w") as file:
