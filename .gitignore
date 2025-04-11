@@ -31,3 +31,6 @@ run_plate*.sh
 
 # ignore yaml file for preprocessing plates (is created after CytoTable run)
 *plate_info_dictionary.yaml
+
+# Ignore extra cppipe file used to generate example segmented images
+NF1_analysis_save_ex_images.cppipe

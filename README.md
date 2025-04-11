@@ -1,10 +1,10 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13345304.svg)](https://doi.org/10.5281/zenodo.13345304)
 
-# NF1 Cell Painting Data 
+# NF1 Schwann cell Cell Painting data
 
 In this repository, we generate image analysis and image-based profiling pipelines to extract and format single-cell morphological profiles.
 
-We train a machine learning model to predict NF1 genotype, evaluate, and generate figures within a separate repository called: [NF1_SchwannCell_data_analysis](https://github.com/WayScience/NF1_SchwannCell_data_analysis).
+We train a machine learning model to predict NF1 genotype, evaluate, and generate figures within a separate repository called: [nf1_schwann_cell_morphology_signature](https://github.com/WayScience/nf1_schwann_cell_morphology_signature).
 Please visit the above repository for further information on the generation, validation, and figures from this model for the manuscript.
 
 ## Goal
@@ -13,7 +13,7 @@ It is important to study Schwann cells from NF1 patients because NF1 causes pati
 This decrease in production occurs when the NF1 gene is mutated (NF1 +/-).
 
 **The goal of this project is to predict NF1 genotype from Schwann cell morphology.** 
-We apply cell image analysis to Cell Painting images and use representation learning to extract morphology features. 
+We apply single cell image analysis to Cell Painting images and use representation learning to extract morphology features. 
 We will apply machine learning to the morphology features to discover a biomarker of NF1 genotype. 
 Once we discover a biomarker from these cells, we hope that our method can be used for drug discovery to treat this rare disease.
 
