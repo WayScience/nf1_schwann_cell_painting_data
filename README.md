@@ -13,7 +13,7 @@ It is important to study Schwann cells from NF1 patients because NF1 causes pati
 This decrease in production occurs when the NF1 gene is mutated (NF1 +/-).
 
 **The goal of this project is to predict NF1 genotype from Schwann cell morphology.** 
-We apply cell image analysis to Cell Painting images and use representation learning to extract morphology features. 
+We apply single cell image analysis to Cell Painting images and use representation learning to extract morphology features. 
 We will apply machine learning to the morphology features to discover a biomarker of NF1 genotype. 
 Once we discover a biomarker from these cells, we hope that our method can be used for drug discovery to treat this rare disease.
 
