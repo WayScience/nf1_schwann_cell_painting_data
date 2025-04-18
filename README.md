@@ -81,3 +81,8 @@ conda env create -f nf1_cellpainting_env.yml
 ```bash
 conda activate nf1_cellpainting_data
 ```
+
+## Licensing
+
+- Code: BSD 3-Clause License (see LICENSE)
+- Data: CC BY 4.0 License (see LICENSE_DATA)
