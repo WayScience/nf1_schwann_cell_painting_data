@@ -385,8 +385,10 @@ for plate, count in outlier_counts.items():
 
 # find irregular shaped nuclei
 feature_thresholds = {
-    "Nuclei_AreaShape_Solidity": -1.25, # outlier threshold for only solidity (values less than the mean)
-    "Nuclei_Intensity_IntegratedIntensity_DAPI": 2, # outlier threshold for only intensity (values above than the mean)
+    # outlier threshold for only solidity (values less than the mean = poor quality)
+    "Nuclei_AreaShape_Solidity": -1.25,
+    # outlier threshold for only intensity (values above than the mean = highly intense)
+    "Nuclei_Intensity_IntegratedIntensity_DAPI": 2,
 }
 
 irregular_nuclei_outliers = find_outliers(
