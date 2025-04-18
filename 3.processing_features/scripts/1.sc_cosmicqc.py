@@ -168,11 +168,11 @@ filtered_combined_df_cdf.sample(n=2, random_state=0)
 
 
 # Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
-outlier_threshold = 1.0
+outlier_threshold = 2
 
 # find nuclei with overly high intensity (over-saturated)
 feature_thresholds = {
-    "Nuclei_Intensity_UpperQuartileIntensity_DAPI": 2,
+    "Nuclei_Intensity_UpperQuartileIntensity_DAPI": outlier_threshold,
 }
 
 nuclei_high_int_outliers = find_outliers(
@@ -274,11 +274,11 @@ for plate, count in outlier_counts.items():
 
 
 # Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
-outlier_threshold = 1.0
+outlier_threshold = 2
 
 # find nuclei with overly high intensity (over-saturated)
 feature_thresholds = {
-    "Nuclei_Intensity_MADIntensity_DAPI": 2,
+    "Nuclei_Intensity_MADIntensity_DAPI": outlier_threshold,
 }
 
 blurry_nuclei_outliers = find_outliers(
@@ -383,12 +383,11 @@ for plate, count in outlier_counts.items():
 # In[14]:
 
 
-# Set outlier threshold that maximizes removing most technical outliers and minimizes good cells
-outlier_threshold = -2
-
 # find irregular shaped nuclei
 feature_thresholds = {
+    # outlier threshold for only solidity (values less than the mean = poor quality)
     "Nuclei_AreaShape_Solidity": -1.25,
+    # outlier threshold for only intensity (values above than the mean = highly intense)
     "Nuclei_Intensity_IntegratedIntensity_DAPI": 2,
 }
 
