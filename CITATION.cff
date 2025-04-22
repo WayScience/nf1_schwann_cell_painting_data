@@ -42,5 +42,14 @@ keywords:
   - data science
   - machine learning
 
-license: "CC-BY-4.0"
+abstract: In this repository, we generate image analysis and image-based profiling pipelines to extract and format single-cell morphological profiles.
+
+license:
+  - CC-BY-4.0
+  - BSD-3-Clause
+
 url: "https://github.com/WayScience/nf1_schwann_cell_painting_data/tree/main"
+
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.13345304
