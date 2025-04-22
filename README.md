@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13345304.svg)](https://doi.org/10.5281/zenodo.13345304)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15265416.svg)](https://doi.org/10.5281/zenodo.15265416)
 
 # NF1 Schwann cell Cell Painting data
 
