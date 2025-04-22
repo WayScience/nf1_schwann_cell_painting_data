@@ -1,33 +1,33 @@
-cff-version: 1.2.0
+cff-version: 1.1.0
 message: "If you use this software or data, please cite it as below. This work is dual-licensed under CC BY 4.0 and BSD-3-Clause."
 title: "NF1 Schwann cell Cell Painting data"
 authors:
   - family-names: Tomkinson
     given-names: Jenna
-    orcid: "https://orcid.org/0000-0003-2676-5813"
+    orcid: "0000-0003-2676-5813"
     affiliation: "Department of Biomedical Informatics, University of Colorado Anschutz"
   - family-names: Mattson
     given-names: Cameron
-    orcid: "https://orcid.org/0009-0008-4969-779X"
+    orcid: "0009-0008-4969-779X"
     affiliation: "Department of Biomedical Informatics, University of Colorado Anschutz"
   - family-names: Mattson-Hoss
     given-names: Michelle
     affiliation: "Infixion Bioscience"
   - family-names: Sarnoff
     given-names: Herb
-    orcid: "https://orcid.org/0000-0002-3219-3113"
+    orcid: "0000-0002-3219-3113"
     affiliation: "Infixion Bioscience"
   - family-names: Bouley
     given-names: Stephanie J.
-    orcid: "https://orcid.org/0000-0003-0785-0860"
+    orcid: "0000-0003-0785-0860"
     affiliation: "Center for Genomic Medicine, Massachusetts General Hospital"
   - family-names: Walker
     given-names: James A.
-    orcid: "https://orcid.org/0000-0001-5585-698X"
+    orcid: "0000-0001-5585-698X"
     affiliation: "Center for Genomic Medicine, Massachusetts General Hospital"
   - family-names: Way
     given-names: Gregory P.
-    orcid: "https://orcid.org/0000-0002-0503-9348"
+    orcid: "0000-0002-0503-9348"
     affiliation: "Department of Biomedical Informatics, University of Colorado Anschutz"
 
 keywords:
@@ -44,12 +44,6 @@ keywords:
 
 abstract: In this repository, we generate image analysis and image-based profiling pipelines to extract and format single-cell morphological profiles.
 
-license:
-  - CC-BY-4.0
-  - BSD-3-Clause
+license: CC-BY-4.0
 
-url: "https://github.com/WayScience/nf1_schwann_cell_painting_data/tree/main"
-
-identifiers:
-  - type: doi
-    value: 10.5281/zenodo.13345304
+url: "https://github.com/WayScience/nf1_schwann_cell_painting_data"
